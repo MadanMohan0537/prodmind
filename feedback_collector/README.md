@@ -9,7 +9,7 @@ Collect, normalize, deduplicate, classify, store, and export product feedback—
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![D1](https://img.shields.io/badge/Cloudflare-D1-F38020?logo=cloudflare&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=111)
-![Tests](https://img.shields.io/badge/tests-14%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-15%20passing-72D572)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [API](#api-reference) · [Deploy](#deploy-to-cloudflare) · [Roadmap](#roadmap)
@@ -320,7 +320,7 @@ npx wrangler secret put CONNECTOR_API_TOKEN
 npm test
 ```
 
-The current 14-test suite verifies:
+The current 15-test suite verifies:
 
 - Feature-request detection
 - Negative-sentiment classification
@@ -335,6 +335,7 @@ The current 14-test suite verifies:
 - Disallowed-origin rejection
 - Authenticated ingestion
 - Matching client/server fingerprints
+- Runtime enforcement of the normalized event contract
 
 Run syntax checks and the complete suite together:
 
