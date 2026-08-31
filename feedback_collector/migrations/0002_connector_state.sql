@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS connector_state(
+  name TEXT PRIMARY KEY,
+  cursor TEXT,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

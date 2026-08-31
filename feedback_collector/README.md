@@ -9,7 +9,7 @@ Collect, normalize, deduplicate, classify, store, and export product feedback—
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![D1](https://img.shields.io/badge/Cloudflare-D1-F38020?logo=cloudflare&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=111)
-![Tests](https://img.shields.io/badge/tests-15%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-27%20passing-72D572)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [API](#api-reference) · [Deploy](#deploy-to-cloudflare) · [Roadmap](#roadmap)
@@ -73,7 +73,8 @@ feedback_collector/
 │   ├── sample-feedback.csv
 │   └── sample-feedback.json
 ├── migrations/
-│   └── 0001_initial.sql
+│   ├── 0001_initial.sql
+│   └── 0002_connector_state.sql
 ├── public/
 │   ├── app.js
 │   ├── feedback.js
@@ -86,7 +87,8 @@ feedback_collector/
 │   └── worker.js
 ├── test/
 │   ├── connectors.test.js
-│   └── feedback.test.js
+│   ├── feedback.test.js
+│   └── worker.test.js
 ├── package.json
 ├── README.md
 └── wrangler.jsonc
@@ -201,7 +203,7 @@ A batch can contain up to 1,000 records. With a Queue binding, the endpoint retu
 GET /api/feedback?source=Support&limit=100
 ```
 
-The maximum page size is 500 records.
+The maximum page size is 500 records. Invalid or negative limits fall back to 100. Each item uses the normalized event contract rather than raw D1 column names.
 
 ### Inspect an ingestion job
 
@@ -217,7 +219,7 @@ Job records include received, accepted, duplicate, failure, and completion infor
 GET /api/export
 ```
 
-Returns up to 10,000 normalized events as newline-delimited JSON (`application/x-ndjson`).
+Returns up to 10,000 normalized events as newline-delimited JSON (`application/x-ndjson`) using the public event contract.
 
 ## Deploy to Cloudflare
 
@@ -320,20 +322,25 @@ npx wrangler secret put CONNECTOR_API_TOKEN
 npm test
 ```
 
-The current 15-test suite verifies:
+The current 27-test suite verifies:
 
 - Feature-request detection
 - Negative-sentiment classification
 - Input-field aliases and whitespace normalization
 - Duplicate removal
-- CSV parsing
+- CSV parsing, including trimmed headers
 - Zendesk record mapping
-- Zendesk pagination
+- Zendesk pagination, cursor resume, and empty-ticket filtering
 - Retry behavior after transient upstream failures
 - Public health routing
 - Unauthorized export rejection
 - Disallowed-origin rejection
 - Authenticated ingestion
+- Rejection of null JSON bodies
+- Safe list pagination limits
+- Public list/export mapping onto the event contract
+- Queue terminal-failure auditing
+- Hidden internal exception details
 - Matching client/server fingerprints
 - Runtime enforcement of the normalized event contract
 
@@ -382,6 +389,7 @@ These constraints are explicit so later complexity is added in response to real 
 - [ ] Standards-compliant multiline CSV parser
 - [ ] IndexedDB for larger offline datasets
 - [x] Secured, scheduled Zendesk ingestion
+- [x] Incremental Zendesk cursor persistence
 - [x] Runtime validation and D1-backed rate limiting
 - [ ] OAuth setup screens for additional live connectors
 - [ ] Configurable taxonomies and classification confidence

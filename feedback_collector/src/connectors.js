@@ -57,15 +57,29 @@ export class JsonApiConnector {
   }
 }
 
-export function createZendeskConnector({ subdomain, token, email, fetcher }) {
+export function createZendeskConnector({ subdomain, token, email, fetcher, cursor, startTime }) {
   const authorization = `Basic ${btoa(`${email}/token:${token}`)}`;
-  return new JsonApiConnector({
+  const endpoint = cursor
+    ? `https://${subdomain}.zendesk.com/api/v2/incremental/tickets/cursor.json?cursor=${encodeURIComponent(cursor)}`
+    : `https://${subdomain}.zendesk.com/api/v2/incremental/tickets/cursor.json?start_time=${startTime ?? Math.floor(Date.now() / 1000) - 3600}`;
+  const state = { cursor: cursor || null };
+  const connector = new JsonApiConnector({
     name: "zendesk",
-    endpoint: `https://${subdomain}.zendesk.com/api/v2/incremental/tickets/cursor.json?start_time=${Math.floor(Date.now() / 1000) - 3600}`,
+    endpoint,
     headers: { Authorization: authorization, Accept: "application/json" },
     fetcher,
-    extractItems: payload => payload.tickets || [],
-    mapRecord: item => ({ id: `zendesk-${item.id}`, text: item.description || item.subject, customer: String(item.requester_id || "Anonymous"), createdAt: item.created_at }),
-    nextPage: payload => payload.end_of_stream ? null : payload.after_url
+    extractItems: payload => (payload.tickets || []).filter(item => item.description || item.subject),
+    mapRecord: item => ({
+      id: `zendesk-${item.id}`,
+      text: item.description || item.subject,
+      customer: String(item.requester_id || "Anonymous"),
+      createdAt: item.created_at
+    }),
+    nextPage: payload => {
+      if (payload.after_cursor) state.cursor = payload.after_cursor;
+      return payload.end_of_stream ? null : payload.after_url;
+    }
   });
+  connector.state = state;
+  return connector;
 }
