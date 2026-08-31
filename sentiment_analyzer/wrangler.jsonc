@@ -5,6 +5,7 @@
   "compatibility_date": "2026-08-31",
   "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "single-page-application" },
   "ai": { "binding": "AI" },
+  "d1_databases": [{ "binding": "DB", "database_name": "sentiment-analyzer-db", "database_id": "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID", "migrations_dir": "migrations" }],
   "vars": { "ALLOWED_ORIGINS": "http://localhost:8787" },
   "observability": { "enabled": true }
 }
