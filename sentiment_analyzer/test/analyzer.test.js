@@ -1,0 +1,13 @@
+import test from "node:test";import assert from "node:assert/strict";import{analyzeFeedbackEvent,analyzeSentiment,detectLanguage,tokenize}from"../public/analyzer.js";
+test("detects English positive sentiment",()=>{const r=analyzeSentiment("I love the fast dashboard");assert.equal(r.label,"positive");assert.ok(r.confidence>.5)});
+test("detects English negative sentiment",()=>assert.equal(analyzeSentiment("The slow page is frustrating").label,"negative"));
+test("handles negation",()=>assert.equal(analyzeSentiment("The page is not slow").label,"positive"));
+test("handles intensifiers",()=>assert.ok(analyzeSentiment("This is very good").score>analyzeSentiment("This is good").score));
+test("detects Spanish",()=>assert.equal(detectLanguage("La aplicación es muy rápida"),"es"));
+test("classifies Spanish sentiment",()=>assert.equal(analyzeSentiment("La aplicación es excelente",{language:"es"}).label,"positive"));
+test("uses emoji evidence",()=>assert.equal(analyzeSentiment("New release 😡").label,"negative"));
+test("detects aspects",()=>assert.ok(analyzeSentiment("The app is slow").aspects.includes("performance")));
+test("marks evidence-free text for review",()=>assert.equal(analyzeSentiment("The screen has a menu").needsReview,true));
+test("rejects empty input",()=>assert.throws(()=>analyzeSentiment(""),/non-empty/));
+test("wraps Feedback Collector events",()=>assert.equal(analyzeFeedbackEvent({id:"f-1",text:"Great app"}).eventId,"f-1"));
+test("tokenizes unicode text",()=>assert.ok(tokenize("rápido 👍").includes("rápido")));
