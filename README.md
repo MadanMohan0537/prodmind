@@ -1,68 +1,47 @@
+<div align="center">
+
 # ProdMind
 
-ProdMind is a zero-cost, Cloudflare-native product management copilot. It is being built through **divide and conquer**: each capability ships as an independently useful, tested product slice before it becomes part of the wider platform.
+**30 open-source product-management applications, built one focused project at a time.**
 
-## Slice 01: Feedback Collector
+Zero-cost software · Cloudflare-ready · Tested end to end · Apache-2.0
 
-The first slice turns CSV, JSON, and manually entered customer feedback into a normalized stream. It currently provides:
+</div>
 
-- CSV and JSON import in the browser
-- A normalized feedback schema
-- Exact semantic-order deduplication
-- Lightweight sentiment and intent classification
-- A feedback inbox and summary dashboard
-- Local-first persistence with no paid database
-- A Cloudflare Worker health endpoint
-- Responsive, accessible UI
-- Automated unit tests
+ProdMind is a divide-and-conquer build of an AI product-management copilot. Each idea lives in its own named project folder, runs independently, and proves its value before it is integrated into the unified platform.
 
-No paid APIs, hosted models, databases, queues, or third-party SaaS products are required.
+## Projects
 
-## Architecture
+| # | Project | Purpose | Status |
+|---|---|---|---|
+| 01 | [Feedback Collector](feedback_collector/) | Collect, normalize, validate, deduplicate, and classify customer feedback. | Active |
+| 02 | Sentiment Analyzer | Domain-aware sentiment with confidence and explanations. | Planned |
+| 03 | Topic Modeler | Discover themes, hierarchies, and topic drift. | Planned |
+| 04 | Feature Request Detector | Detect feature requests, bugs, and multiple intents. | Planned |
+| 05 | Voice-of-Customer Dashboard | Explore customer evidence, trends, and anomalies. | Planned |
 
-```text
-Browser input -> normalize -> deduplicate -> classify -> local store -> dashboard
-```
+Projects 06–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
 
-This slice deliberately uses a modular monolith. Domain logic lives in `public/feedback.js`, UI orchestration in `public/app.js`, and Cloudflare routing in `src/worker.js`. Later slices can reuse these contracts without prematurely creating separate services.
+## Build principles
 
-## Run locally
+- One named folder per product idea
+- A runnable application and focused README in every folder
+- No paid computation or software dependencies
+- Cloudflare Workers-compatible deployments
+- Deterministic fallbacks when AI capacity is unavailable
+- Tests before integration
+- Original implementation and branding
+
+## Run the first project
 
 ```bash
+git clone https://github.com/MadanMohan0537/prodmind.git
+cd prodmind/feedback_collector
 npm install
 npm test
 npm run dev
 ```
 
-## Deploy to Cloudflare
-
-```bash
-npm run deploy
-```
-
-Alternatively, connect this repository in Cloudflare Workers & Pages and enable automatic deployments from `main`. The included `wrangler.jsonc` serves the static application and Worker API together.
-
-## Import format
-
-CSV headers or JSON keys may use `text`, `feedback`, `comment`, or `review` for the feedback body. Optional fields include `source`, `customer`, `user`, `timestamp`, and `createdAt`.
-
-```csv
-text,source,customer
-Please add CSV export,Support,Acme
-The mobile filter crashes,App review,Anonymous
-```
-
-## Product roadmap
-
-1. **Feedback foundation** — ingestion, normalization, deduplication (current)
-2. **Customer intelligence** — topic clustering, evidence review, human corrections
-3. **Decision intelligence** — opportunity grouping and explainable prioritization
-4. **Planning** — PRDs, user stories, roadmaps, and exports
-5. **Measurement** — experiments, adoption, retention, and impact
-6. **Market intelligence** — competitors, trends, and feature gaps
-
-Every slice must be useful independently, pass its tests, fit the Cloudflare free tier, and avoid paid dependencies before integration.
-
 ## License
 
-[MIT](LICENSE)
+Licensed under the [Apache License 2.0](LICENSE).
