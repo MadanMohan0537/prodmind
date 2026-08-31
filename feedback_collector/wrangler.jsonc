@@ -8,5 +8,7 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  "d1_databases": [{"binding":"DB","database_name":"feedback-collector-db","database_id":"REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID","migrations_dir":"migrations"}],
+  "queues": {"producers":[{"binding":"INGESTION_QUEUE","queue":"feedback-ingestion"}],"consumers":[{"queue":"feedback-ingestion","max_batch_size":25,"max_batch_timeout":5,"max_retries":3}]},
   "observability": { "enabled": true }
 }
