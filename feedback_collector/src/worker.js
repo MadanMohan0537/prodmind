@@ -165,7 +165,14 @@ async function ingestZendesk(env) {
   const connector = createZendeskConnector({ subdomain: env.ZENDESK_SUBDOMAIN, email: env.ZENDESK_EMAIL, token: env.ZENDESK_TOKEN });
   const records = [];
   for await (const record of connector.records()) records.push(record);
-  if (records.length) await processPayload(env, { jobId: crypto.randomUUID(), records });
+  if (records.length) {
+    const jobId = crypto.randomUUID();
+    if (env.DB) {
+      await env.DB.prepare("INSERT INTO ingestion_jobs (id, source, status, received) VALUES (?, ?, ?, ?)")
+        .bind(jobId, "zendesk", "processing", records.length).run();
+    }
+    await processPayload(env, { jobId, records });
+  }
 }
 
 export default {
