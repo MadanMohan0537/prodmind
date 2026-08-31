@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyze, canonicalize, deduplicate, normalizeRecord, parseCsv, validateInput } from "../public/feedback.js";
+import { analyze, canonicalize, deduplicate, normalizeRecord, parseCsv, validateEvent, validateInput } from "../public/feedback.js";
 
 test("classifies feature requests with confidence", () => {
   const result = analyze("Please add dark mode");
@@ -11,6 +11,7 @@ test("classifies feature requests with confidence", () => {
 test("handles simple negation", () => assert.notEqual(analyze("The page is not slow").sentiment, "negative"));
 test("rejects missing text", () => assert.deepEqual(validateInput({ source: "survey" }), ["text is required and must be a non-empty string"]));
 test("rejects invalid metadata", () => assert.ok(validateInput({ text: "Hello", metadata: [] }).length));
+test("enforces the normalized event contract", () => assert.ok(validateEvent({ schemaVersion: "2.0", fingerprint: "bad" }).length));
 test("normalizes supported text fields", () => assert.equal(normalizeRecord({ review: "  Useful   app " }).text, "Useful app"));
 
 test("client and server canonical semantics are order-insensitive", () => {
