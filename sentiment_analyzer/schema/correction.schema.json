@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"SentimentCorrection","type":"object","required":["analysisId","correctedLabel"],"properties":{"analysisId":{"type":"string","minLength":1},"correctedLabel":{"enum":["positive","neutral","negative"]},"note":{"type":"string","maxLength":2000}},"additionalProperties":false}
