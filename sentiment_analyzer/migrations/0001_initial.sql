@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS sentiment_analyses(id TEXT PRIMARY KEY,event_id TEXT,text_hash TEXT NOT NULL,label TEXT NOT NULL CHECK(label IN('positive','neutral','negative')),score REAL NOT NULL,confidence REAL NOT NULL,language TEXT NOT NULL,model TEXT NOT NULL,evidence TEXT NOT NULL DEFAULT '[]',aspects TEXT NOT NULL DEFAULT '[]',needs_review INTEGER NOT NULL DEFAULT 0,analyzed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS sentiment_corrections(id TEXT PRIMARY KEY,analysis_id TEXT NOT NULL,corrected_label TEXT NOT NULL CHECK(corrected_label IN('positive','neutral','negative')),note TEXT,corrected_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(analysis_id) REFERENCES sentiment_analyses(id));
+CREATE INDEX IF NOT EXISTS idx_analysis_date ON sentiment_analyses(analyzed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analysis_language_label ON sentiment_analyses(language,label);
+CREATE INDEX IF NOT EXISTS idx_correction_analysis ON sentiment_corrections(analysis_id);
