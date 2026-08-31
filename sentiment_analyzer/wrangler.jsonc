@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prodmind-sentiment-analyzer",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-31",
+  "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "single-page-application" },
+  "ai": { "binding": "AI" },
+  "vars": { "ALLOWED_ORIGINS": "http://localhost:8787" },
+  "observability": { "enabled": true }
+}
