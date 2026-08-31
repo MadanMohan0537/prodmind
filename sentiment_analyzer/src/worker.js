@@ -33,12 +33,58 @@ async function optionalAiReview(text, result, env) {
   }
 }
 
+async function hashText(text) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, "0")).join("");
+}
+
+async function persistAnalysis(input, result, env) {
+  const analysisId = crypto.randomUUID();
+  if (env.DB && !result.error) {
+    await env.DB.prepare(`INSERT INTO sentiment_analyses
+      (id,event_id,text_hash,label,score,confidence,language,model,evidence,aspects,needs_review)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?)`).bind(
+        analysisId, typeof input === "object" ? input.id || null : null,
+        await hashText(typeof input === "string" ? input : input.text), result.label, result.score,
+        result.confidence, result.language, result.model, JSON.stringify(result.evidence),
+        JSON.stringify(result.aspects), result.needsReview ? 1 : 0
+      ).run();
+  }
+  return { analysisId, ...result };
+}
+
+async function handleCorrection(request, env) {
+  if (!env.DB) return json(request, env, { error: "Corrections require D1" }, 503);
+  let body;
+  try { body = await request.json(); } catch { return json(request, env, { error: "Invalid JSON" }, 400); }
+  if (!body.analysisId || !["positive", "neutral", "negative"].includes(body.correctedLabel)) return json(request, env, { error: "analysisId and a valid correctedLabel are required" }, 422);
+  const analysis = await env.DB.prepare("SELECT id FROM sentiment_analyses WHERE id = ?").bind(body.analysisId).first();
+  if (!analysis) return json(request, env, { error: "Analysis not found" }, 404);
+  const id = crypto.randomUUID();
+  await env.DB.prepare("INSERT INTO sentiment_corrections (id,analysis_id,corrected_label,note) VALUES (?,?,?,?)").bind(id, body.analysisId, body.correctedLabel, body.note || null).run();
+  return json(request, env, { id, status: "recorded" }, 201);
+}
+
+async function handleMetrics(request, env) {
+  if (!env.DB) return json(request, env, { error: "Metrics require D1" }, 503);
+  const [labels, languages, review, corrections] = await Promise.all([
+    env.DB.prepare("SELECT label,COUNT(*) count FROM sentiment_analyses GROUP BY label").all(),
+    env.DB.prepare("SELECT language,COUNT(*) count FROM sentiment_analyses GROUP BY language").all(),
+    env.DB.prepare("SELECT COUNT(*) total,SUM(needs_review) needs_review,AVG(confidence) average_confidence FROM sentiment_analyses").first(),
+    env.DB.prepare("SELECT COUNT(*) count FROM sentiment_corrections").first()
+  ]);
+  return json(request, env, { labels: labels.results, languages: languages.results, ...review, corrections: corrections.count });
+}
+
 export async function route(request, env) {
   const url = new URL(request.url);
   if (request.method === "OPTIONS") return new Response(null, { headers: cors(request, env) });
   if (url.pathname === "/api/health") return json(request, env, { status: "ok", service: "sentiment-analyzer", languages: ["en", "es"], aiReview: Boolean(env.AI) });
-  if (url.pathname !== "/api/analyze" || request.method !== "POST") return env.ASSETS.fetch(request);
+  if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
   if (!await authorized(request, env)) return json(request, env, { error: "Unauthorized" }, 401);
+  if (url.pathname === "/api/corrections" && request.method === "POST") return handleCorrection(request, env);
+  if (url.pathname === "/api/metrics" && request.method === "GET") return handleMetrics(request, env);
+  if (url.pathname !== "/api/analyze" || request.method !== "POST") return json(request, env, { error: "Not found" }, 404);
   let body;
   try { body = await request.json(); } catch { return json(request, env, { error: "Invalid JSON" }, 400); }
   const inputs = Array.isArray(body) ? body : Array.isArray(body.records) ? body.records : [body];
@@ -47,7 +93,8 @@ export async function route(request, env) {
   for (const [index, input] of inputs.entries()) {
     try {
       const base = typeof input === "string" ? analyzeSentiment(input) : analyzeFeedbackEvent(input);
-      results.push(await optionalAiReview(typeof input === "string" ? input : input.text, base, env));
+      const reviewed = await optionalAiReview(typeof input === "string" ? input : input.text, base, env);
+      results.push(await persistAnalysis(input, reviewed, env));
     } catch (error) { results.push({ index, error: error.message }); }
   }
   return json(request, env, { results, count: results.length });
