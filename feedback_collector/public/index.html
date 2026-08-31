@@ -19,6 +19,14 @@
     </section>
     <section class="workspace">
       <aside class="panel">
+        <p class="eyebrow">CONNECTION</p>
+        <form id="connection-form">
+          <label>Worker URL<input name="apiUrl" type="url" placeholder="https://feedback-collector.workers.dev" /></label>
+          <label>Access token<input name="apiToken" type="password" autocomplete="off" placeholder="Stored for this tab only" /></label>
+          <button type="submit">Connect to API</button>
+        </form>
+        <p id="connection-status" class="status">Offline demo mode. Data stays in this browser.</p>
+        <div class="divider"><span>feedback</span></div>
         <p class="eyebrow">ADD FEEDBACK</p>
         <form id="feedback-form"><label>Customer feedback<textarea name="text" required placeholder="Paste a review, support message or interview note"></textarea></label><label>Source<input name="source" placeholder="Support, survey, interview…" /></label><label>Customer<input name="customer" placeholder="Optional customer name" /></label><button type="submit">Analyze feedback</button></form>
         <div class="divider"><span>or import</span></div>
