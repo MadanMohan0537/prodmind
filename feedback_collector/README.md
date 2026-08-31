@@ -9,7 +9,7 @@ Collect, normalize, deduplicate, classify, store, and export product feedback—
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![D1](https://img.shields.io/badge/Cloudflare-D1-F38020?logo=cloudflare&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=111)
-![Tests](https://img.shields.io/badge/tests-7%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-14%20passing-72D572)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [API](#api-reference) · [Deploy](#deploy-to-cloudflare) · [Roadmap](#roadmap)
@@ -27,7 +27,8 @@ Feedback Collector turns those scattered signals into a single, versioned stream
 - Manual feedback entry through a responsive web interface
 - CSV and JSON file imports
 - Generic paginated JSON API connector
-- Mapping templates for Zendesk, Intercom, Typeform, and Reddit
+- An hourly, credentialed Zendesk ingestion connector
+- Mapping utilities for additional sources (not yet end-to-end integrations)
 - Consistent, versioned feedback-event schema
 - Whitespace cleaning and required-field validation
 - Deterministic sentiment and intent classification
@@ -246,13 +247,24 @@ REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID
 npx wrangler queues create feedback-ingestion
 ```
 
-### 4. Apply the database migration
+### 4. Configure security and Zendesk secrets
+
+```bash
+npx wrangler secret put API_TOKEN
+npx wrangler secret put ZENDESK_SUBDOMAIN
+npx wrangler secret put ZENDESK_EMAIL
+npx wrangler secret put ZENDESK_TOKEN
+```
+
+Set `ALLOWED_ORIGINS` to the comma-separated origins permitted to call the API. Zendesk secrets are optional; when present, the hourly Cron Trigger performs incremental ticket ingestion.
+
+### 5. Apply the database migration
 
 ```bash
 npm run db:migrate:remote
 ```
 
-### 5. Deploy
+### 6. Deploy
 
 ```bash
 npm run deploy
@@ -293,7 +305,10 @@ npx wrangler secret put CONNECTOR_API_TOKEN
 - Secrets are excluded through `.gitignore` and Cloudflare secret bindings.
 - Transient connector failures use exponential backoff and jitter.
 - Upstream rate-limit instructions are honored through `Retry-After`.
-- The public ingestion API enforces request and batch limits.
+- Every data endpoint requires a bearer token; only the health endpoint is public.
+- CORS responses are limited to configured origins.
+- D1 stores rate counters so limits apply across Worker isolates.
+- The ingestion API enforces request and batch limits.
 - Queue jobs retry three times and record terminal failures.
 - Unique content fingerprints make ingestion idempotent.
 - Schema versions allow compatible event evolution.
@@ -305,7 +320,7 @@ npx wrangler secret put CONNECTOR_API_TOKEN
 npm test
 ```
 
-The current suite verifies:
+The current 14-test suite verifies:
 
 - Feature-request detection
 - Negative-sentiment classification
@@ -313,7 +328,13 @@ The current suite verifies:
 - Duplicate removal
 - CSV parsing
 - Zendesk record mapping
-- Stable connector source identity
+- Zendesk pagination
+- Retry behavior after transient upstream failures
+- Public health routing
+- Unauthorized export rejection
+- Disallowed-origin rejection
+- Authenticated ingestion
+- Matching client/server fingerprints
 
 Run syntax checks and the complete suite together:
 
@@ -359,7 +380,9 @@ These constraints are explicit so later complexity is added in response to real 
 - [ ] Import preview and column mapping
 - [ ] Standards-compliant multiline CSV parser
 - [ ] IndexedDB for larger offline datasets
-- [ ] OAuth setup screens for live connectors
+- [x] Secured, scheduled Zendesk ingestion
+- [x] Runtime validation and D1-backed rate limiting
+- [ ] OAuth setup screens for additional live connectors
 - [ ] Configurable taxonomies and classification confidence
 - [ ] MinHash or local-embedding fuzzy duplicate detection
 - [ ] PII detection and configurable redaction
