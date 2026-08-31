@@ -1,0 +1,2 @@
+import test from"node:test";import assert from"node:assert/strict";import{evaluateDataset}from"../scripts/evaluate.js";
+test("evaluation reports accuracy and confusion",()=>{const r=evaluateDataset([{text:"Great app",label:"positive",language:"en"},{text:"Slow app",label:"negative",language:"en"}]);assert.equal(r.accuracy,1);assert.equal(r.confusion.positive.positive,1);assert.ok(r.brierScore>=0)});
