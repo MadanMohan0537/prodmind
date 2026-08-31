@@ -6,7 +6,7 @@
 
 English + Spanish · Confidence scores · Evidence traces · Aspect detection · Cloudflare-ready
 
-![Tests](https://img.shields.io/badge/tests-18%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-22%20passing-72D572)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
@@ -147,14 +147,15 @@ The browser imports the same `public/analyzer.js` module as the Worker, preventi
 - Workers AI review consumes Cloudflare’s free daily allowance and can be unavailable.
 - Confidence measures rule evidence, not statistically calibrated probability.
 
-These limitations are surfaced deliberately. The project should only move to LoRA fine-tuning, ONNX, or larger multilingual models after an evaluated labeled dataset proves the baseline insufficient.
+These limitations are surfaced deliberately. The optional `ml/` package provides the advanced training and export path, but promotion still requires a representative labeled dataset and measured improvement over the baseline.
 
 ## Tests
 
-The 18-test suite covers English and Spanish sentiment, negation, intensifiers, emojis, aspects, uncertainty, invalid input, Feedback Collector events, Unicode tokenization, evaluation metrics, public health, API authentication, authenticated batches, and clear behavior when persistence is unavailable.
+The project has 18 JavaScript tests and 4 dependency-free Python data-contract tests. They cover the baseline analyzer, API behavior, evaluation metrics, and ML dataset validation.
 
 ```bash
 npm run check
+python -m unittest discover -s ml/tests
 ```
 
 ## Evaluation and calibration
@@ -172,13 +173,17 @@ The report contains accuracy, a confusion matrix, per-label precision/recall/F1,
 | Advanced requirement | Current status | Boundary |
 |---|---|---|
 | Domain-specific sentiment | Baseline implemented | Real domain claims require domain-specific labeled data. |
-| Uncertainty quantification | Implemented baseline | Confidence, review thresholds, Brier evaluation, and corrections; not Monte Carlo dropout. |
-| Multilingual support | English and Spanish | Explicitly bounded and tested; not XLM-R-level coverage. |
-| GPU-accelerated serving | Not applicable | Workers and optional Workers AI satisfy the zero-cost constraint; TensorRT hosting would not. |
-| Explainability | Implemented baseline | Token weights, negation, intensity, aspects, and classifier version; not integrated gradients. |
-| LoRA/adapters | Not implemented | Requires labeled data, weights, training compute, and evaluation gates. |
+| Uncertainty quantification | Two implementations | Baseline confidence/Brier metrics plus ML Monte Carlo dropout. |
+| Multilingual support | Baseline + XLM-R path | Baseline supports English/Spanish; XLM-R training can expand only with evaluated labels. |
+| GPU-accelerated serving | Export path implemented | ONNX/TensorRT artifacts require a separate compatible runtime, not Cloudflare Workers. |
+| Explainability | Two implementations | Baseline token evidence plus ML integrated gradients. |
+| LoRA/adapters | Training pipeline implemented | Runs on a compatible local or free notebook GPU; no production adapter is claimed from the sample data. |
+| Monte Carlo dropout | Implemented in `ml/` | Reports probability variance and predictive entropy from repeated dropout passes. |
+| XLM-R | Implemented in `ml/` | Configured as the multilingual base model for LoRA fine-tuning. |
+| ONNX/TensorRT | Export paths implemented | ONNX export is runnable; TensorRT conversion requires NVIDIA tooling and cannot run on Cloudflare. |
+| Integrated gradients | Implemented in `ml/` | Captum token attributions are available for trained adapters. |
 
-This boundary is intentional. Empty training notebooks or unused ONNX configuration would make the repository look advanced without producing a working product.
+The research code is runnable, but the repository does not claim a trained production model. The bundled miniature dataset validates plumbing only.
 
 ## Roadmap
 
@@ -191,11 +196,16 @@ This boundary is intentional. Empty training notebooks or unused ONNX configurat
 - [x] D1 analysis history and human corrections
 - [x] Operational metrics
 - [x] Reproducible evaluation report
-- [ ] Labeled evaluation dataset and confusion matrix
+- [x] XLM-R LoRA training pipeline
+- [x] Monte Carlo dropout uncertainty
+- [x] Integrated-gradients explanations
+- [x] ONNX export and optional TensorRT conversion
+- [x] Seed labeled evaluation dataset and confusion matrix tooling
 - [ ] Per-domain lexicon configuration
 - [ ] Aspect-level sentiment, not only aspect presence
-- [ ] Human correction capture
-- [ ] Calibration metrics and drift reports
+- [x] Human correction capture
+- [x] Initial calibration metrics
+- [ ] Drift reports
 - [ ] Carefully evaluated multilingual expansion
 
 ## License
