@@ -56,6 +56,19 @@ export function validateInput(record) {
   return errors;
 }
 
+export function validateEvent(event) {
+  const errors = [];
+  for (const field of ["id", "schemaVersion", "text", "source", "createdAt", "fingerprint"]) {
+    if (typeof event[field] !== "string" || !event[field]) errors.push(`${field} is required`);
+  }
+  if (event.schemaVersion !== "1.0") errors.push("schemaVersion must be 1.0");
+  if (!["positive", "neutral", "negative"].includes(event.sentiment)) errors.push("sentiment is invalid");
+  if (!["feature-request", "bug", "general"].includes(event.intent)) errors.push("intent is invalid");
+  if (typeof event.confidence !== "number" || event.confidence < 0 || event.confidence > 1) errors.push("confidence must be between 0 and 1");
+  if (!/^[a-f0-9]{64}$/.test(event.fingerprint || "")) errors.push("fingerprint must be a SHA-256 hex digest");
+  return errors;
+}
+
 export function normalizeRecord(record, index = 0) {
   if (validateInput(record).length) return null;
   const text = normalizeText(record.text ?? record.feedback ?? record.comment ?? record.review);
