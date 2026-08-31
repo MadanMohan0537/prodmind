@@ -1,0 +1,13 @@
+{
+  "name": "prodmind-sentiment-analyzer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test",
+    "check": "node --check public/analyzer.js && node --check public/app.js && node --check src/worker.js && node --test"
+  },
+  "devDependencies": { "wrangler": "^4.33.1" }
+}
