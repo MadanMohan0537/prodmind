@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import{connectorTemplates,JsonApiConnector}from"../src/connectors.js";
+test("Zendesk template maps ticket bodies",()=>{const result=connectorTemplates.zendesk({id:7,body:"Export please",created_at:"2026-01-01T00:00:00Z"});assert.deepEqual(result,{id:"zendesk-7",text:"Export please",customer:undefined,createdAt:"2026-01-01T00:00:00Z"})});
+test("connector exposes its stable source name",()=>{const connector=new JsonApiConnector({name:"community",endpoint:"https://example.test",mapRecord:value=>value});assert.equal(connector.name,"community")});
