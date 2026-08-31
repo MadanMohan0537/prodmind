@@ -8,9 +8,28 @@ const seed = [
 ];
 
 const storageKey = "feedback-collector.offline.v2";
+const themeKey = "feedback-collector.theme";
 let feedback = loadOffline();
 let apiUrl = sessionStorage.getItem("feedback-collector.api-url") || "";
 let apiToken = sessionStorage.getItem("feedback-collector.api-token") || "";
+
+function applyTheme(theme) {
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+  else delete document.documentElement.dataset.theme;
+  const resolved = theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const button = document.querySelector("#theme-toggle");
+  button.textContent = resolved === "dark" ? "☀" : "☾";
+  button.setAttribute("aria-label", `Switch to ${resolved === "dark" ? "light" : "dark"} theme`);
+}
+
+applyTheme(localStorage.getItem(themeKey) || "system");
+
+document.querySelector("#theme-toggle").addEventListener("click", () => {
+  const current = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = current === "dark" ? "light" : "dark";
+  localStorage.setItem(themeKey, next);
+  applyTheme(next);
+});
 
 function loadOffline() {
   try { return JSON.parse(localStorage.getItem(storageKey)) || seed.map(normalizeRecord); }
