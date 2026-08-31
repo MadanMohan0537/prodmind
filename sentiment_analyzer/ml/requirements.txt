@@ -1,0 +1,11 @@
+torch>=2.3,<3
+transformers>=4.44,<5
+datasets>=2.21,<4
+peft>=0.12,<1
+accelerate>=0.33,<2
+scikit-learn>=1.5,<2
+captum>=0.7,<1
+optimum[onnxruntime]>=1.21,<2
+onnx>=1.16,<2
+onnxruntime>=1.19,<2
+PyYAML>=6,<7
