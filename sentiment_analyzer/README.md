@@ -6,7 +6,7 @@
 
 English + Spanish · Confidence scores · Evidence traces · Aspect detection · Cloudflare-ready
 
-![Tests](https://img.shields.io/badge/tests-15%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-18%20passing-72D572)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
@@ -33,6 +33,10 @@ Positive/negative labels alone are dangerous product evidence. Teams need to kno
 - Feedback Collector event compatibility
 - Secured single and batch HTTP analysis
 - Optional Workers AI review for low-confidence cases
+- D1 persistence for analysis history
+- Human correction capture
+- Aggregate label, language, confidence, and review metrics
+- Labeled evaluation data with accuracy, confusion matrix, precision, recall, F1, and Brier score
 - Browser-local analysis requiring no API or payment
 - Responsive light and dark themes
 
@@ -87,11 +91,32 @@ Example result:
 
 The endpoint accepts at most 500 inputs per request. `/api/health` is public; analysis requires a bearer token.
 
+### Record a human correction
+
+```http
+POST /api/corrections
+Authorization: Bearer YOUR_API_TOKEN
+
+{"analysisId":"returned-analysis-id","correctedLabel":"neutral","note":"Sarcastic wording"}
+```
+
+### Inspect operational metrics
+
+```http
+GET /api/metrics
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+Returns label and language volumes, average confidence, review volume, and correction count.
+
 ## Deploy to Cloudflare
 
 ```bash
 npx wrangler login
+npx wrangler d1 create sentiment-analyzer-db
+# Copy the returned database ID into wrangler.jsonc
 npx wrangler secret put API_TOKEN
+npm run db:migrate:remote
 npm run deploy
 ```
 
@@ -126,11 +151,34 @@ These limitations are surfaced deliberately. The project should only move to LoR
 
 ## Tests
 
-The 15-test suite covers English and Spanish sentiment, negation, intensifiers, emojis, aspects, uncertainty, invalid input, Feedback Collector events, Unicode tokenization, public health, API authentication, and authenticated batches.
+The 18-test suite covers English and Spanish sentiment, negation, intensifiers, emojis, aspects, uncertainty, invalid input, Feedback Collector events, Unicode tokenization, evaluation metrics, public health, API authentication, authenticated batches, and clear behavior when persistence is unavailable.
 
 ```bash
 npm run check
 ```
+
+## Evaluation and calibration
+
+The repository includes a small transparent seed dataset under `evaluation/`. It proves the evaluation pipeline, not production accuracy.
+
+```bash
+npm run evaluate
+```
+
+The report contains accuracy, a confusion matrix, per-label precision/recall/F1, a Brier-style confidence score, and misclassified examples. Extend it with anonymized domain-specific feedback before making accuracy claims.
+
+## Original specification coverage
+
+| Advanced requirement | Current status | Boundary |
+|---|---|---|
+| Domain-specific sentiment | Baseline implemented | Real domain claims require domain-specific labeled data. |
+| Uncertainty quantification | Implemented baseline | Confidence, review thresholds, Brier evaluation, and corrections; not Monte Carlo dropout. |
+| Multilingual support | English and Spanish | Explicitly bounded and tested; not XLM-R-level coverage. |
+| GPU-accelerated serving | Not applicable | Workers and optional Workers AI satisfy the zero-cost constraint; TensorRT hosting would not. |
+| Explainability | Implemented baseline | Token weights, negation, intensity, aspects, and classifier version; not integrated gradients. |
+| LoRA/adapters | Not implemented | Requires labeled data, weights, training compute, and evaluation gates. |
+
+This boundary is intentional. Empty training notebooks or unused ONNX configuration would make the repository look advanced without producing a working product.
 
 ## Roadmap
 
@@ -140,6 +188,9 @@ npm run check
 - [x] Secured batch API
 - [x] Optional Workers AI review
 - [x] Light and dark UI
+- [x] D1 analysis history and human corrections
+- [x] Operational metrics
+- [x] Reproducible evaluation report
 - [ ] Labeled evaluation dataset and confusion matrix
 - [ ] Per-domain lexicon configuration
 - [ ] Aspect-level sentiment, not only aspect presence
