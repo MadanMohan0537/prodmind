@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ProdMind turns scattered customer feedback into structured product evidence." />
+  <title>ProdMind · Feedback intelligence</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header><a class="brand" href="/"><span>P</span> ProdMind</a><div class="phase">Slice 01 · Feedback collector</div></header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">CUSTOMER INTELLIGENCE</p><h1>Turn scattered feedback into <em>clear product evidence.</em></h1><p class="lede">Import, normalize, deduplicate and classify feedback without paid infrastructure. Your data stays in this browser for this first product slice.</p></div>
+      <div class="hero-note"><b>Divide. Validate. Integrate.</b><p>Each ProdMind capability ships as a useful, testable slice before the platform expands.</p></div>
+    </section>
+    <section class="stats">
+      <div><strong id="total">0</strong><span>Total feedback</span></div><div><strong id="requests">0</strong><span>Feature requests</span></div><div><strong id="negative">0</strong><span>Needs attention</span></div><div><strong id="sources">0</strong><span>Sources</span></div>
+    </section>
+    <section class="workspace">
+      <aside class="panel">
+        <p class="eyebrow">ADD FEEDBACK</p>
+        <form id="feedback-form"><label>Customer feedback<textarea name="text" required placeholder="Paste a review, support message or interview note"></textarea></label><label>Source<input name="source" placeholder="Support, survey, interview…" /></label><label>Customer<input name="customer" placeholder="Optional customer name" /></label><button type="submit">Analyze feedback</button></form>
+        <div class="divider"><span>or import</span></div>
+        <label class="upload">Choose CSV or JSON<input id="file-input" type="file" accept=".csv,.json,application/json,text/csv" /></label>
+        <p id="import-status" class="status">Expected text field: <code>text</code>, <code>feedback</code>, <code>comment</code> or <code>review</code>.</p>
+        <button id="reset" class="ghost" type="button">Restore demo data</button>
+      </aside>
+      <section><div class="section-title"><div><p class="eyebrow">NORMALIZED STREAM</p><h2>Feedback inbox</h2></div><span>Duplicate entries are removed automatically</span></div><div id="feedback-list" class="feedback-list"></div></section>
+    </section>
+  </main>
+  <footer>ProdMind · Built for Cloudflare's free tier</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
