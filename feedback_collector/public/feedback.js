@@ -1,0 +1,9 @@
+const positive=["love","great","fast","easy","helpful","excellent","happy"];
+const negative=["bug","broken","slow","crash","hard","confusing","hate","error"];
+const requestSignals=["please add","would like","wish","feature","can you","need","should"];
+export function normalizeText(value=""){return String(value).replace(/\s+/g," ").trim()}
+export function fingerprint(text){return normalizeText(text).toLowerCase().replace(/[^a-z0-9 ]/g,"").split(" ").filter(Boolean).sort().join("|")}
+export function analyze(text){const value=normalizeText(text).toLowerCase();const score=positive.reduce((n,word)=>n+Number(value.includes(word)),0)-negative.reduce((n,word)=>n+Number(value.includes(word)),0);return{sentiment:score>0?"positive":score<0?"negative":"neutral",intent:requestSignals.some(signal=>value.includes(signal))?"feature-request":value.includes("bug")||value.includes("crash")||value.includes("error")?"bug":"general"}}
+export function normalizeRecord(record,index=0){const text=normalizeText(record.text??record.feedback??record.comment??record.review??"");if(!text)return null;return{id:record.id||`feedback-${Date.now()}-${index}`,text,source:normalizeText(record.source||"import"),customer:normalizeText(record.customer||record.user||"Anonymous"),createdAt:record.createdAt||record.timestamp||new Date().toISOString(),...analyze(text)}}
+export function deduplicate(records){const seen=new Set();return records.filter(record=>{const key=fingerprint(record.text);if(seen.has(key))return false;seen.add(key);return true})}
+export function parseCsv(input){const rows=input.trim().split(/\r?\n/).map(line=>line.split(",").map(cell=>cell.trim().replace(/^"|"$/g,"")));if(rows.length<2)return[];const headers=rows.shift();return rows.map(row=>Object.fromEntries(headers.map((header,i)=>[header,row[i]||""])))}
