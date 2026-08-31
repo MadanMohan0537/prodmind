@@ -7,7 +7,10 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "node --test",
-    "check": "node --check public/analyzer.js && node --check public/app.js && node --check src/worker.js && node --test"
+    "check": "node --check public/analyzer.js && node --check public/app.js && node --check src/worker.js && node --check scripts/evaluate.js && node --test",
+    "evaluate": "node scripts/evaluate.js evaluation/labeled-feedback.json",
+    "db:migrate:local": "wrangler d1 migrations apply sentiment-analyzer-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply sentiment-analyzer-db --remote"
   },
   "devDependencies": { "wrangler": "^4.33.1" }
 }
