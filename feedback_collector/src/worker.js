@@ -23,6 +23,43 @@ function json(request, env, data, status = 200, headers = {}) {
   return Response.json(data, { status, headers: { ...responseHeaders(request, env), ...headers } });
 }
 
+export function parseLimit(value, fallback = 100, max = 500) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return fallback;
+  return Math.min(parsed, max);
+}
+
+export function safeJsonParse(value, fallback = {}) {
+  if (value == null || value === "") return fallback;
+  if (typeof value === "object") return value;
+  try { return JSON.parse(value); } catch { return fallback; }
+}
+
+export function toPublicEvent(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    schemaVersion: row.schema_version ?? row.schemaVersion ?? "1.0",
+    text: row.text,
+    source: row.source,
+    customer: row.customer,
+    createdAt: row.created_at ?? row.createdAt,
+    sentiment: row.sentiment,
+    intent: row.intent,
+    confidence: row.confidence,
+    classifier: row.classifier,
+    fingerprint: row.fingerprint,
+    metadata: safeJsonParse(row.metadata)
+  };
+}
+
+export async function markJobFailed(env, jobId, error) {
+  if (!env?.DB || !jobId) return;
+  const message = error instanceof Error ? error.message : String(error || "Unknown error");
+  await env.DB.prepare("UPDATE ingestion_jobs SET status = ?, error = ?, completed_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind("failed", message, jobId).run();
+}
+
 function tokenFrom(request) {
   const header = request.headers.get("Authorization") || "";
   return header.startsWith("Bearer ") ? header.slice(7) : "";
@@ -50,8 +87,10 @@ export async function enforceRateLimit(request, env, limit = 60) {
   const bucket = new Date().toISOString().slice(0, 16);
   const key = `${ip}:${bucket}`;
   await env.DB.prepare("INSERT INTO rate_limits (key, count, expires_at) VALUES (?, 1, datetime('now', '+2 minutes')) ON CONFLICT(key) DO UPDATE SET count = count + 1").bind(key).run();
+  await env.DB.prepare("DELETE FROM rate_limits WHERE expires_at < datetime('now')").run();
   const row = await env.DB.prepare("SELECT count FROM rate_limits WHERE key = ?").bind(key).first();
-  return { allowed: row.count <= limit, remaining: Math.max(0, limit - row.count) };
+  const count = row?.count ?? 1;
+  return { allowed: count <= limit, remaining: Math.max(0, limit - count) };
 }
 
 async function sha256(value) {
@@ -84,7 +123,7 @@ export async function storeBatch(db, records, jobId) {
         item.sentiment, item.intent, item.confidence, item.classifier, item.fingerprint,
         JSON.stringify(item.metadata), jobId
       ).run();
-    result.meta.changes ? stored += 1 : duplicates += 1;
+    result.meta?.changes ? stored += 1 : duplicates += 1;
   }
   return { stored, duplicates, persistence: "d1" };
 }
@@ -106,36 +145,46 @@ async function handleIngest(request, env) {
   let body;
   try { body = await request.json(); }
   catch { return json(request, env, { error: "Request must contain valid JSON" }, 400); }
+  if (body == null || typeof body !== "object") return json(request, env, { error: "Request must contain a JSON object or array" }, 400);
   const records = Array.isArray(body) ? body : Array.isArray(body.records) ? body.records : [body];
   if (records.length > 1_000) return json(request, env, { error: "Maximum batch size is 1,000" }, 413);
   const jobId = crypto.randomUUID();
-  if (env.DB) {
-    await env.DB.prepare("INSERT INTO ingestion_jobs (id, source, status, received) VALUES (?, ?, ?, ?)")
-      .bind(jobId, body.source || "api", env.INGESTION_QUEUE ? "queued" : "processing", records.length).run();
-  }
   const payload = { jobId, records };
   if (env.INGESTION_QUEUE) {
-    await env.INGESTION_QUEUE.send(payload);
-    return json(request, env, { jobId, status: "queued", received: records.length }, 202);
+    if (env.DB) {
+      await env.DB.prepare("INSERT INTO ingestion_jobs (id, source, status, received) VALUES (?, ?, ?, ?)")
+        .bind(jobId, body.source || "api", "queued", records.length).run();
+    }
+    try {
+      await env.INGESTION_QUEUE.send(payload);
+      return json(request, env, { jobId, status: "queued", received: records.length }, 202);
+    } catch {
+      if (env.DB) {
+        await env.DB.prepare("UPDATE ingestion_jobs SET status = ? WHERE id = ?").bind("processing", jobId).run();
+      }
+    }
+  } else if (env.DB) {
+    await env.DB.prepare("INSERT INTO ingestion_jobs (id, source, status, received) VALUES (?, ?, ?, ?)")
+      .bind(jobId, body.source || "api", "processing", records.length).run();
   }
   return json(request, env, { jobId, status: "completed", received: records.length, ...await processPayload(env, payload) }, 201);
 }
 
 async function handleList(request, env, url) {
   if (!env.DB) return json(request, env, { data: [], notice: "D1 is not bound" });
-  const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 500);
+  const limit = parseLimit(url.searchParams.get("limit"));
   const source = url.searchParams.get("source");
   const query = source
     ? env.DB.prepare("SELECT * FROM feedback_events WHERE source = ? ORDER BY created_at DESC LIMIT ?").bind(source, limit)
     : env.DB.prepare("SELECT * FROM feedback_events ORDER BY created_at DESC LIMIT ?").bind(limit);
   const result = await query.all();
-  return json(request, env, { data: result.results, count: result.results.length });
+  return json(request, env, { data: result.results.map(toPublicEvent), count: result.results.length });
 }
 
 async function handleExport(request, env) {
   if (!env.DB) return json(request, env, { error: "Export requires D1" }, 503);
   const result = await env.DB.prepare("SELECT * FROM feedback_events ORDER BY created_at ASC LIMIT 10000").all();
-  const body = result.results.map(row => JSON.stringify({ ...row, metadata: JSON.parse(row.metadata || "{}") })).join("\n");
+  const body = result.results.map(row => JSON.stringify(toPublicEvent(row))).join("\n");
   return new Response(body, { headers: { ...responseHeaders(request, env), "Content-Type": "application/x-ndjson", "Content-Disposition": "attachment; filename=feedback-events.jsonl" } });
 }
 
@@ -160,29 +209,69 @@ export async function route(request, env) {
   return json(request, env, { error: "Not found" }, 404);
 }
 
-async function ingestZendesk(env) {
+export async function ingestZendesk(env) {
   if (!env.ZENDESK_SUBDOMAIN || !env.ZENDESK_EMAIL || !env.ZENDESK_TOKEN) return;
-  const connector = createZendeskConnector({ subdomain: env.ZENDESK_SUBDOMAIN, email: env.ZENDESK_EMAIL, token: env.ZENDESK_TOKEN });
-  const records = [];
-  for await (const record of connector.records()) records.push(record);
-  if (records.length) {
-    const jobId = crypto.randomUUID();
+  const jobId = crypto.randomUUID();
+  try {
+    let cursor = null;
     if (env.DB) {
+      try {
+        const row = await env.DB.prepare("SELECT cursor FROM connector_state WHERE name = ?").bind("zendesk").first();
+        cursor = row?.cursor || null;
+      } catch {
+        cursor = null;
+      }
       await env.DB.prepare("INSERT INTO ingestion_jobs (id, source, status, received) VALUES (?, ?, ?, ?)")
-        .bind(jobId, "zendesk", "processing", records.length).run();
+        .bind(jobId, "zendesk", "processing", 0).run();
     }
-    await processPayload(env, { jobId, records });
+    const connector = createZendeskConnector({
+      subdomain: env.ZENDESK_SUBDOMAIN,
+      email: env.ZENDESK_EMAIL,
+      token: env.ZENDESK_TOKEN,
+      cursor
+    });
+    const records = [];
+    for await (const record of connector.records()) records.push(record);
+    if (env.DB && connector.state?.cursor) {
+      try {
+        await env.DB.prepare("INSERT INTO connector_state (name, cursor, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(name) DO UPDATE SET cursor = excluded.cursor, updated_at = CURRENT_TIMESTAMP")
+          .bind("zendesk", connector.state.cursor).run();
+      } catch {
+        // Cursor persistence requires migration 0002; ingestion still completes.
+      }
+    }
+    if (records.length) {
+      if (env.DB) {
+        await env.DB.prepare("UPDATE ingestion_jobs SET received = ? WHERE id = ?").bind(records.length, jobId).run();
+      }
+      await processPayload(env, { jobId, records });
+    } else if (env.DB) {
+      await env.DB.prepare("UPDATE ingestion_jobs SET status = ?, received = 0, completed_at = CURRENT_TIMESTAMP WHERE id = ?")
+        .bind("completed", jobId).run();
+    }
+  } catch (error) {
+    await markJobFailed(env, jobId, error);
+    throw error;
   }
 }
 
 export default {
   fetch(request, env) {
-    return route(request, env).catch(error => json(request, env, { error: "Internal ingestion error", requestId: crypto.randomUUID(), detail: error.message }, 500));
+    return route(request, env).catch(() => json(request, env, { error: "Internal ingestion error", requestId: crypto.randomUUID() }, 500));
   },
   async queue(batch, env) {
     for (const message of batch.messages) {
-      try { await processPayload(env, message.body); message.ack(); }
-      catch (error) { message.attempts < 3 ? message.retry({ delaySeconds: 2 ** message.attempts }) : message.ack(); }
+      try {
+        await processPayload(env, message.body);
+        message.ack();
+      } catch (error) {
+        if (message.attempts < 3) {
+          message.retry({ delaySeconds: 2 ** Math.max(0, message.attempts) });
+        } else {
+          await markJobFailed(env, message.body?.jobId, error);
+          message.ack();
+        }
+      }
     }
   },
   scheduled(_event, env, context) {

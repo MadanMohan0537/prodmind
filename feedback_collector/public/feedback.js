@@ -64,20 +64,29 @@ export function validateEvent(event) {
   if (event.schemaVersion !== "1.0") errors.push("schemaVersion must be 1.0");
   if (!["positive", "neutral", "negative"].includes(event.sentiment)) errors.push("sentiment is invalid");
   if (!["feature-request", "bug", "general"].includes(event.intent)) errors.push("intent is invalid");
+  if (typeof event.classifier !== "string" || !event.classifier) errors.push("classifier is required");
   if (typeof event.confidence !== "number" || event.confidence < 0 || event.confidence > 1) errors.push("confidence must be between 0 and 1");
+  if (event.createdAt && Number.isNaN(Date.parse(event.createdAt))) errors.push("createdAt must be a valid date-time");
   if (!/^[a-f0-9]{64}$/.test(event.fingerprint || "")) errors.push("fingerprint must be a SHA-256 hex digest");
   return errors;
 }
 
-export function normalizeRecord(record, index = 0) {
+export function toIsoDate(value) {
+  if (!value) return new Date().toISOString();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+}
+
+export function normalizeRecord(record, _index = 0) {
   if (validateInput(record).length) return null;
   const text = normalizeText(record.text ?? record.feedback ?? record.comment ?? record.review);
+  const providedId = record.id != null ? String(record.id).trim() : "";
   return {
-    id: record.id || `feedback-${Date.now()}-${index}`,
+    id: providedId || `feedback-${crypto.randomUUID()}`,
     text,
     source: normalizeText(record.source || "import"),
     customer: normalizeText(record.customer || record.user || "Anonymous"),
-    createdAt: record.createdAt || record.timestamp || new Date().toISOString(),
+    createdAt: toIsoDate(record.createdAt || record.timestamp),
     metadata: record.metadata || {},
     ...analyze(text)
   };
@@ -110,6 +119,6 @@ export function parseCsv(input) {
   }
   row.push(cell.trim()); if (row.some(Boolean)) rows.push(row);
   if (rows.length < 2) return [];
-  const headers = rows.shift();
+  const headers = rows.shift().map(header => header.trim());
   return rows.map(values => Object.fromEntries(headers.map((header, index) => [header, values[index] || ""])));
 }

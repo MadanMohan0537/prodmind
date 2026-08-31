@@ -25,3 +25,21 @@ test("parses quoted multiline CSV", () => {
   assert.equal(result[0].text, "Great app, but\nneeds export");
   assert.equal(result[0].source, "review");
 });
+
+test("trims CSV headers so aliased fields still map", () => {
+  const result = parseCsv(" text , source \nUseful app,survey");
+  assert.equal(result[0].text, "Useful app");
+  assert.equal(result[0].source, "survey");
+});
+
+test("normalizes createdAt into ISO-8601", () => {
+  const record = normalizeRecord({ text: "Useful app", createdAt: "2026-01-01" });
+  assert.equal(record.createdAt, "2026-01-01T00:00:00.000Z");
+});
+
+test("generates distinct ids for concurrent records", () => {
+  const left = normalizeRecord({ text: "First record" });
+  const right = normalizeRecord({ text: "Second record" });
+  assert.notEqual(left.id, right.id);
+  assert.match(left.id, /^feedback-[0-9a-f-]{36}$/i);
+});

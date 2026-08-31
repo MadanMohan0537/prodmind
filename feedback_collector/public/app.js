@@ -13,11 +13,17 @@ let feedback = loadOffline();
 let apiUrl = sessionStorage.getItem("feedback-collector.api-url") || "";
 let apiToken = sessionStorage.getItem("feedback-collector.api-token") || "";
 
+function resolveTheme(theme) {
+  if (theme === "light" || theme === "dark") return theme;
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 function applyTheme(theme) {
   if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
   else delete document.documentElement.dataset.theme;
-  const resolved = theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const resolved = resolveTheme(theme);
   const button = document.querySelector("#theme-toggle");
+  if (!button) return;
   button.textContent = resolved === "dark" ? "☀" : "☾";
   button.setAttribute("aria-label", `Switch to ${resolved === "dark" ? "light" : "dark"} theme`);
 }
@@ -54,7 +60,7 @@ function render() {
     <article class="feedback-card">
       <div class="card-top">
         <span class="tag ${item.sentiment}">${item.sentiment}</span>
-        <span class="tag">${item.intent.replace("-", " ")}</span>
+        <span class="tag">${escapeHtml((item.intent || "general").replace("-", " "))}</span>
         ${item.confidence ? `<span class="tag">${Math.round(item.confidence * 100)}% confidence</span>` : ""}
       </div>
       <p>${escapeHtml(item.text)}</p>
@@ -68,15 +74,29 @@ async function api(path, options = {}) {
     ...options,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiToken}`, ...options.headers }
   });
-  if (!response.ok) throw new Error((await response.json()).error || `Request failed with ${response.status}`);
-  return response.json();
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || `Request failed with ${response.status}`);
+  return payload;
 }
 
 async function refreshFromApi() {
   const result = await api("/api/feedback?limit=500");
-  feedback = result.data.map(item => ({ ...item, createdAt: item.created_at }));
+  feedback = (result.data || []).map(item => ({
+    ...item,
+    createdAt: item.createdAt || item.created_at,
+    text: item.text || "",
+    source: item.source || "import",
+    customer: item.customer || "Anonymous",
+    intent: item.intent || "general",
+    sentiment: item.sentiment || "neutral"
+  }));
   render();
 }
+
+const apiUrlInput = document.querySelector("#connection-form [name=apiUrl]");
+const apiTokenInput = document.querySelector("#connection-form [name=apiToken]");
+if (apiUrlInput) apiUrlInput.value = apiUrl;
+if (apiTokenInput) apiTokenInput.value = apiToken;
 
 document.querySelector("#connection-form").addEventListener("submit", async event => {
   event.preventDefault();

@@ -22,3 +22,25 @@ test("Zendesk connector paginates and maps fetched tickets", async () => {
   assert.equal(mapped.id, "zendesk-7");
   assert.equal(mapped.text, "Export please");
 });
+
+test("Zendesk connector resumes from a saved cursor and skips empty tickets", async () => {
+  const urls = [];
+  const fetcher = async url => {
+    urls.push(String(url));
+    return Response.json({
+      end_of_stream: true,
+      after_cursor: "cursor-next",
+      tickets: [
+        { id: 1, description: "", subject: "", requester_id: 1, created_at: "2026-01-01T00:00:00Z" },
+        { id: 2, description: "Need search", requester_id: 2, created_at: "2026-01-01T00:00:00Z" }
+      ]
+    });
+  };
+  const connector = createZendeskConnector({ subdomain: "demo", token: "token", email: "pm@example.com", fetcher, cursor: "saved" });
+  const records = [];
+  for await (const record of connector.records()) records.push(record);
+  assert.equal(records.length, 1);
+  assert.equal(records[0].id, "zendesk-2");
+  assert.match(urls[0], /cursor=saved/);
+  assert.equal(connector.state.cursor, "cursor-next");
+});
