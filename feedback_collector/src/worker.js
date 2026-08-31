@@ -1,4 +1,4 @@
-import { canonicalize, deduplicate, normalizeRecord, validateInput } from "../public/feedback.js";
+import { canonicalize, deduplicate, normalizeRecord, validateEvent, validateInput } from "../public/feedback.js";
 import { createZendeskConnector } from "./connectors.js";
 
 function allowedOrigin(request, env) {
@@ -63,13 +63,13 @@ export async function prepareRecord(record, index = 0) {
   const errors = validateInput(record);
   if (errors.length) return { errors, index };
   const normalized = normalizeRecord(record, index);
-  return {
-    value: {
+  const value = {
       ...normalized,
       schemaVersion: "1.0",
       fingerprint: await sha256(canonicalize(normalized.text))
-    }
   };
+  const contractErrors = validateEvent(value);
+  return contractErrors.length ? { errors: contractErrors, index } : { value };
 }
 
 export async function storeBatch(db, records, jobId) {
