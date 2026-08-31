@@ -1,4 +1,71 @@
-export class ConnectorError extends Error{constructor(message,details={}){super(message);this.name="ConnectorError";this.details=details}}
-export async function fetchWithRetry(url,options={},policy={}){const retries=policy.retries??3,baseDelay=policy.baseDelay??250;for(let attempt=0;attempt<=retries;attempt++){try{const response=await fetch(url,options);if(response.ok)return response;if(![408,429,500,502,503,504].includes(response.status)||attempt===retries)throw new ConnectorError(`Connector request failed with ${response.status}`,{url,status:response.status});const retryAfter=Number(response.headers.get("Retry-After"))*1000;await new Promise(resolve=>setTimeout(resolve,retryAfter||baseDelay*2**attempt+Math.random()*100))}catch(error){if(attempt===retries||error instanceof ConnectorError)throw error;await new Promise(resolve=>setTimeout(resolve,baseDelay*2**attempt+Math.random()*100))}}throw new ConnectorError("Retry policy exhausted",{url})}
-export class JsonApiConnector{constructor({name,endpoint,headers={},mapRecord,nextPage}){this.name=name;this.endpoint=endpoint;this.headers=headers;this.mapRecord=mapRecord;this.nextPage=nextPage}async*records({cursor,signal}={}){let url=cursor||this.endpoint;while(url){const response=await fetchWithRetry(url,{headers:this.headers,signal}),payload=await response.json(),items=Array.isArray(payload)?payload:payload.items||payload.results||payload.data||[];for(const item of items)yield{...this.mapRecord(item),source:this.name,metadata:{connector:this.name,originalId:item.id}};url=this.nextPage?this.nextPage(payload,response):null}}}
-export const connectorTemplates={zendesk:item=>({id:`zendesk-${item.id}`,text:item.body||item.description,customer:item.requester?.name,createdAt:item.created_at}),intercom:item=>({id:`intercom-${item.id}`,text:item.body||item.source?.body,customer:item.contacts?.contacts?.[0]?.name,createdAt:item.created_at}),typeform:item=>({id:`typeform-${item.response_id}`,text:item.answers?.map(a=>a.text).filter(Boolean).join("\n"),createdAt:item.submitted_at}),reddit:item=>({id:`reddit-${item.id}`,text:item.selftext||item.body||item.title,customer:item.author,createdAt:item.created_utc?new Date(item.created_utc*1000).toISOString():undefined})};
+export class ConnectorError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = "ConnectorError";
+    this.details = details;
+  }
+}
+
+export const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+export async function fetchWithRetry(url, options = {}, policy = {}) {
+  const retries = policy.retries ?? 3;
+  const baseDelay = policy.baseDelay ?? 250;
+  const fetcher = policy.fetcher ?? fetch;
+  const sleeper = policy.sleeper ?? wait;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const response = await fetcher(url, options);
+      if (response.ok) return response;
+      const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
+      if (!retryable || attempt === retries) throw new ConnectorError(`Connector request failed with ${response.status}`, { url, status: response.status });
+      const retryAfter = Number(response.headers.get("Retry-After")) * 1000;
+      await sleeper(retryAfter || baseDelay * 2 ** attempt + Math.random() * 100);
+    } catch (error) {
+      if (attempt === retries || error instanceof ConnectorError) throw error;
+      await sleeper(baseDelay * 2 ** attempt + Math.random() * 100);
+    }
+  }
+  throw new ConnectorError("Retry policy exhausted", { url });
+}
+
+export class JsonApiConnector {
+  constructor({ name, endpoint, headers = {}, mapRecord, nextPage, extractItems, fetcher = fetch }) {
+    this.name = name;
+    this.endpoint = endpoint;
+    this.headers = headers;
+    this.mapRecord = mapRecord;
+    this.nextPage = nextPage;
+    this.extractItems = extractItems;
+    this.fetcher = fetcher;
+  }
+
+  async *records({ cursor, signal } = {}) {
+    let url = cursor || this.endpoint;
+    while (url) {
+      const response = await fetchWithRetry(url, { headers: this.headers, signal }, { fetcher: this.fetcher });
+      const payload = await response.json();
+      const items = this.extractItems
+        ? this.extractItems(payload)
+        : Array.isArray(payload) ? payload : payload.items || payload.results || payload.data || [];
+      for (const item of items) {
+        yield { ...this.mapRecord(item), source: this.name, metadata: { connector: this.name, originalId: item.id } };
+      }
+      url = this.nextPage ? this.nextPage(payload, response) : null;
+    }
+  }
+}
+
+export function createZendeskConnector({ subdomain, token, email, fetcher }) {
+  const authorization = `Basic ${btoa(`${email}/token:${token}`)}`;
+  return new JsonApiConnector({
+    name: "zendesk",
+    endpoint: `https://${subdomain}.zendesk.com/api/v2/incremental/tickets/cursor.json?start_time=${Math.floor(Date.now() / 1000) - 3600}`,
+    headers: { Authorization: authorization, Accept: "application/json" },
+    fetcher,
+    extractItems: payload => payload.tickets || [],
+    mapRecord: item => ({ id: `zendesk-${item.id}`, text: item.description || item.subject, customer: String(item.requester_id || "Anonymous"), createdAt: item.created_at }),
+    nextPage: payload => payload.end_of_stream ? null : payload.after_url
+  });
+}
