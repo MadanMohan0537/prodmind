@@ -15,7 +15,7 @@ ProdMind is a divide-and-conquer build of an AI product-management copilot. Each
 | # | Project | Purpose | Status |
 |---|---|---|---|
 | 01 | [Feedback Collector](feedback_collector/) | Collect, normalize, validate, deduplicate, and classify customer feedback. | Active |
-| 02 | Sentiment Analyzer | Domain-aware sentiment with confidence and explanations. | Planned |
+| 02 | [Sentiment Analyzer](sentiment_analyzer/) | Explainable bilingual sentiment with confidence, evidence, and review flags. | Active |
 | 03 | Topic Modeler | Discover themes, hierarchies, and topic drift. | Planned |
 | 04 | Feature Request Detector | Detect feature requests, bugs, and multiple intents. | Planned |
 | 05 | Voice-of-Customer Dashboard | Explore customer evidence, trends, and anomalies. | Planned |
