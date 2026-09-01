@@ -1,0 +1,4 @@
+{"id":"1","text":"Please add CSV export to the dashboard","source":"zendesk","timestamp":"2026-07-01T10:00:00Z","reliability":0.9}
+{"id":"2","text":"Scheduled dashboard reports would save time","source":"intercom","timestamp":"2026-07-04T10:00:00Z","reliability":0.8}
+{"id":"3","text":"The mobile app crashes during login","source":"app-store","timestamp":"2026-08-01T10:00:00Z","reliability":0.8}
+{"id":"4","text":"Login freezes and mobile startup is slow","source":"zendesk","timestamp":"2026-08-06T10:00:00Z","reliability":0.9}
