@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prodmind-topic-modeler",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-08-23",
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "vars": { "ALLOWED_ORIGINS": "http://localhost:8787" },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "topic-modeler-db",
+    "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+    "migrations_dir": "migrations"
+  }]
+}
