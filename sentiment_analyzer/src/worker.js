@@ -6,6 +6,12 @@ function cors(request, env) {
   return origin && allowed.includes(origin) ? { "Access-Control-Allow-Origin": origin, Vary: "Origin" } : {};
 }
 
+function originAllowed(request, env) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return true;
+  return (env.ALLOWED_ORIGINS || "").split(",").map(value => value.trim()).filter(Boolean).includes(origin);
+}
+
 function json(request, env, data, status = 200) {
   return Response.json(data, { status, headers: { ...cors(request, env), "Access-Control-Allow-Headers": "authorization, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
@@ -57,7 +63,8 @@ async function handleCorrection(request, env) {
   if (!env.DB) return json(request, env, { error: "Corrections require D1" }, 503);
   let body;
   try { body = await request.json(); } catch { return json(request, env, { error: "Invalid JSON" }, 400); }
-  if (!body.analysisId || !["positive", "neutral", "negative"].includes(body.correctedLabel)) return json(request, env, { error: "analysisId and a valid correctedLabel are required" }, 422);
+  if (!body || typeof body !== "object" || Array.isArray(body) || !body.analysisId || !["positive", "neutral", "negative"].includes(body.correctedLabel)) return json(request, env, { error: "analysisId and a valid correctedLabel are required" }, 422);
+  if (body.note !== undefined && (typeof body.note !== "string" || body.note.length > 2_000)) return json(request, env, { error: "note must be a string of at most 2,000 characters" }, 422);
   const analysis = await env.DB.prepare("SELECT id FROM sentiment_analyses WHERE id = ?").bind(body.analysisId).first();
   if (!analysis) return json(request, env, { error: "Analysis not found" }, 404);
   const id = crypto.randomUUID();
@@ -78,9 +85,10 @@ async function handleMetrics(request, env) {
 
 export async function route(request, env) {
   const url = new URL(request.url);
-  if (request.method === "OPTIONS") return new Response(null, { headers: cors(request, env) });
+  if (request.method === "OPTIONS") return originAllowed(request, env) ? new Response(null, { headers: cors(request, env) }) : json(request, env, { error: "Origin not allowed" }, 403);
   if (url.pathname === "/api/health") return json(request, env, { status: "ok", service: "sentiment-analyzer", languages: ["en", "es"], aiReview: Boolean(env.AI) });
   if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
+  if (!originAllowed(request, env)) return json(request, env, { error: "Origin not allowed" }, 403);
   if (!await authorized(request, env)) return json(request, env, { error: "Unauthorized" }, 401);
   if (url.pathname === "/api/corrections" && request.method === "POST") return handleCorrection(request, env);
   if (url.pathname === "/api/metrics" && request.method === "GET") return handleMetrics(request, env);
@@ -88,6 +96,7 @@ export async function route(request, env) {
   let body;
   try { body = await request.json(); } catch { return json(request, env, { error: "Invalid JSON" }, 400); }
   const inputs = Array.isArray(body) ? body : Array.isArray(body.records) ? body.records : [body];
+  if (!inputs.length) return json(request, env, { error: "At least one input is required" }, 422);
   if (inputs.length > 500) return json(request, env, { error: "Maximum batch size is 500" }, 413);
   const results = [];
   for (const [index, input] of inputs.entries()) {
@@ -100,4 +109,4 @@ export async function route(request, env) {
   return json(request, env, { results, count: results.length });
 }
 
-export default { fetch: (request, env) => route(request, env).catch(error => json(request, env, { error: "Analysis failed", detail: error.message }, 500)) };
+export default { fetch: (request, env) => route(request, env).catch(() => json(request, env, { error: "Analysis failed", requestId: crypto.randomUUID() }, 500)) };
