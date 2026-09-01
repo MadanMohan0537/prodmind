@@ -1,0 +1,15 @@
+{
+  "name": "prodmind-topic-modeler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test",
+    "check": "node --check public/topic-modeler.js && node --check public/app.js && node --check src/worker.js && node --test",
+    "db:migrate:local": "wrangler d1 migrations apply topic-modeler-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply topic-modeler-db --remote"
+  },
+  "devDependencies": { "wrangler": "^4.33.1" }
+}
