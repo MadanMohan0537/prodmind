@@ -135,6 +135,8 @@ It includes BERTopic with MiniLM embeddings, River incremental clustering, BERTo
 - Tokens are compared as SHA-256 digests.
 - Input length and batch size are bounded.
 - D1 statements are parameterized.
+- Persistence writes are split into bounded D1 batches.
+- Browser-rendered topic labels and terms are HTML-escaped.
 - API responses use `nosniff` and disable caching.
 
 The bearer token protects a small private deployment. For a multi-user service, add Cloudflare Access or per-user authentication and a distributed rate limiter before exposing it publicly.
@@ -153,6 +155,7 @@ Tests cover tokenization, cosine similarity, topic creation, assignments, hierar
 
 - Sparse lexical similarity is fast and transparent but does not understand synonyms as well as embeddings.
 - Topic IDs are scoped to a run; long-term identity matching is future work.
+- “Online” describes incremental assignment within one analysis run; the baseline does not yet carry centroids across requests.
 - The simple chronological midpoint is a useful drift signal, not a statistical alarm system.
 - English and Spanish stop words are included; other languages work lexically but need tuned stop-word lists.
 - Browser analysis does not persist. Worker history needs D1.

@@ -12,3 +12,7 @@ test("model creates assignments, weighted keywords, and hierarchy", () => {
 });
 test("model rejects an empty collection", () => assert.throws(() => modelTopics([]), /At least one/));
 test("model validates timestamps", () => assert.throws(() => modelTopics([{ text: "valid text", timestamp: "bad" }]), /invalid timestamp/));
+test("model does not expose internal centroid vectors", () => {
+  const result = modelTopics(["csv export", "export reports"]);
+  assert.equal("centroid" in result.topics[0], false);
+});

@@ -6,6 +6,12 @@ function cors(request, env) {
   return origin && allowed.includes(origin) ? { "Access-Control-Allow-Origin": origin, Vary: "Origin" } : {};
 }
 
+function originAllowed(request, env) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return true;
+  return (env.ALLOWED_ORIGINS || "").split(",").map(value => value.trim()).filter(Boolean).includes(origin);
+}
+
 function json(request, env, data, status = 200) {
   return Response.json(data, { status, headers: { ...cors(request, env), "Access-Control-Allow-Headers": "authorization, content-type", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
@@ -34,15 +40,16 @@ async function persist(result, documents, env) {
   const statements = [];
   for (const topic of result.topics) statements.push(env.DB.prepare("INSERT INTO topics (id,run_id,label,keywords,document_count,share) VALUES (?,?,?,?,?,?)").bind(`${runId}:${topic.id}`, runId, topic.label, JSON.stringify(topic.keywords), topic.documentCount, topic.share));
   for (const assignment of result.assignments) statements.push(env.DB.prepare("INSERT INTO topic_assignments (run_id,document_id,topic_id,similarity) VALUES (?,?,?,?)").bind(runId, assignment.documentId, assignment.topicId, assignment.similarity));
-  if (statements.length) await env.DB.batch(statements);
+  for (let index = 0; index < statements.length; index += 50) await env.DB.batch(statements.slice(index, index + 50));
   return { runId, ...result };
 }
 
 export async function route(request, env) {
   const url = new URL(request.url);
-  if (request.method === "OPTIONS") return new Response(null, { headers: cors(request, env) });
+  if (request.method === "OPTIONS") return originAllowed(request, env) ? new Response(null, { headers: cors(request, env) }) : json(request, env, { error: "Origin not allowed" }, 403);
   if (url.pathname === "/api/health") return json(request, env, { status: "ok", service: "topic-modeler", persistence: Boolean(env.DB) });
   if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
+  if (!originAllowed(request, env)) return json(request, env, { error: "Origin not allowed" }, 403);
   if (!await authorized(request, env)) return json(request, env, { error: "Unauthorized" }, 401);
   if (url.pathname === "/api/runs" && request.method === "GET") {
     if (!env.DB) return json(request, env, { error: "Run history requires D1" }, 503);

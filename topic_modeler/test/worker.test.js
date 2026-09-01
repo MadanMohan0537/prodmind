@@ -14,3 +14,11 @@ test("CORS only reflects an allowed origin", async () => {
   const request = new Request("https://x/api/health", { headers: { Origin: "https://example.com" } });
   assert.equal((await route(request, env)).headers.get("Access-Control-Allow-Origin"), "https://example.com");
 });
+test("analysis rejects a disallowed origin", async () => {
+  const request = new Request("https://x/api/topics/analyze", { method: "POST", headers: { Origin: "https://evil.example", Authorization: "Bearer secret", "Content-Type": "application/json" }, body: JSON.stringify({ documents: ["csv export"] }) });
+  assert.equal((await route(request, env)).status, 403);
+});
+test("analysis rejects an empty collection", async () => {
+  const request = new Request("https://x/api/topics/analyze", { method: "POST", headers: { Authorization: "Bearer secret", "Content-Type": "application/json" }, body: JSON.stringify({ documents: [] }) });
+  assert.equal((await route(request, env)).status, 422);
+});

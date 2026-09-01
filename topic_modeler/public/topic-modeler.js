@@ -116,5 +116,7 @@ export function modelTopics(input, options = {}) {
     cluster.documents.forEach(document => assignments.push({ documentId: document.id, topicId: id, similarity: Number(cosine(vector(tokenize(document.text)), cluster.centroid).toFixed(4)) }));
     return { id, label: terms.slice(0, 3).map(item => item.term).join(" · ") || "Unclassified", documentCount: cluster.documents.length, share: Number((cluster.documents.length / documents.length).toFixed(4)), keywords: terms, sources: [...new Set(cluster.documents.map(document => document.source))], centroid: cluster.centroid };
   }).sort((a, b) => b.documentCount - a.documentCount);
-  return { schemaVersion: "1.0.0", model: "prodmind-online-weighted-ctfidf-v1", generatedAt: new Date().toISOString(), documentCount: documents.length, topicCount: topics.length, topics, assignments, hierarchy: hierarchy(topics, Number(options.hierarchyThreshold ?? 0.18)), drift: detectDrift(documents), options: { similarityThreshold: threshold, hierarchyThreshold: Number(options.hierarchyThreshold ?? 0.18), halfLifeDays } };
+  const topicHierarchy = hierarchy(topics, Number(options.hierarchyThreshold ?? 0.18));
+  const publicTopics = topics.map(({ centroid: _centroid, ...topic }) => topic);
+  return { schemaVersion: "1.0.0", model: "prodmind-online-weighted-ctfidf-v1", generatedAt: new Date().toISOString(), documentCount: documents.length, topicCount: publicTopics.length, topics: publicTopics, assignments, hierarchy: topicHierarchy, drift: detectDrift(documents), options: { similarityThreshold: threshold, hierarchyThreshold: Number(options.hierarchyThreshold ?? 0.18), halfLifeDays } };
 }
