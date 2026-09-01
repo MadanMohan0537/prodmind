@@ -1,0 +1,10 @@
+{
+  "documents": [
+    { "id": "f-1", "text": "Please add CSV export to the analytics dashboard", "source": "zendesk", "reliability": 0.9, "timestamp": "2026-07-01T10:00:00Z" },
+    { "id": "f-2", "text": "We need PDF reports and scheduled dashboard exports", "source": "intercom", "reliability": 0.8, "timestamp": "2026-07-04T10:00:00Z" },
+    { "id": "f-3", "text": "The mobile app crashes during login", "source": "app-store", "reliability": 0.8, "timestamp": "2026-08-01T10:00:00Z" },
+    { "id": "f-4", "text": "Login is slow and sometimes the app freezes", "source": "zendesk", "reliability": 0.9, "timestamp": "2026-08-06T10:00:00Z" },
+    { "id": "f-5", "text": "Add SSO and stronger account security controls", "source": "sales", "reliability": 1, "timestamp": "2026-08-14T10:00:00Z" },
+    { "id": "f-6", "text": "Security teams require SAML single sign on", "source": "sales", "reliability": 1, "timestamp": "2026-08-18T10:00:00Z" }
+  ]
+}
