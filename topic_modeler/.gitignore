@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+__pycache__/
+.pytest_cache/
+.venv/
+ml/artifacts/
