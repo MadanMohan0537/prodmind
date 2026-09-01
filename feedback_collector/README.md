@@ -9,7 +9,7 @@ Collect, normalize, deduplicate, classify, store, and export product feedback—
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![D1](https://img.shields.io/badge/Cloudflare-D1-F38020?logo=cloudflare&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=111)
-![Tests](https://img.shields.io/badge/tests-15%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-18%20passing-72D572)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [API](#api-reference) · [Deploy](#deploy-to-cloudflare) · [Roadmap](#roadmap)
@@ -39,8 +39,10 @@ Feedback Collector turns those scattered signals into a single, versioned stream
 - Ingestion job status and failure auditing
 - Connector retries with exponential backoff, jitter, and `Retry-After` support
 - Per-minute API rate limiting
+- Automatic cleanup of expired rate-limit buckets
 - Source filtering and normalized JSONL export
 - Browser storage fallback when cloud bindings are unavailable
+- Rejection of disallowed origins for preflight and state-changing API requests
 - Sample datasets and automated tests
 
 ## Product flow
