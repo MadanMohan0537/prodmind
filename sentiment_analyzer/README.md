@@ -6,7 +6,7 @@
 
 English + Spanish · Confidence scores · Evidence traces · Aspect detection · Cloudflare-ready
 
-![Tests](https://img.shields.io/badge/tests-22%20passing-72D572)
+![Tests](https://img.shields.io/badge/tests-21%20JavaScript%20%2B%204%20Python-72D572)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
@@ -39,6 +39,7 @@ Positive/negative labels alone are dangerous product evidence. Teams need to kno
 - Labeled evaluation data with accuracy, confusion matrix, precision, recall, F1, and Brier score
 - Browser-local analysis requiring no API or payment
 - Responsive light and dark themes
+- Strict origin checks and output escaping for browser safety
 
 ## Quick start
 
@@ -151,7 +152,7 @@ These limitations are surfaced deliberately. The optional `ml/` package provides
 
 ## Tests
 
-The project has 18 JavaScript tests and 4 dependency-free Python data-contract tests. They cover the baseline analyzer, API behavior, evaluation metrics, and ML dataset validation.
+The project has 21 JavaScript tests and 4 dependency-free Python data-contract tests. They cover the baseline analyzer, API behavior, origin enforcement, correction validation, evaluation metrics, and ML dataset validation.
 
 ```bash
 npm run check
