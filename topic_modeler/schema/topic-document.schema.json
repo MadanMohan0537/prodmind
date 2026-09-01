@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prodmind.dev/schemas/topic-document.schema.json",
+  "title": "Topic document",
+  "type": "object",
+  "required": ["text"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "maxLength": 200 },
+    "text": { "type": "string", "minLength": 1, "maxLength": 20000 },
+    "source": { "type": "string", "maxLength": 100 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "reliability": { "type": "number", "minimum": 0, "maximum": 1 }
+  }
+}
