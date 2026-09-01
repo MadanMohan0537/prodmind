@@ -1,0 +1,14 @@
+model:
+  embedding_model: all-MiniLM-L6-v2
+  minimum_topic_size: 5
+  top_terms: 10
+online:
+  clusters: 12
+  halflife: 0.5
+weighting:
+  half_life_days: 30
+  default_source_reliability: 0.7
+drift:
+  smoothing: 0.000001
+  moderate_threshold: 0.35
+  high_threshold: 1.0
