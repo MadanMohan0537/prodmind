@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prodmind.dev/schemas/topic-result.schema.json",
+  "title": "Topic model result",
+  "type": "object",
+  "required": ["schemaVersion", "model", "documentCount", "topicCount", "topics", "assignments", "hierarchy", "drift"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "model": { "type": "string" },
+    "documentCount": { "type": "integer", "minimum": 1 },
+    "topicCount": { "type": "integer", "minimum": 1 },
+    "topics": { "type": "array" },
+    "assignments": { "type": "array" },
+    "hierarchy": { "type": "array" },
+    "drift": { "type": "object" }
+  }
+}
