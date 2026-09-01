@@ -8,6 +8,14 @@ export class ConnectorError extends Error {
 
 export const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
+export function retryAfterMilliseconds(value, now = Date.now()) {
+  if (!value) return 0;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+  const date = Date.parse(value);
+  return Number.isNaN(date) ? 0 : Math.max(0, date - now);
+}
+
 export async function fetchWithRetry(url, options = {}, policy = {}) {
   const retries = policy.retries ?? 3;
   const baseDelay = policy.baseDelay ?? 250;
@@ -20,7 +28,7 @@ export async function fetchWithRetry(url, options = {}, policy = {}) {
       if (response.ok) return response;
       const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
       if (!retryable || attempt === retries) throw new ConnectorError(`Connector request failed with ${response.status}`, { url, status: response.status });
-      const retryAfter = Number(response.headers.get("Retry-After")) * 1000;
+      const retryAfter = retryAfterMilliseconds(response.headers.get("Retry-After"));
       await sleeper(retryAfter || baseDelay * 2 ** attempt + Math.random() * 100);
     } catch (error) {
       if (attempt === retries || error instanceof ConnectorError) throw error;

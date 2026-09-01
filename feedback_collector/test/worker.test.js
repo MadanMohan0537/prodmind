@@ -20,6 +20,16 @@ test("ingestion rejects an invalid origin preflight", async () => {
   assert.equal(response.status, 403);
 });
 
+test("ingestion rejects a state-changing request from an invalid origin", async () => {
+  const request = new Request("https://worker.test/api/feedback", { method: "POST", headers: { Origin: "https://evil.example", Authorization: "Bearer test-secret", "Content-Type": "application/json" }, body: JSON.stringify({ text: "Valid feedback" }) });
+  assert.equal((await route(request, env)).status, 403);
+});
+
+test("ingestion rejects an empty batch", async () => {
+  const request = new Request("https://worker.test/api/feedback", { method: "POST", headers: { Authorization: "Bearer test-secret", "Content-Type": "application/json" }, body: JSON.stringify([]) });
+  assert.equal((await route(request, env)).status, 422);
+});
+
 test("authenticated ingestion validates and processes a record", async () => {
   const request = new Request("https://worker.test/api/feedback", {
     method: "POST",

@@ -49,6 +49,7 @@ export async function enforceRateLimit(request, env, limit = 60) {
   const ip = request.headers.get("CF-Connecting-IP") || "local";
   const bucket = new Date().toISOString().slice(0, 16);
   const key = `${ip}:${bucket}`;
+  await env.DB.prepare("DELETE FROM rate_limits WHERE expires_at < CURRENT_TIMESTAMP").run();
   await env.DB.prepare("INSERT INTO rate_limits (key, count, expires_at) VALUES (?, 1, datetime('now', '+2 minutes')) ON CONFLICT(key) DO UPDATE SET count = count + 1").bind(key).run();
   const row = await env.DB.prepare("SELECT count FROM rate_limits WHERE key = ?").bind(key).first();
   return { allowed: row.count <= limit, remaining: Math.max(0, limit - row.count) };
@@ -107,6 +108,7 @@ async function handleIngest(request, env) {
   try { body = await request.json(); }
   catch { return json(request, env, { error: "Request must contain valid JSON" }, 400); }
   const records = Array.isArray(body) ? body : Array.isArray(body.records) ? body.records : [body];
+  if (!records.length) return json(request, env, { error: "At least one record is required" }, 422);
   if (records.length > 1_000) return json(request, env, { error: "Maximum batch size is 1,000" }, 413);
   const jobId = crypto.randomUUID();
   if (env.DB) {
@@ -147,6 +149,7 @@ export async function route(request, env) {
   }
   if (url.pathname === "/api/health") return json(request, env, { status: "ok", service: "feedback-collector", schemaVersion: "1.0", storage: env.DB ? "d1" : "offline" });
   if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
+  if (request.headers.get("Origin") && !allowedOrigin(request, env)) return json(request, env, { error: "Origin not allowed" }, 403);
   if (!await authorize(request, env)) return json(request, env, { error: "Unauthorized" }, 401, { "WWW-Authenticate": "Bearer" });
   const rate = await enforceRateLimit(request, env);
   if (!rate.allowed) return json(request, env, { error: "Rate limit exceeded" }, 429, { "Retry-After": "60" });
@@ -177,12 +180,21 @@ async function ingestZendesk(env) {
 
 export default {
   fetch(request, env) {
-    return route(request, env).catch(error => json(request, env, { error: "Internal ingestion error", requestId: crypto.randomUUID(), detail: error.message }, 500));
+    return route(request, env).catch(() => json(request, env, { error: "Internal ingestion error", requestId: crypto.randomUUID() }, 500));
   },
   async queue(batch, env) {
     for (const message of batch.messages) {
       try { await processPayload(env, message.body); message.ack(); }
-      catch (error) { message.attempts < 3 ? message.retry({ delaySeconds: 2 ** message.attempts }) : message.ack(); }
+      catch (error) {
+        if (message.attempts < 3) message.retry({ delaySeconds: 2 ** message.attempts });
+        else {
+          if (env.DB && message.body?.jobId) {
+            await env.DB.prepare("UPDATE ingestion_jobs SET status = 'failed', error = ?, completed_at = CURRENT_TIMESTAMP WHERE id = ?")
+              .bind(String(error.message || "Queue processing failed").slice(0, 1000), message.body.jobId).run();
+          }
+          message.ack();
+        }
+      }
     }
   },
   scheduled(_event, env, context) {
