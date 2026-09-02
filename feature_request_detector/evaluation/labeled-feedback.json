@@ -1,0 +1,10 @@
+[
+  { "text": "Please add CSV export", "labels": ["feature-request"] },
+  { "text": "The mobile app crashes on login", "labels": ["bug-report"] },
+  { "text": "This workflow is slow and frustrating", "labels": ["complaint"] },
+  { "text": "I love the new dashboard", "labels": ["praise"] },
+  { "text": "Where can I update my billing address?", "labels": ["question"] },
+  { "text": "We will cancel unless you add SAML", "labels": ["churn-risk", "feature-request"] },
+  { "text": "Great reports, but please add scheduled delivery", "labels": ["praise", "feature-request"] },
+  { "text": "Can you fix the crash and add offline mode?", "labels": ["feature-request", "bug-report", "question"] }
+]
