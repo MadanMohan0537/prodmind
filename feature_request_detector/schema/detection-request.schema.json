@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prodmind.dev/schemas/detection-request/1.0",
+  "title": "Feature request detection input",
+  "type": "object",
+  "required": ["text"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "maxLength": 200 },
+    "text": { "type": "string", "minLength": 1, "maxLength": 20000 },
+    "source": { "type": "string", "maxLength": 100 }
+  }
+}
