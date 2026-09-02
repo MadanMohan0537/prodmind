@@ -1,0 +1,9 @@
+{
+  "records": [
+    { "id": "f-101", "source": "zendesk", "text": "Please add scheduled CSV exports for our finance team." },
+    { "id": "f-102", "source": "app-store", "text": "The application crashes whenever I open filters." },
+    { "id": "f-103", "source": "interview", "text": "I love the dashboard, but can you add SAML login? It is blocking our entire team." },
+    { "id": "f-104", "source": "survey", "text": "Where can I change notification settings?" },
+    { "id": "f-105", "source": "support", "text": "This is a deal-breaker. We will cancel unless bulk editing is available." }
+  ]
+}
