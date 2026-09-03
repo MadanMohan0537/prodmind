@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prodmind.dev/schema/dashboard-result.schema.json",
+  "title": "Voice-of-Customer Dashboard Result",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "summary", "trends", "topics", "sources", "segments", "intents", "anomalies", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "summary": {
+      "type": "object",
+      "required": ["totalFeedback", "uniqueCustomers", "averageSentiment", "negativeRate", "needsAttention"]
+    },
+    "trends": { "type": "array" },
+    "topics": { "type": "array" },
+    "sources": { "type": "array" },
+    "segments": { "type": "array" },
+    "intents": { "type": "array" },
+    "anomalies": { "type": "array" },
+    "evidence": { "type": "array" }
+  }
+}
