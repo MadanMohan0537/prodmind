@@ -6,6 +6,11 @@
 
 Explainable · Multi-label · Local-first · Zero paid APIs · Cloudflare-ready
 
+![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-19%20passing-22c55e)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
+
 </div>
 
 Feature Request Detector is project 04 in [ProdMind](../README.md). It converts customer feedback into an inspectable set of intents instead of forcing every message into one category. A single record can be a feature request, bug report, complaint, question, praise, and churn warning at the same time.
@@ -15,6 +20,17 @@ Feature Request Detector is project 04 in [ProdMind](../README.md). It converts 
 Feedback rarely arrives in tidy categories. “I love the dashboard, but it crashes and we need scheduled exports before renewal” contains praise, a bug, a feature request, urgency, business impact, and churn risk. A single-label classifier discards most of that evidence.
 
 This product provides a deterministic baseline that is inexpensive, private, testable, and honest about uncertainty. It is suitable for triage and dataset bootstrapping; it does not pretend that a rule system replaces evaluated domain-specific machine learning.
+
+## At a glance
+
+| | |
+|---|---|
+| **Problem** | Mixed-intent feedback gets flattened into one label and loses actionable context. |
+| **Users** | Product managers, support teams, customer-success teams, and feedback-operations owners. |
+| **Input** | Plain text or a normalized Feedback Collector event. |
+| **Output** | Multiple intent labels, confidence, sentence evidence, urgency, impact, and review status. |
+| **Runtime** | Browser-local demo or authenticated Cloudflare Worker API. |
+| **Cost posture** | The working baseline requires no paid API or hosted model. |
 
 ## Capabilities
 
@@ -47,6 +63,33 @@ flowchart TD
 ```
 
 The browser and Worker import the same `public/detector.js` module, preventing classification drift between the demo and the deployed API.
+
+## Intent taxonomy
+
+| Label | What it captures |
+|---|---|
+| `feature-request` | Explicit requests and implied unmet needs |
+| `bug-report` | Broken, failing, crashing, or incorrect behavior |
+| `complaint` | Dissatisfaction that may not identify a defect |
+| `question` | Requests for information or clarification |
+| `praise` | Positive product feedback |
+| `churn-risk` | Cancellation, switching, renewal, or adoption risk |
+
+Labels are independent. A record can receive several labels, and every detected intent includes the sentence and signals that supported it.
+
+## Repository structure
+
+```text
+public/                 Responsive UI and shared detector module
+src/worker.js           Cloudflare Worker routes, auth, CORS, and D1 persistence
+schema/                 Versioned input and output contracts
+migrations/             Optional D1 database schema
+evaluation/             Labeled seed dataset
+scripts/evaluate.js     Precision, recall, F1, and exact-match report
+tests/                  Detector, API utility, and compatibility tests
+examples/               Sample feedback payloads
+wrangler.jsonc          Cloudflare development and deployment configuration
+```
 
 ## Quick start
 
@@ -135,10 +178,10 @@ For local API testing, create an untracked `.dev.vars` file containing `API_TOKE
 - Bearer tokens are compared through fixed-length SHA-256 digests.
 - Inputs are length- and batch-bounded.
 - Browser-rendered evidence is HTML-escaped.
-- D1 uses parameterized statements and stores text hashes, not raw feedback.
+- D1 uses parameterized statements and stores a text hash plus structured analysis. Intent evidence includes matched source sentences, so persisted rows can contain customer feedback text.
 - Internal exceptions are not exposed in API responses.
 
-For a public multi-tenant deployment, add per-user identity, tenant isolation, abuse controls, and a distributed rate limiter.
+Before enabling persistence for real customer data, define consent, minimization, retention, deletion, and access policies. For a public multi-tenant deployment, add per-user identity, tenant isolation, abuse controls, and a distributed rate limiter.
 
 ## Evaluation
 
@@ -148,6 +191,8 @@ The included seed dataset validates the evaluation machinery; it is not evidence
 npm run check
 node scripts/evaluate.js evaluation/labeled-feedback.json
 ```
+
+The current repository has **19 passing automated tests**. The bundled seed produces **8/8 exact multi-label matches**, which confirms that the rules and evaluation harness agree on a small, intentionally representative dataset—not that the detector has 100% real-world accuracy.
 
 The report includes exact multi-label match, per-label precision/recall/F1, and mismatched examples. Replace or extend the seed data with anonymized feedback from the intended domain before tuning thresholds or making quality claims.
 
@@ -159,6 +204,8 @@ The report includes exact multi-label match, per-label precision/recall/F1, and 
 - Urgency and impact are lexical signals and require human confirmation for prioritization.
 - This detects requests; it does not decide whether a request should be built.
 - D1 metrics describe analyzed volume, not customer demand deduplicated across accounts.
+- JSON Schemas document versioned contracts; runtime enforcement is implemented with explicit validation rather than loading the schema files dynamically.
+- The D1 persistence route and browser flow still need dedicated integration tests against a deployed preview before production use.
 
 ## Integration with ProdMind
 
