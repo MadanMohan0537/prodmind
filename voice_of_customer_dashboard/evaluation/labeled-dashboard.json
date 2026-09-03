@@ -1,0 +1,21 @@
+{
+  "cases": [
+    {
+      "name": "summary and dimensions",
+      "records": [
+        { "text": "Confusing setup", "source": "support", "segment": "SMB", "customerId": "a", "sentiment": -0.8, "topics": ["onboarding"] },
+        { "text": "Great setup", "source": "survey", "segment": "SMB", "customerId": "b", "sentiment": 0.8, "topics": ["onboarding"] }
+      ],
+      "expect": { "totalFeedback": 2, "uniqueCustomers": 2, "topTopic": "onboarding", "needsAttention": 1 }
+    },
+    {
+      "name": "source filter",
+      "records": [
+        { "text": "Support record", "source": "support", "sentiment": -0.4 },
+        { "text": "Survey record", "source": "survey", "sentiment": 0.4 }
+      ],
+      "filters": { "source": "support" },
+      "expect": { "totalFeedback": 1, "topSource": "support", "needsAttention": 1 }
+    }
+  ]
+}
