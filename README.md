@@ -18,7 +18,7 @@ ProdMind is a divide-and-conquer build of an AI product-management copilot. Each
 | 02 | [Sentiment Analyzer](sentiment_analyzer/) | Explainable bilingual sentiment with confidence, evidence, and review flags. | Active |
 | 03 | [Topic Modeler](topic_modeler/) | Discover themes, hierarchies, and topic drift with online weighted clustering. | Active |
 | 04 | [Feature Request Detector](feature_request_detector/) | Detect feature requests, bugs, and overlapping intents with explainable evidence. | Active |
-| 05 | Voice-of-Customer Dashboard | Explore customer evidence, trends, and anomalies. | Planned |
+| 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Explore customer evidence, trends, segments, and explainable anomalies. | Active |
 
 Projects 06–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
 
