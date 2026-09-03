@@ -1,0 +1,7 @@
+{
+  "records": [
+    { "id": "voc-1", "timestamp": "2026-08-28T09:00:00Z", "source": "support", "segment": "New SMB", "customerId": "c-1", "text": "The setup guide is confusing.", "sentiment": -0.7, "topics": ["onboarding"], "intents": ["complaint"] },
+    { "id": "voc-2", "timestamp": "2026-08-29T11:00:00Z", "source": "survey", "segment": "Enterprise", "customerId": "c-2", "text": "Reporting is fast and useful.", "sentiment": 0.8, "topics": ["reporting"], "intents": ["praise"] },
+    { "id": "voc-3", "timestamp": "2026-09-01T10:00:00Z", "source": "interview", "segment": "New SMB", "customerId": "c-3", "text": "We need a guided onboarding checklist.", "sentiment": -0.5, "topics": ["onboarding"], "intents": ["feature-request"] }
+  ]
+}
