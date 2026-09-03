@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prodmind-voice-of-customer-dashboard",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "http://localhost:8787"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "voice-of-customer-db",
+    "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+    "migrations_dir": "migrations"
+  }],
+  "observability": { "enabled": true }
+}
