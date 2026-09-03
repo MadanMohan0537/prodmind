@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A local-first Voice-of-Customer dashboard for evidence, trends, topics, segments, and anomalies.">
+  <title>ProdMind · Voice of Customer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Voice of Customer home"><span>PM</span> ProdMind</a>
+    <div class="status"><i></i> Local analysis</div>
+  </header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">IDEA 05 · VOICE OF CUSTOMER</p><h1>Know what customers are saying—<em>and what changed.</em></h1><p>Turn normalized feedback into a traceable view of sentiment, topics, segments, sources, and emerging anomalies. No model key required.</p></div>
+      <div class="hero-actions"><button id="sample" class="secondary">Load sample</button><button id="analyze">Analyze feedback</button></div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel input-panel">
+        <div class="panel-head"><div><p class="eyebrow">INPUT</p><h2>Feedback events</h2></div><span id="inputCount">0 records</span></div>
+        <label for="input">JSON array or <code>{ "records": [...] }</code></label>
+        <textarea id="input" spellcheck="false" placeholder='[{"text":"Setup is confusing","source":"support","segment":"SMB","sentiment":-0.7,"topics":["onboarding"]}]'></textarea>
+        <p id="error" class="error" role="alert"></p>
+      </aside>
+      <section class="dashboard" aria-live="polite">
+        <div class="filters panel">
+          <label>Source<select id="source"><option value="">All sources</option></select></label>
+          <label>Segment<select id="segment"><option value="">All segments</option></select></label>
+          <label>Topic<select id="topic"><option value="">All topics</option></select></label>
+          <label>Search<input id="query" type="search" placeholder="Evidence text"></label>
+        </div>
+        <div class="metrics">
+          <article><span>Total feedback</span><strong id="total">—</strong><small>filtered records</small></article>
+          <article><span>Known customers</span><strong id="customers">—</strong><small>unique IDs</small></article>
+          <article><span>Avg. sentiment</span><strong id="sentiment">—</strong><small>−1 to +1</small></article>
+          <article><span>Needs attention</span><strong id="attention">—</strong><small>negative records</small></article>
+        </div>
+        <div class="grid">
+          <article class="panel chart-card wide"><div class="panel-head"><div><p class="eyebrow">TREND</p><h2>Feedback pulse</h2></div><span>volume by day</span></div><div id="trend" class="trend empty">Load sample data to begin.</div></article>
+          <article class="panel chart-card"><div class="panel-head"><div><p class="eyebrow">THEMES</p><h2>Top topics</h2></div></div><div id="topics" class="bars"></div></article>
+          <article class="panel chart-card"><div class="panel-head"><div><p class="eyebrow">CHANNELS</p><h2>Sources</h2></div></div><div id="sources" class="bars"></div></article>
+          <article class="panel chart-card"><div class="panel-head"><div><p class="eyebrow">WATCHLIST</p><h2>Anomalies</h2></div><span id="alertCount">0 alerts</span></div><div id="alerts" class="alerts empty">No anomalies detected.</div></article>
+          <article class="panel chart-card"><div class="panel-head"><div><p class="eyebrow">CUSTOMERS</p><h2>Segments</h2></div></div><div id="segments" class="bars"></div></article>
+          <article class="panel evidence-card wide"><div class="panel-head"><div><p class="eyebrow">TRACEABILITY</p><h2>Evidence stream</h2></div><span id="evidenceCount">0 shown</span></div><div id="evidence" class="evidence empty">No evidence yet.</div></article>
+        </div>
+      </section>
+    </section>
+  </main>
+  <footer>ProdMind · Explainable customer intelligence · Browser-local by default</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
