@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="An explainable, uncertainty-aware product opportunity prioritization engine.">
+  <title>ProdMind · Prioritization Engine</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header><a class="brand" href="/"><span>PM</span> ProdMind</a><div class="status"><i></i> Decision model ready</div></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">IDEA 06 · PRIORITIZATION ENGINE</p><h1>Make trade-offs visible.<br><em>Prioritize with evidence.</em></h1><p>Balance customer and business value, strategy, confidence, feasibility, effort, risk, dependencies, and uncertainty without hiding the decision behind one magic number.</p></div><div class="actions"><button id="sample" class="secondary">Load sample</button><button id="run">Prioritize</button></div></section>
+    <section class="layout">
+      <aside class="panel editor"><div class="panel-head"><div><p class="eyebrow">INPUT</p><h2>Opportunities</h2></div><span id="count">0 items</span></div><label for="capacity">Portfolio capacity</label><input id="capacity" type="number" min="0.1" value="10" step="0.5"><label for="input">JSON opportunity array</label><textarea id="input" spellcheck="false" placeholder='[{"id":"onboarding","title":"Improve onboarding","businessValue":8,"effort":5}]'></textarea><p id="error" role="alert"></p></aside>
+      <section class="results">
+        <div class="metrics"><article><span>Opportunities</span><strong id="total">—</strong><small>evaluated</small></article><article><span>Pareto frontier</span><strong id="pareto">—</strong><small>non-dominated</small></article><article><span>Capacity used</span><strong id="used">—</strong><small id="capacityLabel">of —</small></article><article><span>Selected</span><strong id="selected">—</strong><small>dependency-aware</small></article></div>
+        <article class="panel portfolio"><div class="panel-head"><div><p class="eyebrow">RECOMMENDED PORTFOLIO</p><h2>Within current capacity</h2></div><span id="remaining"></span></div><div id="portfolio" class="chips empty">Load the sample to begin.</div></article>
+        <article class="panel ranking"><div class="panel-head"><div><p class="eyebrow">RANKING</p><h2>Opportunity decisions</h2></div><span>p10 · p50 · p90</span></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Opportunity</th><th>Score range</th><th>Effort</th><th>Decision signals</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="empty">No results yet.</td></tr></tbody></table></div></article>
+      </section>
+    </section>
+  </main>
+  <footer>Transparent assumptions · Reproducible simulation · Human decision ownership</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
