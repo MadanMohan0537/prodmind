@@ -1,0 +1,23 @@
+{
+  "cases": [
+    {
+      "name": "high-value feasible onboarding wins",
+      "opportunities": [
+        { "id": "onboarding", "title": "Onboarding checklist", "businessValue": 9, "userValue": 9, "strategicAlignment": 9, "confidence": 0.9, "feasibility": 0.9, "urgency": 8, "effort": 3, "risk": 0.1 },
+        { "id": "themes", "title": "Custom themes", "businessValue": 3, "userValue": 4, "strategicAlignment": 2, "confidence": 0.5, "feasibility": 0.8, "urgency": 2, "effort": 5, "risk": 0.2 }
+      ],
+      "options": { "capacity": 3, "iterations": 500, "seed": 42 },
+      "expectedTop": "onboarding",
+      "expectedSelected": ["onboarding"]
+    },
+    {
+      "name": "dependency is scheduled first",
+      "opportunities": [
+        { "id": "api", "title": "Public API", "businessValue": 9, "userValue": 8, "strategicAlignment": 9, "confidence": 0.8, "feasibility": 0.8, "urgency": 7, "effort": 3, "risk": 0.2, "dependencies": ["exports"] },
+        { "id": "exports", "title": "Export foundation", "businessValue": 5, "userValue": 6, "strategicAlignment": 7, "confidence": 0.8, "feasibility": 0.9, "urgency": 5, "effort": 2, "risk": 0.1 }
+      ],
+      "options": { "capacity": 5, "iterations": 500, "seed": 42 },
+      "expectedSelected": ["exports", "api"]
+    }
+  ]
+}
