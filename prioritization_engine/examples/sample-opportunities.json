@@ -1,0 +1,10 @@
+{
+  "opportunities": [
+    { "id": "onboarding", "title": "Interactive onboarding checklist", "businessValue": 8, "userValue": 9, "strategicAlignment": 9, "confidence": 0.84, "feasibility": 0.82, "urgency": 8, "effort": 5, "risk": 0.18, "uncertainty": 0.16, "evidenceCount": 208, "tags": ["activation"] },
+    { "id": "sso", "title": "Enterprise SAML SSO", "businessValue": 9, "userValue": 7, "strategicAlignment": 8, "confidence": 0.76, "feasibility": 0.61, "urgency": 7, "effort": 13, "risk": 0.35, "uncertainty": 0.28, "evidenceCount": 64, "tags": ["enterprise"] },
+    { "id": "exports", "title": "Scheduled report exports", "businessValue": 6, "userValue": 8, "strategicAlignment": 6, "confidence": 0.79, "feasibility": 0.9, "urgency": 6, "effort": 3, "risk": 0.12, "uncertainty": 0.14, "evidenceCount": 91, "tags": ["reporting"] },
+    { "id": "api", "title": "Public reporting API", "businessValue": 8, "userValue": 7, "strategicAlignment": 8, "confidence": 0.65, "feasibility": 0.68, "urgency": 5, "effort": 8, "risk": 0.3, "uncertainty": 0.3, "evidenceCount": 43, "dependencies": ["exports"], "tags": ["platform"] },
+    { "id": "themes", "title": "Custom dashboard themes", "businessValue": 3, "userValue": 5, "strategicAlignment": 3, "confidence": 0.55, "feasibility": 0.92, "urgency": 2, "effort": 2, "risk": 0.08, "uncertainty": 0.2, "evidenceCount": 17, "tags": ["experience"] }
+  ],
+  "options": { "capacity": 10, "iterations": 1000, "seed": 42 }
+}
