@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prodmind.dev/schema/prioritization-result.schema.json",
+  "title": "Prioritization Result",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "method", "weights", "ranked", "paretoFrontier", "portfolio"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "method": { "type": "string" },
+    "weights": { "type": "object" },
+    "ranked": { "type": "array" },
+    "paretoFrontier": { "type": "array", "items": { "type": "string" } },
+    "portfolio": {
+      "type": "object",
+      "required": ["selected", "capacity", "used", "remaining"]
+    }
+  }
+}
