@@ -19,8 +19,9 @@ ProdMind is a divide-and-conquer build of an AI product-management copilot. Each
 | 03 | [Topic Modeler](topic_modeler/) | Discover themes, hierarchies, and topic drift with online weighted clustering. | Active |
 | 04 | [Feature Request Detector](feature_request_detector/) | Detect feature requests, bugs, and overlapping intents with explainable evidence. | Active |
 | 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Explore customer evidence, trends, segments, and explainable anomalies. | Active |
+| 06 | [Prioritization Engine](prioritization_engine/) | Rank opportunities with transparent scoring, uncertainty, dependencies, and capacity constraints. | Active |
 
-Projects 06–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
+Projects 07–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
 
 ## Build principles
 
