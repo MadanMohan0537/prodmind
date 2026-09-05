@@ -1,0 +1,8 @@
+{
+  "experiment_id": "pricing-v1",
+  "events": [
+    {"event_id":"e1","experiment_id":"pricing-v1","user_id":"u1","variant":"control","type":"exposure","timestamp":"2026-09-01T00:00:00.000Z"},
+    {"event_id":"e2","experiment_id":"pricing-v1","user_id":"u2","variant":"treatment","type":"exposure","timestamp":"2026-09-01T00:00:00.000Z"},
+    {"event_id":"e3","experiment_id":"pricing-v1","user_id":"u2","variant":"treatment","type":"conversion","timestamp":"2026-09-02T00:00:00.000Z"}
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "name": "experiment-data-quality-auditor",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01"
+}

@@ -21,7 +21,9 @@ ProdMind is a divide-and-conquer build of an AI product-management copilot. Each
 | 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Explore customer evidence, trends, segments, and explainable anomalies. | Active |
 | 06 | [Prioritization Engine](prioritization_engine/) | Rank opportunities with transparent scoring, uncertainty, dependencies, and capacity constraints. | Active |
 
-Projects 07–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
+| 07 | [Experiment Data Quality Auditor](experiment-data-quality-auditor/) | Validate raw experiment events and block unsafe aggregates before analysis. | MVP |
+
+Projects 08–30 will be added only after their preceding contracts are validated, avoiding unfinished scaffolds.
 
 ## Build principles
 
@@ -47,4 +49,5 @@ Each project folder contains its own setup, security, deployment, testing, and a
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE).
+Licensed under the [Apache License 2.0](LICENSE), except where a project supplies its own license. The Experiment Data Quality Auditor is [MIT-licensed](experiment-data-quality-auditor/LICENSE).
+
