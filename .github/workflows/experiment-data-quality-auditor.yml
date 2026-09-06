@@ -10,8 +10,6 @@ on:
       - 'feature_request_detector/**'
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
-      - 'scripts/**'
-      - 'package.json'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -22,8 +20,6 @@ on:
       - 'feature_request_detector/**'
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
-      - 'scripts/**'
-      - 'package.json'
 permissions:
   contents: read
 jobs:
@@ -34,5 +30,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node scripts/test-all.mjs
+      - run: node experiment-data-quality-auditor/scripts/test-all.mjs
       - run: node --check experiment-data-quality-auditor/public/app.js

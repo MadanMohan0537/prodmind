@@ -26,7 +26,7 @@ One installation serves one trusted team. All authenticated users share access; 
 From the repository root:
 
 ```bash
-node scripts/test-all.mjs
+node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
 Or run only project 7:
@@ -123,7 +123,7 @@ Exit 0: checks passed; exit 2: findings block aggregates; exit 1: invalid input/
 - `tests/`: original audit tests plus integration, API and SQLite tests
 - Repository-root `.github/workflows/experiment-data-quality-auditor.yml`: runs all seven modules
 
-The redundant nested workflow template has been removed. [Shared architecture and limits](../docs/CONNECTED_WORKFLOW.md) document what is and is not connected.
+The redundant nested workflow template has been removed. [Shared architecture and limits](docs/CONNECTED_WORKFLOW.md) document what is and is not connected.
 
 ## Research and limitations
 

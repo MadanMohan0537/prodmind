@@ -217,4 +217,4 @@ Licensed under the repository-level [Apache License 2.0](../LICENSE).
 
 This module is used by the [shared Experiment & Learning Workspace](../experiment-data-quality-auditor/). The integrated server imports this module's implementation and carries original evidence IDs through discovery, ranking, experiments and recorded decisions. The standalone API and existing database are unchanged; there is no automatic cross-database synchronization.
 
-See [shared contracts and architecture](../docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node scripts/test-all.mjs`.
+See [shared contracts and architecture](../experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node experiment-data-quality-auditor/scripts/test-all.mjs`.
