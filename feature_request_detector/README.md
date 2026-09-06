@@ -226,3 +226,9 @@ The report includes exact multi-label match, per-label precision/recall/F1, and 
 ## License
 
 Licensed under the repository-level [Apache License 2.0](../LICENSE).
+
+## Connected ProdMind workflow
+
+This module is used by the [shared Experiment & Learning Workspace](../experiment-data-quality-auditor/). The integrated server imports this module's implementation and carries original evidence IDs through discovery, ranking, experiments and recorded decisions. The standalone API and existing database are unchanged; there is no automatic cross-database synchronization.
+
+See [shared contracts and architecture](../docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node scripts/test-all.mjs`.

@@ -1,0 +1,8 @@
+{
+  "records": [
+    {"id":"demo-1","text":"Please add an onboarding checklist. Setup is confusing.","source":"synthetic-support","customerId":"demo-c1","segment":"SMB","timestamp":"2026-09-01T09:00:00.000Z"},
+    {"id":"demo-2","text":"We need an onboarding checklist to finish setup.","source":"synthetic-survey","customerId":"demo-c2","segment":"SMB","timestamp":"2026-09-02T10:00:00.000Z"},
+    {"id":"demo-3","text":"Please add scheduled CSV exports for the finance team.","source":"synthetic-interview","customerId":"demo-c3","segment":"Enterprise","timestamp":"2026-09-03T11:00:00.000Z"},
+    {"id":"demo-4","text":"The CSV export is slow and confusing for our finance team.","source":"synthetic-support","customerId":"demo-c4","segment":"Enterprise","timestamp":"2026-09-04T12:00:00.000Z"}
+  ]
+}
