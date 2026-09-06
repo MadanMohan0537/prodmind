@@ -1,8 +1,0 @@
-{
-  "name": "prodmind",
-  "version": "0.2.0",
-  "private": true,
-  "type": "module",
-  "engines": {"node": ">=22.13.0"},
-  "scripts": {"test": "node scripts/test-all.mjs", "test:integration": "cd experiment-data-quality-auditor && node --test tests/workflow.test.js"}
-}

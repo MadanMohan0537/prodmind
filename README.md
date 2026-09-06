@@ -90,7 +90,7 @@ Requirements: Node.js 22.13 or later.
 ~~~bash
 git clone https://github.com/MadanMohan0537/prodmind.git
 cd prodmind
-node scripts/test-all.mjs
+node experiment-data-quality-auditor/scripts/test-all.mjs
 ~~~
 
 The root runner tests all seven JavaScript modules, including the evidence-to-learning lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage and decision gates.
@@ -167,14 +167,15 @@ The current handoff is explicit rather than automatically synchronized. A future
 ├── voice_of_customer_dashboard/
 ├── prioritization_engine/
 ├── experiment-data-quality-auditor/
-├── docs/
-├── scripts/
+├── .github/             Repository-wide verification
+├── .gitignore
+├── LICENSE
 └── README.md
 ~~~
 
 ## Documentation
 
-- [Connected contracts, architecture and limits](docs/CONNECTED_WORKFLOW.md)
+- [Connected contracts, architecture and limits](experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md)
 - [Experiment workspace requirements](experiment-data-quality-auditor/docs/PRD.md)
 - Individual architecture and usage guides inside every module
 
