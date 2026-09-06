@@ -10,6 +10,7 @@ on:
       - 'feature_request_detector/**'
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
+      - 'product_outcome_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -20,6 +21,7 @@ on:
       - 'feature_request_detector/**'
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
+      - 'product_outcome_monitor/**'
 permissions:
   contents: read
 jobs:

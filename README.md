@@ -10,7 +10,7 @@
 
 </div>
 
-ProdMind connects seven focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, and records decisions without losing the original evidence.
+ProdMind connects eight focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, records decisions, and follows their outcomes without losing the original evidence.
 
 Every module remains independently runnable. Project 7 provides the connected workspace and shared lifecycle.
 
@@ -28,9 +28,11 @@ Human-reviewed prioritization
 Experiment plan and event audit
       ↓
 Human decision and learning ledger
+      ↓
+Post-decision outcome monitoring
 ~~~
 
-## The seven modules
+## The eight modules
 
 | # | Module | Responsibility |
 |---|---|---|
@@ -41,6 +43,7 @@ Human decision and learning ledger
 | 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Summarizes trends, segments and source evidence |
 | 06 | [Prioritization Engine](prioritization_engine/) | Ranks explicitly reviewed opportunities against capacity and dependencies |
 | 07 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Persists runs, locks plans, audits events and records decisions |
+| 08 | [Product Outcome Monitor](product_outcome_monitor/) | Detects whether expected outcomes persist and flags reversals or guardrail breaches |
 
 These are implementation-level connections. Project 7 imports the actual functions from Projects 1–6 rather than copying their algorithms or linking to unrelated demos.
 
@@ -93,7 +96,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ~~~
 
-The root runner tests all seven JavaScript modules, including the evidence-to-learning lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage and decision gates.
+The root runner tests all eight JavaScript modules, including the evidence-to-learning lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage, decision gates and post-decision outcome signals.
 
 Optional Python ML research folders are not included in the root JavaScript runner.
 
@@ -167,6 +170,7 @@ The current handoff is explicit rather than automatically synchronized. A future
 ├── voice_of_customer_dashboard/
 ├── prioritization_engine/
 ├── experiment-data-quality-auditor/
+├── product_outcome_monitor/
 ├── .github/             Repository-wide verification
 ├── .gitignore
 ├── LICENSE
@@ -190,4 +194,4 @@ The current handoff is explicit rather than automatically synchronized. A future
 
 ## License
 
-The original modules use [Apache License 2.0](LICENSE), except where a component provides its own license. Project 7 includes an [MIT license](experiment-data-quality-auditor/LICENSE). Imported modules retain their original notices.
+The original modules use [Apache License 2.0](LICENSE), except where a component provides its own license. Projects 7 and 8 include their own MIT licenses. Imported modules retain their original notices.

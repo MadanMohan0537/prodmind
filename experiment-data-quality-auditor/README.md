@@ -305,7 +305,7 @@ experiment-data-quality-auditor/
 ├── public/                  Responsive working interface
 ├── migrations/              D1 schema and revision triggers
 ├── tests/                   Audit and lifecycle tests
-├── scripts/test-all.mjs     Seven-project test runner
+├── scripts/test-all.mjs     Repository-wide test runner
 ├── docs/                    PRD and connected architecture
 ├── examples/                Synthetic audit fixture
 ├── wrangler.jsonc
@@ -362,7 +362,7 @@ Project 7 directly imports:
 
 Their standalone APIs and databases remain available and independent. The connected deployment does not silently migrate or modify existing module databases.
 
-The external AI Roadmap Optimizer is a documented planning companion, not a live dependency.
+Project 8, [Product Outcome Monitor](../product_outcome_monitor/), consumes Project 7 decision identities through an explicit handoff and follows declared outcomes after rollout. The external AI Roadmap Optimizer is a documented planning companion, not a live dependency.
 
 ## License
 
