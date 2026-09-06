@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {analyzeOutcome,fromLearningDecision,validatePlan} from '../src/monitor.js';import worker from '../src/worker.js';
+const fixture=()=>JSON.parse(readFileSync(new URL('../public/sample.json',import.meta.url)));
+test('detects sustained target performance',()=>{const r=analyzeOutcome(fixture());assert.equal(r.analysis.status,'sustained');assert.equal(r.analysis.sustained,true)});
+test('results are deterministic apart from generated monitor ID',()=>{const x=fixture();x.monitorId='monitor-1';assert.deepEqual(analyzeOutcome(x),analyzeOutcome(x))});
+test('guardrail breach creates at-risk status',()=>{const x=fixture();x.guardrails[0].current=.2;const r=analyzeOutcome(x);assert.equal(r.analysis.status,'at_risk');assert.equal(r.analysis.guardrailBreaches.length,1)});
+test('detects effect reversal',()=>{const x=fixture();x.observed=x.observed.map((r,i)=>({...r,value:i<3?.34:.3}));assert.equal(analyzeOutcome(x).analysis.reversal,true)});
+test('supports decrease metrics',()=>{const x=fixture();x.direction='decrease';x.targetChange=.05;x.observed=x.observed.map(r=>({...r,value:.27}));assert.equal(analyzeOutcome(x).analysis.sustained,true)});
+test('reports limited baseline without treating it as causality',()=>{const r=analyzeOutcome(fixture());assert.ok(r.analysis.signals.some(s=>s.code==='limited_baseline'));assert.match(r.analysis.interpretation,/do not establish/)});
+test('rejects cycles in time and observed-before-baseline',()=>{const x=fixture();x.observed[0].period=x.baseline.at(-1).period;assert.throws(()=>validatePlan(x),/follow baseline/)});
+test('rejects duplicate guardrail names',()=>{const x=fixture();x.guardrails.push({...x.guardrails[0]});assert.throws(()=>validatePlan(x),/uniquely named/)});
+test('maps Project 7 decision identities and evidence',()=>{const x=fromLearningDecision({opportunityId:'o1',experimentId:'e1',decisionId:'d1',evidenceIds:['f1']},{title:'x'});assert.deepEqual(x.evidenceIds,['f1']);assert.equal(x.decisionId,'d1')});
+const request=(body,token='secret')=>new Request('https://test/api/analyze',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body)});
+test('worker fails closed without token',async()=>assert.equal((await worker.fetch(request(fixture()),{})).status,503));
+test('worker rejects unauthorized request',async()=>assert.equal((await worker.fetch(request(fixture(),'bad'),{API_TOKEN:'secret'})).status,401));
+test('worker returns analysis',async()=>{const r=await worker.fetch(request(fixture()),{API_TOKEN:'secret'});assert.equal(r.status,200);assert.equal((await r.json()).analysis.status,'sustained')});
+test('worker rejects invalid input',async()=>assert.equal((await worker.fetch(request({}),{API_TOKEN:'secret'})).status,422));
