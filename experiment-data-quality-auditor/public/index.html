@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ProdMind — Evidence to decisions</title>
-  <meta name="description" content="A connected product workspace for feedback analysis, prioritization, experiments and evidence-linked decisions.">
+  <meta name="description" content="A connected product workspace for feedback analysis, prioritization, experiments, decisions and outcome monitoring.">
   <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.js"></script>
 </head>
 <body>
@@ -17,7 +17,7 @@
         <p><a href="/sample-feedback.json" download>Download synthetic sample</a></p><p class="muted">Up to 100 records. IDs and timestamps are required. Existing exports need mapping to the documented contract.</p>
       </aside>
       <div id="workspace" hidden>
-        <section class="panel"><h1 id="run-title"></h1><p id="run-status"></p><ol class="stages"><li>1 Collect</li><li>2 Sentiment</li><li>3 Topics</li><li>4 Requests</li><li>5 Evidence</li><li>6 Prioritize</li><li>7 Learn</li></ol><div id="summary" class="metrics"></div></section>
+        <section class="panel"><h1 id="run-title"></h1><p id="run-status"></p><ol class="stages"><li>1 Collect</li><li>2 Sentiment</li><li>3 Topics</li><li>4 Requests</li><li>5 Evidence</li><li>6 Prioritize</li><li>7 Learn</li><li>8 Monitor</li></ol><div id="summary" class="metrics"></div></section>
         <section class="panel"><h2>Customer evidence</h2><p>Topic assignments and language rules are suggestions for review, not verified customer problems.</p><div id="evidence"></div></section>
         <section class="panel"><h2>Prioritize reviewed opportunities</h2><p>No business estimates are invented. Assess each candidate you want ranked. Effort and capacity must use the same unit.</p>
           <form id="assessment"><label>Candidate<select id="opportunity" required></select></label><label>Reviewed title<input name="title" required maxlength="200"></label><div id="factors" class="form-grid"></div><label>Owner<input name="owner" required maxlength="100"></label><label>Rationale<textarea name="rationale" required maxlength="2000"></textarea></label><label>Dependency IDs, separated by commas<input name="dependencies"></label><button>Add assessment to this draft</button></form>
@@ -29,9 +29,9 @@
             <label>Sample-size rationale<textarea name="sampleSizeRationale" required placeholder="Record the analyst's calculation, assumptions or study reference."></textarea></label><label>Guardrail name<input name="guardrailName" required></label><label>Guardrail acceptance criterion<input name="guardrailCriterion" required></label><button>Save experiment draft</button>
           </form>
         </section>
-        <section class="panel"><h2>Experiments and learning</h2><div id="experiments"></div><h3>Opportunity learning ledger</h3><div id="learning"></div></section>
+        <section class="panel"><h2>Experiments, learning and outcomes</h2><p><a href="/sample-monitoring.json" download>Download a synthetic Project 8 monitoring snapshot</a></p><div id="experiments"></div><h3>Opportunity learning ledger</h3><div id="learning"></div></section>
       </div>
-      <section id="empty" class="panel"><h1>Start with the customer evidence.</h1><p>Load a saved run or upload feedback. ProdMind connects its seven modules through one saved workflow, from source records to reviewed decisions.</p><p>No automatic shipping decisions. No paid AI calls. No fabricated impact estimates.</p></section>
+      <section id="empty" class="panel"><h1>Start with the customer evidence.</h1><p>Load a saved run or upload feedback. ProdMind connects all eight modules through one saved workflow, from source records to monitored outcomes.</p><p>No automatic shipping decisions. No paid AI calls. No fabricated impact estimates.</p></section>
     </div>
   </main>
 </body>

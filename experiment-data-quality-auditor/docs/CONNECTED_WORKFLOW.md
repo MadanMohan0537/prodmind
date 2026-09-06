@@ -13,12 +13,13 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 5. Dashboard | `voice_of_customer_dashboard/public/analytics.js::buildDashboard` | Summary, segments, trends and source evidence from the enriched records |
 | 6. Prioritize | `prioritization_engine/public/engine.js::prioritize` | Reviewed estimates plus server-owned opportunity/evidence IDs |
 | 7. Experiment and learn | `experiment-data-quality-auditor/src/lifecycle.js` | Locked plan, opportunity snapshot, event audits and reviewed decision |
+| 8. Monitor outcomes | `product_outcome_monitor/src/monitor.js` | Decision ID, evidence IDs, post-decision signals, guardrail breaches and persisted reviews |
 
 ## Shared contracts
 
 A discovery run has a server-generated UUID, revision, immutable source evidence and suggested opportunities. Source records require distinct IDs; a duplicate ID rejects the upload. Identical text from different source IDs stays in the evidence and appears as a duplicate-candidate group. This prevents text-only deduplication from silently erasing different customers. Evidence count means records, not unique affected customers.
 
-Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, but cannot replace these links. An experiment stores both the opportunity ID and its ranking snapshot so later reprioritization does not rewrite the experiment's original rationale. The learning endpoint returns decisions linked back to that opportunity and its original records. Learning does not silently change prioritization scores; PMs explicitly reassess and save a new ranking.
+Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, but cannot replace these links. An experiment stores both the opportunity ID and its ranking snapshot so later reprioritization does not rewrite the experiment's original rationale. The learning endpoint returns decisions and outcome reviews linked back to that opportunity and its original records. Project 8 monitoring is submitted through `POST /api/runs/:runId/learning/:experimentId/monitor`; the server supplies the authoritative opportunity, experiment, decision and evidence identities. Learning does not silently change prioritization scores; PMs explicitly reassess and save a new ranking.
 
 The integrated ranking uses deterministic scores without Monte Carlo simulation to reduce request computation. Project 6's standalone simulation behavior is preserved by default. No synthetic uncertainty band is attached when simulation is disabled. Dependency cycles and missing assessed dependencies are rejected before invoking the portfolio selector.
 
@@ -45,7 +46,7 @@ Their APIs and databases remain independent and available. The connected deploym
 ## Limits
 
 - 100 feedback records per run, 4,000 characters per record
-- 20 experiments per run, 20 readouts per experiment
+- 20 experiments per run, 20 readouts and 20 outcome reviews per experiment
 - 10,000 raw events per snapshot and 2 MB request limit
 - 900 KB persisted run limit; rejected updates do not overwrite saved work
 - 50 most recent runs listed; known IDs remain directly retrievable

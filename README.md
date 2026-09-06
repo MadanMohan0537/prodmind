@@ -58,7 +58,8 @@ These are implementation-level connections. Project 7 imports the actual functio
 7. Lock the plan before prospective exposure begins.
 8. Audit exposure and conversion events.
 9. Record an analyst-reviewed human decision.
-10. Trace the result back to the originating feedback.
+10. Submit baseline and post-decision metric observations for outcome monitoring.
+11. Review persistence, reversal and guardrail signals with the decision and originating feedback still attached.
 
 ## Evidence lineage
 
@@ -71,6 +72,7 @@ feedback ID
   → experiment
   → readout
   → reviewed decision
+  → monitored outcome
 ~~~
 
 Clients cannot replace server-owned evidence links during prioritization. Experiments retain an opportunity snapshot so later reprioritization does not rewrite the original rationale.

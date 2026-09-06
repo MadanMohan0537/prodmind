@@ -61,7 +61,7 @@ function render() {
   $('#workspace').hidden = false; $('#empty').hidden = true; $('#run-title').textContent = run.title;
   $('#run-status').textContent = `${run.stage} · revision ${run.version} · ${run.id}`;
   $('#summary').replaceChildren();
-  for (const [label,count] of Object.entries({Evidence:run.evidence.length,Topics:run.topics.topicCount,'Needs sentiment review':run.evidence.filter(e=>e.sentiment.needsReview).length,Experiments:run.experiments.length})) {
+  for (const [label,count] of Object.entries({Evidence:run.evidence.length,Topics:run.topics.topicCount,'Needs sentiment review':run.evidence.filter(e=>e.sentiment.needsReview).length,Experiments:run.experiments.length,'Outcome reviews':run.experiments.reduce((n,e)=>n+(e.outcomeReviews?.length??0),0)})) {
     const tile = el('div', undefined,'metric'); tile.append(el('strong',String(count)),el('span',label)); $('#summary').append(tile);
   }
   $('#evidence').replaceChildren();
@@ -111,6 +111,12 @@ function renderExperiment(e) {
     form.append(el('button','Record reviewed decision'));
     form.onsubmit=event=>{event.preventDefault();action(async()=>{const input=values(form);input.auditId=latest.id;input.guardrailReviews=e.plan.guardrails.map((g,i)=>({name:g.name,passed:input[`guardrail-${i}`]==='passed',evidence:input[`guardrail-evidence-${i}`]}));await mutate(`experiments/${e.id}/decision`,input);notice('Decision saved against the original opportunity and feedback.');});};card.append(form);
   }
-  if(e.decision){details(card,'Recorded decision',e.decision);const item=el('article',undefined,'card');item.append(el('h3',`${e.decision.outcome}: ${e.opportunitySnapshot.title}`),el('p',e.decision.rationale),el('p',`Opportunity ${e.opportunityId} · Evidence ${e.evidenceIds.join(', ')}`));$('#learning').append(item);}
+  if(e.decision){
+    details(card,'Recorded decision',e.decision);
+    const monitor=el('form');const label=el('label','Upload Project 8 monitoring snapshot (JSON)');const file=el('input');Object.assign(file,{type:'file',accept:'.json,application/json',required:true});label.append(file);monitor.append(label,el('button','Analyze and save outcome review'));
+    monitor.onsubmit=event=>{event.preventDefault();action(async()=>{if(!file.files[0]||file.files[0].size>2_000_000)throw new Error('Choose a monitoring JSON file under 2 MB');const input=JSON.parse(await file.files[0].text());delete input.opportunityId;delete input.experimentId;delete input.decisionId;delete input.evidenceIds;await mutate(`learning/${e.id}/monitor`,input);notice('Project 8 outcome review saved with the original decision and evidence lineage.');});};card.append(monitor);
+    for(const review of e.outcomeReviews??[])details(card,`Outcome ${review.analysis.status} · ${review.createdAt}`,review);
+    const item=el('article',undefined,'card');const latest=(e.outcomeReviews??[]).at(-1);item.append(el('h3',`${e.decision.outcome}: ${e.opportunitySnapshot.title}`),el('p',e.decision.rationale),el('p',`Opportunity ${e.opportunityId} · Evidence ${e.evidenceIds.join(', ')}`),el('p',latest?`Latest monitored outcome: ${latest.analysis.status}`:'Outcome monitoring has not started.'));$('#learning').append(item);
+  }
   $('#experiments').append(card);
 }
