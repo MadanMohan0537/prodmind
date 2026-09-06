@@ -1,8 +1,15 @@
 # ProdMind
 
+[![ProdMind connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
+
 Seven focused product-management modules, now connected through one evidence-to-learning workflow.
 
 ProdMind helps a product team move from customer feedback to reviewed opportunities, capacity-aware priorities, experiments and recorded decisions. The modules remain independently runnable; project 7 now provides their shared workspace and persistence.
+
+```text
+Customer evidence → Understand → Find opportunities → Prioritize
+                  → Experiment → Human decision → Learning ledger
+```
 
 ## Start with the connected workspace
 
@@ -57,7 +64,12 @@ Use the [project 7 deployment instructions](experiment-data-quality-auditor/READ
 
 See [the shared contracts, architecture and limits](docs/CONNECTED_WORKFLOW.md).
 
+## Roadmap planning companion
+
+The standalone [AI Roadmap Optimizer](https://github.com/MadanMohan0537/ai-roadmap-optimizer) extends the lifecycle after prioritization. It compares balanced, growth, revenue, retention and low-risk delivery scenarios while enforcing team capacity, dependencies, mandatory commitments and deadlines.
+
+The current handoff is deliberate and transparent: export reviewed initiatives from ProdMind and map them to the optimizer's documented feature contract. There is no live synchronization yet, so changes in one repository do not silently modify the other. A future integration can preserve opportunity IDs and evidence links while keeping roadmap approval with accountable product and engineering leaders.
+
 ## License
 
 [Apache-2.0](LICENSE) for the original modules, except where a component provides its own license. New project 7 code is [MIT-licensed](experiment-data-quality-auditor/LICENSE); imported Apache-2.0 modules retain their notices and license.
-
