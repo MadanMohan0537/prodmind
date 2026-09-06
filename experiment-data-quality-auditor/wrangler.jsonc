@@ -1,5 +1,9 @@
 {
-  "name": "experiment-data-quality-auditor",
-  "main": "src/worker.js",
-  "compatibility_date": "2026-09-01"
+  "name": "prodmind-connected-workflow",
+  "main": "src/product-worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": true},
+  "d1_databases": [
+    {"binding": "DB", "database_name": "prodmind-workflow", "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID", "migrations_dir": "migrations"}
+  ]
 }

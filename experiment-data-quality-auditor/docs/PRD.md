@@ -1,4 +1,14 @@
-# Product requirements: Experiment Data Quality Auditor
+# Product requirements: Connected Experiment & Learning Workspace
+
+## Realignment
+
+The original event auditor remains a component. Project 7 now also hosts the shared workflow: projects 1–5 enrich evidence, project 6 ranks human-assessed opportunities, and project 7 preserves experiment plans and resulting learning against those same evidence IDs.
+
+The UI must operate through authenticated APIs and saved server state, not a separate localStorage demo. Users can reload runs, inspect original evidence, assess candidates, create and lock experiments, upload event snapshots, and record reviewed decisions. Concurrent writes must not silently overwrite one another.
+
+Acceptance requires an HTTP integration test across discovery, ranking, experiment creation, plan locking, readout and decision, plus reload and learning-ledger verification against SQLite. Statistical interpretation remains a documented human gate; this product does not claim to replace the separate Experimentation Copilot.
+
+The original auditor requirements below still apply within that wider workflow.
 
 ## User and problem
 

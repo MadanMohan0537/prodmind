@@ -6,7 +6,7 @@ export function tokenize(text) {
 }
 
 function vector(tokens) {
-  const counts = {};
+  const counts = Object.create(null);
   for (const token of tokens) counts[token] = (counts[token] || 0) + 1;
   const norm = Math.sqrt(Object.values(counts).reduce((sum, value) => sum + value * value, 0)) || 1;
   for (const token of Object.keys(counts)) counts[token] /= norm;
@@ -34,8 +34,8 @@ function documentWeight(document, now, halfLifeDays) {
 }
 
 function keywords(documents, allDocuments, now, halfLifeDays, limit = 8) {
-  const scores = {};
-  const globalDf = {};
+  const scores = Object.create(null);
+  const globalDf = Object.create(null);
   for (const document of allDocuments) for (const token of new Set(tokenize(document.text))) globalDf[token] = (globalDf[token] || 0) + 1;
   for (const document of documents) {
     const weight = documentWeight(document, now, halfLifeDays);
@@ -47,7 +47,7 @@ function keywords(documents, allDocuments, now, halfLifeDays, limit = 8) {
 }
 
 function distribution(documents) {
-  const counts = {};
+  const counts = Object.create(null);
   let total = 0;
   for (const document of documents) for (const token of tokenize(document.text)) { counts[token] = (counts[token] || 0) + 1; total += 1; }
   for (const token of Object.keys(counts)) counts[token] /= total || 1;
@@ -104,7 +104,7 @@ export function modelTopics(input, options = {}) {
     else {
       const cluster = clusters[best.index];
       cluster.documents.push(document); cluster.vectors.push(documentVector);
-      const merged = {};
+      const merged = Object.create(null);
       for (const item of cluster.vectors) for (const [key, value] of Object.entries(item)) merged[key] = (merged[key] || 0) + value / cluster.vectors.length;
       cluster.centroid = merged;
     }

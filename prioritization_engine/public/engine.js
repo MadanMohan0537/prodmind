@@ -166,9 +166,9 @@ export function prioritize(input, options = {}) {
     ids.add(item.id);
   });
   const effortBaseline = percentile(opportunities.map(item => item.effort), 0.5);
-  const scored = opportunities.map(item => ({ ...scoreOpportunity(item, options.weights, effortBaseline), uncertaintyBand: simulateOpportunity(item, { ...options, effortBaseline }) }));
+  const scored = opportunities.map(item => ({ ...scoreOpportunity(item, options.weights, effortBaseline), uncertaintyBand: options.simulate === false ? null : simulateOpportunity(item, { ...options, effortBaseline }) }));
   const frontier = new Set(paretoFront(scored));
-  const ranked = scored.sort((a, b) => b.uncertaintyBand.p50 - a.uncertaintyBand.p50 || b.score - a.score || a.id.localeCompare(b.id)).map((item, index) => ({
+  const ranked = scored.sort((a, b) => (b.uncertaintyBand?.p50 ?? b.score) - (a.uncertaintyBand?.p50 ?? a.score) || b.score - a.score || a.id.localeCompare(b.id)).map((item, index) => ({
     ...item,
     rank: index + 1,
     paretoOptimal: frontier.has(item.id),
@@ -178,7 +178,7 @@ export function prioritize(input, options = {}) {
   return {
     schemaVersion: "1.0.0",
     generatedAt: new Date().toISOString(),
-    method: "transparent-weighted-score+monte-carlo+pareto-frontier+dependency-aware-selection",
+    method: options.simulate === false ? "transparent-weighted-score+pareto-frontier+dependency-aware-selection" : "transparent-weighted-score+monte-carlo+pareto-frontier+dependency-aware-selection",
     weights: normalizeWeights(options.weights),
     ranked,
     paretoFrontier: [...frontier],
