@@ -1,75 +1,192 @@
+<div align="center">
+
 # ProdMind
 
-[![ProdMind connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
+**An evidence-to-learning operating system for product teams.**
 
-Seven focused product-management modules, now connected through one evidence-to-learning workflow.
+[![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
+[![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-2563EB.svg)](LICENSE)
 
-ProdMind helps a product team move from customer feedback to reviewed opportunities, capacity-aware priorities, experiments and recorded decisions. The modules remain independently runnable; project 7 now provides their shared workspace and persistence.
+</div>
 
-```text
-Customer evidence → Understand → Find opportunities → Prioritize
-                  → Experiment → Human decision → Learning ledger
-```
+ProdMind connects seven focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, and records decisions without losing the original evidence.
 
-## Start with the connected workspace
+Every module remains independently runnable. Project 7 provides the connected workspace and shared lifecycle.
 
-The entry point is [Experiment & Learning Workspace](experiment-data-quality-auditor/). Its existing folder name is retained to avoid breaking links. The original event auditor is now a supporting component rather than a disconnected product.
+~~~text
+Customer feedback
+      ↓
+Normalize and validate
+      ↓
+Sentiment, topics and request intent
+      ↓
+Voice-of-Customer evidence
+      ↓
+Human-reviewed prioritization
+      ↓
+Experiment plan and event audit
+      ↓
+Human decision and learning ledger
+~~~
 
-1. Upload feedback with source IDs and dates.
-2. Inspect sentiment, topics, intents and the evidence dashboard.
-3. Review candidates and supply your business/effort estimates.
-4. Rank assessed opportunities within capacity.
-5. Create and lock an evidence-linked experiment plan.
-6. Audit a complete event snapshot against the plan.
-7. Record a human-reviewed decision and revisit the originating opportunity.
+## The seven modules
 
-## Modules
-
-| # | Project | Connection in the shared workflow |
+| # | Module | Responsibility |
 |---|---|---|
-| 01 | [Feedback Collector](feedback_collector/) | Normalizes and validates the source records |
-| 02 | [Sentiment Analyzer](sentiment_analyzer/) | Enriches those same records with sentiment evidence |
-| 03 | [Topic Modeler](topic_modeler/) | Assigns themes while retaining document IDs |
-| 04 | [Feature Request Detector](feature_request_detector/) | Attaches requests, intents and review flags |
-| 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Summarizes the enriched evidence |
-| 06 | [Prioritization Engine](prioritization_engine/) | Ranks human-assessed, evidence-linked opportunities |
-| 07 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Persists the workflow, locks plans, audits events and records linked decisions |
+| 01 | [Feedback Collector](feedback_collector/) | Validates and normalizes source records while preserving identities |
+| 02 | [Sentiment Analyzer](sentiment_analyzer/) | Adds explainable sentiment, confidence and review flags |
+| 03 | [Topic Modeler](topic_modeler/) | Discovers themes and retains document-to-topic links |
+| 04 | [Feature Request Detector](feature_request_detector/) | Detects requests, bugs and intent evidence |
+| 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Summarizes trends, segments and source evidence |
+| 06 | [Prioritization Engine](prioritization_engine/) | Ranks explicitly reviewed opportunities against capacity and dependencies |
+| 07 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Persists runs, locks plans, audits events and records decisions |
 
-These connections are implemented as imports of the original module functions, with integration tests checking the joins. They are not just navigation links. Existing standalone D1 databases are not automatically synchronized or migrated; export existing feedback into the connected workspace when needed.
+These are implementation-level connections. Project 7 imports the actual functions from Projects 1–6 rather than copying their algorithms or linking to unrelated demos.
 
-## Local verification
+## End-to-end workflow
 
-Node.js 22.13 or later is required for the integration tests' built-in SQLite support. No package installation or paid API is needed:
+1. Upload feedback with source IDs and timestamps.
+2. Run normalization, sentiment, topic and request analysis.
+3. Inspect the generated Voice-of-Customer evidence.
+4. Review suggested opportunities and enter product estimates.
+5. Rank reviewed opportunities within capacity.
+6. Create an experiment tied to its opportunity and evidence.
+7. Lock the plan before prospective exposure begins.
+8. Audit exposure and conversion events.
+9. Record an analyst-reviewed human decision.
+10. Trace the result back to the originating feedback.
 
-```bash
+## Evidence lineage
+
+~~~text
+feedback ID
+  → sentiment and intent evidence
+  → topic
+  → opportunity
+  → priority decision
+  → experiment
+  → readout
+  → reviewed decision
+~~~
+
+Clients cannot replace server-owned evidence links during prioritization. Experiments retain an opportunity snapshot so later reprioritization does not rewrite the original rationale.
+
+## Human decision gates
+
+- Opportunity scoring requires explicit PM review.
+- Business value, user value, effort, risk and strategic alignment are supplied estimates.
+- Prospective plans must be locked before exposure begins.
+- Retrospective analyses cannot authorize shipping.
+- Event defects block aggregate release.
+- Shipping requires a clean latest audit, mature observation window, planned samples, completed guardrail reviews, analyst review and a named reviewer.
+
+Counts and rate differences are descriptive. ProdMind does not claim statistical significance, causality or automatic shipping.
+
+## Run all tests
+
+Requirements: Node.js 22.13 or later.
+
+~~~bash
 git clone https://github.com/MadanMohan0537/prodmind.git
 cd prodmind
 node scripts/test-all.mjs
-```
+~~~
 
-The runner tests all seven JavaScript modules, including the complete HTTP workflow and real SQLite persistence. Optional Python ML extras in the original projects are not covered by this runner.
+The root runner tests all seven JavaScript modules, including the evidence-to-learning lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage and decision gates.
 
-## Deployment
+Optional Python ML research folders are not included in the root JavaScript runner.
 
-Use the [project 7 deployment instructions](experiment-data-quality-auditor/README.md#cloudflare-deployment) for one Cloudflare Worker serving the shared interface and API. It requires one D1 database and a server-side API token. Existing project deployments are unchanged. No deployment or data migration happens merely by cloning or merging this code.
+## Run one module
 
-## Product boundaries
+Each project retains its own examples, schemas, tests, Worker and documentation:
 
-- Business estimates and experiment decisions require human review.
-- The connected version uses deterministic rules/clustering and lightweight ranking, not a paid LLM.
-- The experiment auditor validates events; it does not calculate statistical significance or prove causality.
-- One installation is one trusted team. Shared-token access is not multi-tenant authorization.
-- Feedback and workflow state are saved in D1, not browser storage.
-- Cloudflare quotas still apply; free software does not promise unlimited free hosting.
+~~~bash
+cd feedback_collector
+npm test
+~~~
 
-See [the shared contracts, architecture and limits](docs/CONNECTED_WORKFLOW.md).
+Standalone databases remain independent. The connected workspace does not silently read or migrate them. Existing feedback must be exported through the documented integration boundary.
+
+## Deploy the connected workspace
+
+~~~bash
+cd experiment-data-quality-auditor
+npx wrangler d1 create prodmind-workflow
+~~~
+
+Replace the placeholder database ID in wrangler.jsonc, then:
+
+~~~bash
+npx wrangler d1 migrations apply prodmind-workflow --remote
+npx wrangler secret put API_TOKEN
+npx wrangler deploy
+~~~
+
+The Worker serves the responsive interface and authenticated API. Workflow state is stored in D1 rather than browser storage.
+
+## Security boundaries
+
+- API access fails closed without the token or database binding.
+- Mutations require the latest workflow revision.
+- Conditional updates prevent stale overwrites.
+- Raw experiment user IDs are audited but excluded from reports.
+- Feedback text and supplied identifiers are persisted; use pseudonymous data.
+- One deployment represents one trusted team. A shared token is not tenant isolation.
+- Configure abuse protection before broad public exposure.
+
+## Current limits
+
+| Area | Limit |
+|---|---|
+| Feedback | 100 records per run |
+| Feedback text | 4,000 characters per record |
+| Experiments | 20 per run |
+| Readouts | 20 per experiment |
+| Event snapshot | 10,000 events and 2 MB |
+| Persisted run | 900 KB |
+| Experiment window | 1–90 days |
+| Outcome model | Two variants and binary conversion |
+
+No paid model or external inference service is required for the tested workflow. Cloudflare quotas still apply.
 
 ## Roadmap planning companion
 
-The standalone [AI Roadmap Optimizer](https://github.com/MadanMohan0537/ai-roadmap-optimizer) extends the lifecycle after prioritization. It compares balanced, growth, revenue, retention and low-risk delivery scenarios while enforcing team capacity, dependencies, mandatory commitments and deadlines.
+The standalone [AI Roadmap Optimizer](https://github.com/MadanMohan0537/ai-roadmap-optimizer) continues the lifecycle after prioritization. It compares five delivery strategies while enforcing capacity, dependencies, commitments and deadlines.
 
-The current handoff is deliberate and transparent: export reviewed initiatives from ProdMind and map them to the optimizer's documented feature contract. There is no live synchronization yet, so changes in one repository do not silently modify the other. A future integration can preserve opportunity IDs and evidence links while keeping roadmap approval with accountable product and engineering leaders.
+The current handoff is explicit rather than automatically synchronized. A future adapter can preserve opportunity and evidence IDs without silently mutating either product.
+
+## Repository structure
+
+~~~text
+.
+├── feedback_collector/
+├── sentiment_analyzer/
+├── topic_modeler/
+├── feature_request_detector/
+├── voice_of_customer_dashboard/
+├── prioritization_engine/
+├── experiment-data-quality-auditor/
+├── docs/
+├── scripts/
+└── README.md
+~~~
+
+## Documentation
+
+- [Connected contracts, architecture and limits](docs/CONNECTED_WORKFLOW.md)
+- [Experiment workspace requirements](experiment-data-quality-auditor/docs/PRD.md)
+- Individual architecture and usage guides inside every module
+
+## Product principles
+
+- Preserve evidence before generating recommendations.
+- Keep scoring inputs and assumptions visible.
+- Use deterministic code for validation and statistics-sensitive gates.
+- Require human review for business estimates and consequential decisions.
+- Fail closed when data quality is insufficient.
+- Claim only what the code and tests support.
 
 ## License
 
-[Apache-2.0](LICENSE) for the original modules, except where a component provides its own license. New project 7 code is [MIT-licensed](experiment-data-quality-auditor/LICENSE); imported Apache-2.0 modules retain their notices and license.
+The original modules use [Apache License 2.0](LICENSE), except where a component provides its own license. Project 7 includes an [MIT license](experiment-data-quality-auditor/LICENSE). Imported modules retain their original notices.
