@@ -1,136 +1,369 @@
+<div align="center">
+
 # Project 7: Experiment & Learning Workspace
 
-A connected workspace for ProdMind's feedback-to-decision lifecycle. It now composes projects 1–6 and preserves their evidence links, rather than operating only as a separate event validator.
+**Connect customer evidence to experiments, reviewed decisions, and reusable learning.**
 
-**Repository path stays `experiment-data-quality-auditor/`. No second project 7 folder is needed.** The original auditor and CLI remain available within this project.
+[![ProdMind lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
+[![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
+[![Cloudflare D1](https://img.shields.io/badge/storage-Cloudflare%20D1-F38020)](https://developers.cloudflare.com/d1/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2563EB.svg)](LICENSE)
 
-## What you can do
+</div>
 
-- Upload feedback and run the actual Collector, Sentiment Analyzer, Topic Modeler and Request Detector implementations.
-- Inspect a Voice-of-Customer dashboard built from those same enriched records.
-- Review topic-derived opportunities, enter your own estimates and rank them with project 6.
-- Select an opportunity from the capacity portfolio and create an experiment tied to its source evidence.
-- Lock a prospective plan before exposure; label historical analyses as retrospective.
-- Audit raw exposure/conversion snapshots for duplicate IDs, variant crossover, missing exposure, invalid timestamps and window violations.
-- Record a human decision after the audit, sample, duration and guardrail gates pass.
-- Reopen the saved run and trace the decision back to the opportunity and original customer records.
+Project 7 is the connected workspace for ProdMind. It runs the implementations from Projects 1–6, preserves their evidence links, and adds the experiment lifecycle that turns a prioritized opportunity into documented learning.
 
-## Interface and persistence
+The repository path remains 'experiment-data-quality-auditor/' because the original event auditor is still a core component. No duplicate Project 7 folder is required.
 
-The light/dark responsive interface is served by `src/product-worker.js`. It calls real server APIs and uses D1 for authoritative state. The API token is kept only in the open page's memory, never in localStorage or uploaded content. Reloading requires re-entering it.
+~~~text
+Customer feedback
+      ↓
+Sentiment, topics and request intent
+      ↓
+Voice-of-Customer evidence
+      ↓
+Human-reviewed opportunity scoring
+      ↓
+Capacity-aware prioritization
+      ↓
+Evidence-linked experiment plan
+      ↓
+Event quality audit
+      ↓
+Analyst-reviewed decision
+      ↓
+Learning ledger
+~~~
 
-One installation serves one trusted team. All authenticated users share access; names entered as reviewers are user-supplied attribution, not verified identities. Keep production secrets and customer data out of Git.
+## Why this project exists
 
-## Run tests
+Product teams often lose the connection between an experiment and the customer problem that motivated it. They may also interpret conversion totals before checking whether exposure and conversion events are trustworthy.
 
-From the repository root:
+This workspace addresses both problems:
 
-```bash
+- **Traceability:** every experiment can be followed back to its opportunity and original feedback records.
+- **Quality control:** defective event snapshots are blocked before aggregates are released.
+- **Human accountability:** business estimates, statistical interpretation and shipping decisions remain explicit human responsibilities.
+
+## What works today
+
+### Discovery and evidence
+
+- Accepts JSON arrays, '{records: [...]}' and Feedback Collector '{data: [...]}' exports
+- Normalizes records with the real Feedback Collector implementation
+- Adds sentiment, topic and request-intent analysis
+- Builds a Voice-of-Customer dashboard from the same enriched evidence
+- Preserves distinct source IDs even when two records contain identical text
+- Flags duplicate-text candidates without silently deleting customer evidence
+
+### Opportunity review
+
+- Suggests opportunities from discovered topics
+- Requires a PM to review every scoring factor
+- Captures owner, rationale, dependencies and capacity
+- Rejects missing assessments and dependency cycles
+- Uses Project 6 for deterministic capacity-aware prioritization
+- Prevents clients from replacing server-owned evidence links
+
+### Experiment and learning
+
+- Creates an experiment from a selected portfolio opportunity
+- Stores an immutable snapshot of its original rationale and evidence
+- Supports prospective and retrospective modes
+- Locks prospective plans before exposure begins
+- Validates raw exposure and conversion events
+- Blocks readouts with duplicate IDs, crossover, orphan conversions, invalid time order or window violations
+- Requires guardrail, sample, duration and analyst-review gates
+- Records ship, iterate or reject decisions against the latest audit
+- Returns an opportunity-linked learning ledger
+
+## Working interface
+
+The responsive light/dark interface is served from [public/](public/) by [src/product-worker.js](src/product-worker.js).
+
+From one workspace, a product manager can:
+
+1. Enter an API token.
+2. Upload feedback or load the synthetic sample.
+3. Inspect enriched evidence and the Voice-of-Customer dashboard.
+4. Review and rank opportunities.
+5. create and lock an experiment plan.
+6. Upload an event snapshot.
+7. Review audit results.
+8. Record a human decision.
+9. Reopen the saved run and inspect the learning ledger.
+
+The interface calls the Worker API. It is not a disconnected localStorage demonstration. The API token stays in page memory and must be entered again after reloading.
+
+## Run the tests
+
+Requirements: Node.js 22.13 or later.
+
+From the ProdMind repository root:
+
+~~~bash
 node experiment-data-quality-auditor/scripts/test-all.mjs
-```
+~~~
 
-Or run only project 7:
+Run only Project 7:
 
-```bash
+~~~bash
 cd experiment-data-quality-auditor
 node --test
-```
+~~~
 
-Node 22.13+ is required. Tests use Node's real SQLite engine behind the D1 query interface, including migrations, revision history, conflict detection and a complete HTTP lifecycle. They do not substitute for live Cloudflare or browser verification.
+The tests cover:
 
-## Cloudflare deployment
+- original event-auditor behavior;
+- the complete discovery-to-learning lifecycle;
+- real SQLite migrations and revision triggers;
+- authenticated HTTP routes;
+- persistence across reloads;
+- stale and concurrent write protection;
+- evidence-lineage enforcement;
+- prospective and retrospective rules;
+- event-quality, sample, duration and guardrail gates.
 
-From this project folder, with Wrangler installed or available through npx:
+Local tests exercise SQLite through a D1-compatible adapter. They do not claim a live Cloudflare deployment or browser visual test.
 
-```bash
+## Deploy to Cloudflare
+
+### 1. Create the database
+
+~~~bash
+cd experiment-data-quality-auditor
 npx wrangler d1 create prodmind-workflow
-```
+~~~
 
-Copy the returned database ID into the `database_id` placeholder in `wrangler.jsonc`. Do not reuse an existing module's database: this migration creates the connected workspace's own tables.
+Copy the returned database ID into the 'database_id' field in [wrangler.jsonc](wrangler.jsonc).
 
-```bash
+### 2. Apply migrations
+
+~~~bash
 npx wrangler d1 migrations apply prodmind-workflow --local
-npx wrangler secret put API_TOKEN
 npx wrangler d1 migrations apply prodmind-workflow --remote
+~~~
+
+### 3. Configure authentication
+
+~~~bash
+npx wrangler secret put API_TOKEN
+~~~
+
+Use a high-entropy token. Never commit it to Git.
+
+For local development, add 'API_TOKEN=your-local-token' to the ignored '.dev.vars' file.
+
+### 4. Run or deploy
+
+~~~bash
+npx wrangler dev
 npx wrangler deploy
-```
+~~~
 
-Use a high-entropy token, and configure access/abuse controls before exposing to untrusted users. The static interface is public but does not contain customer records; all data endpoints require authorization. Without D1 or the token the API fails closed. The existing six modules do not need separate deployments for the integrated path: their implementation modules are bundled by Wrangler.
-
-For local development, put `API_TOKEN=<your-local-token>` in the ignored `.dev.vars`, apply the local migration, then use `npx wrangler dev`.
-
-No hosted deployment has been verified as part of this change. Free-tier CPU, storage and request quotas apply; the connected ranking skips Monte Carlo to reduce computation. No model API is called.
-
-## Start a run
-
-Upload a JSON array, `{records:[...]}`, or Collector `{data:[...]}` export through the UI. Each source record needs a unique `id`, feedback text, and timestamp. Collector's `created_at` and serialized metadata are mapped at the server boundary. Use [the synthetic sample](public/sample-feedback.json) to try discovery without customer data.
-
-All distinct source IDs are retained, even if their text matches. Similar-text groups are flagged for review. Records are not equivalent to unique affected customers. Topic labels, sentiment and request classifications are rule-based suggestions and need review.
-
-The PM must fill every scoring factor, owner and rationale. No default business impact, effort or confidence is quietly inserted into the connected workflow. Dependents require assessed dependencies; cycles are rejected.
+The six earlier modules do not require separate deployments for this connected path. Wrangler bundles their imported implementations into Project 7.
 
 ## API
 
-Send `Authorization: Bearer <token>` and JSON for POST requests. All mutation requests after run creation require the latest integer `version`.
+All data endpoints require:
 
-| Method | Path | Operation |
+~~~http
+Authorization: Bearer <token>
+Content-Type: application/json
+~~~
+
+| Method | Endpoint | Purpose |
 |---|---|---|
-| GET | /api/health | Public configuration status |
-| POST | /api/runs | Create and save discovery from title + records |
-| GET | /api/runs | List latest 50 runs |
-| GET | /api/runs/:run | Reload full saved workflow |
-| POST | /api/runs/:run/rank | Save human assessments and capacity ranking |
-| POST | /api/runs/:run/experiments | Create an evidence-linked draft |
+| GET | /api/health | Public service status |
+| POST | /api/runs | Create discovery from feedback |
+| GET | /api/runs | List the 50 latest runs |
+| GET | /api/runs/:run | Reload a workflow |
+| POST | /api/runs/:run/rank | Save reviewed scoring and ranking |
+| POST | /api/runs/:run/experiments | Create an experiment draft |
 | POST | /api/runs/:run/experiments/:id/start | Lock the plan |
-| POST | /api/runs/:run/experiments/:id/readout | Audit and save a complete event snapshot |
-| POST | /api/runs/:run/experiments/:id/decision | Record reviewed outcome against latest audit |
-| GET | /api/runs/:run/learning | Return opportunity-linked decisions |
-| POST | /api/audit | Original standalone, non-persistent event audit |
+| POST | /api/runs/:run/experiments/:id/readout | Audit and save an event snapshot |
+| POST | /api/runs/:run/experiments/:id/decision | Record the reviewed outcome |
+| GET | /api/runs/:run/learning | Retrieve linked learning |
+| POST | /api/audit | Run the original stateless event audit |
 
-A stale version returns HTTP 409. Reload before resubmitting; writes are not automatically retried. This prevents lost updates and duplicate decisions. The SQLite revision journal is updated transactionally with each saved snapshot.
+Every mutation after run creation requires the latest integer 'version'. A stale request receives HTTP 409 and must reload before resubmission. Updates are never silently retried.
 
-## Experiment contract
+## Feedback contract
 
-A draft requires `opportunityId`, hypothesis, distinct control/treatment descriptions, primary metric and conversion definition, owner, UTC start/end, an integer `minimumPerArm`, `sampleSizeRationale`, and guardrails with `name` and `criterion`. The UI captures one guardrail; the API accepts up to ten. The plan becomes immutable when started.
+Each record requires:
 
-Readouts use the existing auditor envelope with `experiment_id` equal to the server-generated experiment ID and `events` containing `event_id`, `user_id`, `experiment_id`, `variant`, `type`, and `timestamp`. Variants are `control` or `treatment`; types are `exposure` or `conversion`. Event timestamps require exact UTC milliseconds, for example `2026-09-06T10:00:00.000Z`. Upload a full snapshot, not incremental batches. Partial-window snapshots can create false orphan findings.
+- a unique source 'id';
+- feedback 'text'; and
+- a valid timestamp in 'createdAt', 'created_at' or 'timestamp'.
 
-A decision includes latest `auditId`, `outcome` (ship/iterate/reject), reviewer, rationale, analyst `statisticalReview`, and every guardrail's name, passed boolean and evidence. A clean audit, completed window and per-arm sample target are required for every terminal decision. Retrospective mode cannot record ship. Failed guardrails also prevent ship. There is no emergency-stop or cancellation endpoint in this version.
+Text is limited to 4,000 characters. A discovery run accepts at most 100 records. Collector metadata serialized as JSON is parsed at the integration boundary.
+
+Identical text from distinct source IDs remains as distinct evidence. Evidence count means records, not proven unique affected customers.
+
+## Experiment-plan contract
+
+A draft requires:
+
+- selected 'opportunityId';
+- hypothesis;
+- distinct control and treatment descriptions;
+- primary metric and conversion definition;
+- owner;
+- exact UTC start and end times;
+- integer 'minimumPerArm' and sample-size rationale;
+- one to ten named guardrails with explicit criteria.
+
+The plan becomes immutable when started. Prospective plans must be locked before their start time. Historical work must use retrospective mode.
+
+## Event-audit contract
+
+Readouts accept one complete snapshot:
+
+~~~json
+{
+  "experiment_id": "server-generated-experiment-id",
+  "events": [
+    {
+      "event_id": "event-001",
+      "experiment_id": "server-generated-experiment-id",
+      "user_id": "pseudonymous-user-id",
+      "variant": "control",
+      "type": "exposure",
+      "timestamp": "2026-09-06T10:00:00.000Z"
+    }
+  ]
+}
+~~~
+
+Supported variants are 'control' and 'treatment'. Supported types are 'exposure' and 'conversion'. Upload a complete snapshot rather than incremental batches; incomplete windows can create misleading orphan findings.
+
+Any implemented defect blocks the entire aggregate. The system does not silently discard bad rows and release partial results.
+
+## Decision contract
+
+A terminal decision includes:
+
+- the latest 'auditId';
+- outcome: ship, iterate or reject;
+- reviewer;
+- rationale;
+- analyst 'statisticalReview';
+- every guardrail name, pass/fail judgment and evidence.
+
+A clean latest audit, completed window and minimum sample per arm are required. Failed guardrails block shipping. Retrospective experiments may record learning but cannot produce a ship decision.
 
 ## Statistical boundary
 
-Rates and their absolute difference are **descriptive only**. This workflow does not calculate sample size, statistical significance or SRM. The reviewer must supply those assessments and review stopping-rule validity separately. A sample target is a user-entered plan, not a claim of statistical power. The system records a human shipping decision; it never generates one automatically.
+The workspace reports visitor counts, conversion counts, rates and their absolute difference. These are **descriptive**, not proof of treatment effect.
 
-The separate AI Experimentation Copilot repository is not a live dependency. The meaningful connection implemented here is between the seven modules inside ProdMind.
+It does not calculate:
+
+- required sample size;
+- statistical significance;
+- confidence intervals;
+- sample-ratio mismatch;
+- sequential-testing corrections;
+- novelty effects; or
+- causal validity.
+
+The entered sample target is a plan supplied by the team. An analyst must review the experiment design, statistical results and stopping behavior separately. The software records a human decision; it does not generate one automatically.
+
+## Persistence and concurrency
+
+[migrations/0001_product_runs.sql](migrations/0001_product_runs.sql) creates:
+
+- 'product_runs' for bounded JSON workflow snapshots; and
+- 'product_run_history' for revision and stage metadata.
+
+Each update uses a conditional version check. SQL triggers append revision history in the same transaction. The journal stores stage transitions, not complete historical snapshots.
+
+Raw experiment user IDs are processed during auditing but are not persisted in the report. Feedback text and supplied customer identifiers are persisted.
+
+## Security model
+
+- The API fails closed when 'API_TOKEN' or the D1 binding is missing.
+- Same-origin checks protect API requests from unrelated browser origins.
+- Responses disable caching and set defensive content headers.
+- One deployment represents one trusted team.
+- Reviewer names are user-supplied attribution, not verified identities.
+- Shared-token authentication is not account-level or tenant-level authorization.
+
+Before using real customer data, add organization-appropriate identity, authorization, retention, audit access, backup and abuse controls.
+
+## Project structure
+
+~~~text
+experiment-data-quality-auditor/
+├── src/
+│   ├── pipeline.js          Projects 1–6 integration
+│   ├── lifecycle.js         Experiment state machine
+│   ├── store.js             D1 persistence and version checks
+│   ├── product-worker.js    Connected HTTP application
+│   ├── audit.js             Deterministic event auditor
+│   ├── worker.js            Original stateless audit endpoint
+│   └── cli.js               Local audit CLI
+├── public/                  Responsive working interface
+├── migrations/              D1 schema and revision triggers
+├── tests/                   Audit and lifecycle tests
+├── scripts/test-all.mjs     Seven-project test runner
+├── docs/                    PRD and connected architecture
+├── examples/                Synthetic audit fixture
+├── wrangler.jsonc
+└── README.md
+~~~
 
 ## Original auditor CLI
 
-```bash
+~~~bash
 node src/cli.js examples/clean.json
-```
+~~~
 
-Exit 0: checks passed; exit 2: findings block aggregates; exit 1: invalid input/file. The fixture is deliberately tiny and demonstrates data handling, not experimental significance. Core audit functionality remains compatible.
+| Exit code | Meaning |
+|---|---|
+| 0 | Implemented checks passed |
+| 1 | Invalid input or file error |
+| 2 | Quality findings blocked aggregate release |
 
-## Source map
+The included fixture proves data handling only. It is not evidence of statistical significance.
 
-- `src/pipeline.js`: adapters and real imports for projects 1–6
-- `src/lifecycle.js`: evidence-linked experiment and decision state machine
-- `src/store.js`: persisted runs and optimistic concurrency
-- `src/product-worker.js`: unified authenticated HTTP surface
-- `src/audit.js`, `src/worker.js`, `src/cli.js`: original auditor interfaces
-- `public/`: working interface and clearly labeled synthetic data
-- `migrations/`: new D1 tables and transactional revision journal
-- `tests/`: original audit tests plus integration, API and SQLite tests
-- Repository-root `.github/workflows/experiment-data-quality-auditor.yml`: runs all seven modules
+## Limits
 
-The redundant nested workflow template has been removed. [Shared architecture and limits](docs/CONNECTED_WORKFLOW.md) document what is and is not connected.
+| Area | Limit |
+|---|---|
+| Feedback | 100 records per run |
+| Feedback text | 4,000 characters per record |
+| Experiments | 20 per run |
+| Readouts | 20 per experiment |
+| Event snapshot | 10,000 events and 2 MB |
+| Persisted workflow | 900 KB |
+| Listed workflows | 50 most recent |
+| Experiment window | 1–90 days |
+| Outcome model | Two variants and binary conversion |
 
-## Research and limitations
+There is no live vendor connector, scheduled collection, automatic legacy-database synchronization, traffic assignment, missing-source reconciliation, trained model, multi-tenant authorization or unlimited hosting claim.
 
-Experiment logging defects can undermine statistical interpretation; detecting a defect does not establish its root cause. See [Microsoft's data-quality discussion](https://www.microsoft.com/en-us/research/group/experimentation-platform-exp/articles/data-quality-fundamental-building-blocks-for-trustworthy-a-b-testing-analysis) and [SRM taxonomy](https://www.microsoft.com/en-us/research/publication/diagnosing-sample-ratio-mismatch-in-online-controlled-experiments-a-taxonomy-and-rules-of-thumb-for-practitioners/).
+## Documentation
 
-No live vendor connector, automatic legacy-database sync, event assignment, missing-source reconciliation, trained model, verified causal inference, multi-tenant permissions or unlimited free hosting is claimed. Raw experiment users are not saved in audit reports; source feedback is saved, so use pseudonymous data and define retention before real customer use.
+- [Connected architecture and contracts](docs/CONNECTED_WORKFLOW.md)
+- [Product requirements](docs/PRD.md)
+- [Synthetic feedback sample](public/sample-feedback.json)
+- [Event-audit fixture](examples/clean.json)
+
+## Relationship to the other projects
+
+Project 7 directly imports:
+
+- Feedback Collector normalization
+- Sentiment Analyzer enrichment
+- Topic Modeler clustering
+- Feature Request Detector intent analysis
+- Voice-of-Customer Dashboard aggregation
+- Prioritization Engine ranking
+
+Their standalone APIs and databases remain available and independent. The connected deployment does not silently migrate or modify existing module databases.
+
+The external AI Roadmap Optimizer is a documented planning companion, not a live dependency.
 
 ## License
 
-New project 7 code is [MIT](LICENSE). Imported original ProdMind modules remain Apache-2.0; retain the repository's root license when distributing the connected application.
+New Project 7 code is [MIT licensed](LICENSE). Imported ProdMind modules retain the repository-level [Apache License 2.0](../LICENSE).
