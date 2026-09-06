@@ -22,7 +22,7 @@ async function started() {let run=await ranked();run=addExperiment(run,plan(run.
 const decision = run => ({auditId:run.experiments[0].audits.at(-1).id,outcome:'iterate',reviewer:'Test analyst',rationale:'Need a powered experiment',statisticalReview:'Insufficient power; iterate, do not infer a winner',guardrailReviews:[{name:'Support rate',passed:true,evidence:'Synthetic test evidence'}]});
 const monitoring = () => ({title:'Onboarding outcome',metric:{name:'Activation',unit:'rate'},direction:'increase',targetChange:.05,baseline:['2026-08-01','2026-08-02','2026-08-03'].map((day,i)=>({period:`${day}T00:00:00.000Z`,value:.3+i*.01})),observed:['2026-09-04','2026-09-05','2026-09-06'].map(day=>({period:`${day}T00:00:00.000Z`,value:.35})),guardrails:[{name:'Support rate',kind:'maximum',threshold:.2,current:.1}],owner:'Test PM',reviewCadence:'weekly'});
 
-test('all seven modules connect with original evidence IDs and a learning result',async()=>{
+test('all eight modules connect with original evidence IDs and a monitored learning result',async()=>{
   let run=await started();
   const id=run.experiments[0].id;
   assert.equal(run.dashboard.summary.totalFeedback,run.evidence.length);
@@ -175,4 +175,13 @@ test('prototype-like words remain finite topic features',async()=>{
   const run=await discover(input,now);
   assert.ok(run.topics.assignments.every(a=>Number.isFinite(a.similarity)));
   assert.ok(run.topics.topics.every(t=>t.keywords.every(k=>Number.isFinite(k.score))));
+});
+
+test('workspace UI exposes the eighth connected monitoring stage',()=>{
+  const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
+  const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+  assert.match(html,/8 Monitor/);
+  assert.match(html,/all eight modules/);
+  assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
+  assert.match(app,/Outcome reviews/);
 });
