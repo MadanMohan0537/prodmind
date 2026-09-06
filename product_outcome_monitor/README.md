@@ -40,7 +40,8 @@ The MVP applies these ideas conservatively. It surfaces patterns for review and 
 - Minimum and maximum guardrail thresholds
 - Limited-baseline warning
 - Deterministic follow-up actions
-- Authenticated, stateless Cloudflare Worker API
+- Authenticated Cloudflare Worker API with a direct Project 7 ledger endpoint
+- Persistent closed-loop outcome reviews when invoked through the Project 7 workspace
 - Responsive light/dark interface and synthetic sample
 - Core, integration-contract and HTTP tests
 
@@ -61,6 +62,7 @@ For local development, place 'API_TOKEN=your-local-token' in the ignored '.dev.v
 |---|---|---|
 | GET | /api/health | Public configuration status |
 | POST | /api/analyze | Analyze one complete monitoring snapshot |
+| POST | /api/from-learning | Analyze a Project 7 ledger entry plus monitoring observations |
 
 The analysis endpoint requires 'Authorization: Bearer <token>' and JSON. Requests are limited to 500 KB.
 
@@ -83,7 +85,7 @@ The response includes baseline statistics, latest change, EWMA points, control-l
 
 ## Project 7 handoff
 
-'fromLearningDecision' maps Project 7 learning-ledger identifiers and evidence IDs into a monitoring-plan draft. Metrics, baseline, target, owner and cadence still require explicit product-team input.
+'fromLearningDecision' accepts Project 7's real nested learning-ledger record and maps its opportunity, experiment, decision and evidence identities into a monitoring plan. Metrics, baseline, target, owner and cadence still require explicit product-team input.
 
 The connection preserves lineage:
 
@@ -91,7 +93,7 @@ The connection preserves lineage:
 feedback → opportunity → experiment → decision → monitored outcome
 ~~~
 
-There is no silent database synchronization. This stateless MVP accepts a complete snapshot.
+The integrated Project 7 workspace exposes `POST /api/runs/:runId/learning/:experimentId/monitor`. It performs this analysis and saves the outcome review into the same versioned D1 product run. The standalone Project 8 Worker remains useful for stateless analysis through `/api/analyze` and `/api/from-learning`.
 
 ## Analytical boundary
 
