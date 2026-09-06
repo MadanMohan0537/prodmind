@@ -1,5 +1,6 @@
 import {audit} from './audit.js';
 import {requireText, number} from './pipeline.js';
+import {analyzeOutcome, fromLearningDecision} from '../../product_outcome_monitor/src/monitor.js';
 
 const date = (value, name) => {
   requireText(value, name, 40);
@@ -31,7 +32,7 @@ export function addExperiment(run, input, now = new Date().toISOString()) {
   if (!Array.isArray(plan.guardrails) || !plan.guardrails.length || plan.guardrails.length > 10) throw new Error('Define 1–10 guardrails');
   plan.guardrails = plan.guardrails.map(g => ({name: requireText(g.name, 'guardrail name', 100), criterion: requireText(g.criterion, 'guardrail acceptance criterion', 500)}));
   if (new Set(plan.guardrails.map(g => g.name)).size !== plan.guardrails.length) throw new Error('Guardrail names must be unique');
-  const experiment = {id: crypto.randomUUID(), opportunityId: opportunity.id, evidenceIds: [...opportunity.evidenceIds], opportunitySnapshot: structuredClone(opportunity), plan, status: 'draft', createdAt: now, audits: [], decision: null};
+  const experiment = {id: crypto.randomUUID(), opportunityId: opportunity.id, evidenceIds: [...opportunity.evidenceIds], opportunitySnapshot: structuredClone(opportunity), plan, status: 'draft', createdAt: now, audits: [], decision: null, outcomeReviews: []};
   return {...run, stage: 'experimenting', experiments: [...run.experiments, experiment]};
 }
 
@@ -90,7 +91,7 @@ export function recordDecision(run, id, input, now = new Date().toISOString()) {
       return {name: g.name, passed: g.passed, evidence: requireText(g.evidence, 'guardrail evidence')};
     });
     if (input.outcome === 'ship' && (e.plan.mode !== 'prospective' || guardrails.some(g => !g.passed))) throw new Error('Shipping requires a prospective plan and passed guardrails');
-    e.decision = {auditId: latest.id, outcome: input.outcome, reviewer: requireText(input.reviewer, 'reviewer', 100), rationale: requireText(input.rationale, 'decision rationale'), statisticalReview: requireText(input.statisticalReview, 'analyst review of significance, SRM and stopping rules'), guardrailReviews: guardrails, decidedAt: now, method: 'human-reviewed-not-automated-inference'};
+    e.decision = {id: crypto.randomUUID(), auditId: latest.id, outcome: input.outcome, reviewer: requireText(input.reviewer, 'reviewer', 100), rationale: requireText(input.rationale, 'decision rationale'), statisticalReview: requireText(input.statisticalReview, 'analyst review of significance, SRM and stopping rules'), guardrailReviews: guardrails, decidedAt: now, method: 'human-reviewed-not-automated-inference'};
     e.status = 'decided';
     return e;
   });
@@ -98,5 +99,18 @@ export function recordDecision(run, id, input, now = new Date().toISOString()) {
 }
 
 export function learningLedger(run) {
-  return run.experiments.filter(e => e.decision).map(e => ({experimentId: e.id, opportunityId: e.opportunityId, evidenceIds: e.evidenceIds, decision: e.decision}));
+  return run.experiments.filter(e => e.decision).map(e => ({experimentId: e.id, opportunityId: e.opportunityId, decisionId: e.decision.id ?? e.decision.auditId, evidenceIds: e.evidenceIds, decision: e.decision, outcomeReviews: e.outcomeReviews ?? []}));
+}
+
+export function recordOutcomeReview(run, id, input, now = new Date().toISOString()) {
+  const next = update(run, id, e => {
+    if (e.status !== 'decided' || !e.decision) throw new Error('A completed human decision is required before outcome monitoring');
+    e.outcomeReviews ??= [];
+    if (e.outcomeReviews.length >= 20) throw new Error('Maximum 20 outcome reviews per experiment');
+    const ledgerEntry = {experimentId: e.id, opportunityId: e.opportunityId, decisionId: e.decision.id ?? e.decision.auditId, evidenceIds: e.evidenceIds, decision: e.decision};
+    const result = analyzeOutcome(fromLearningDecision(ledgerEntry, input));
+    e.outcomeReviews.push({id: crypto.randomUUID(), createdAt: now, ...result});
+    return e;
+  });
+  return {...next, stage: 'monitoring'};
 }

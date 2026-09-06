@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
 import {discover, rankOpportunities} from '../src/pipeline.js';
-import {addExperiment, startExperiment, recordReadout, recordDecision, learningLedger} from '../src/lifecycle.js';
+import {addExperiment, startExperiment, recordReadout, recordDecision, recordOutcomeReview, learningLedger} from '../src/lifecycle.js';
 import {RunStore, Conflict} from '../src/store.js';
 import worker from '../src/product-worker.js';
 
@@ -20,6 +20,7 @@ const events = id => ({experiment_id:id,events:[
 async function ranked() {const run=await discover(fixture(),now);return rankOpportunities(run,{assessments:[assessment(run.opportunities[0])],capacity:5});}
 async function started() {let run=await ranked();run=addExperiment(run,plan(run.ranking.ranked[0].id),now);return startExperiment(run,run.experiments[0].id,now);}
 const decision = run => ({auditId:run.experiments[0].audits.at(-1).id,outcome:'iterate',reviewer:'Test analyst',rationale:'Need a powered experiment',statisticalReview:'Insufficient power; iterate, do not infer a winner',guardrailReviews:[{name:'Support rate',passed:true,evidence:'Synthetic test evidence'}]});
+const monitoring = () => ({title:'Onboarding outcome',metric:{name:'Activation',unit:'rate'},direction:'increase',targetChange:.05,baseline:['2026-08-01','2026-08-02','2026-08-03'].map((day,i)=>({period:`${day}T00:00:00.000Z`,value:.3+i*.01})),observed:['2026-09-04','2026-09-05','2026-09-06'].map(day=>({period:`${day}T00:00:00.000Z`,value:.35})),guardrails:[{name:'Support rate',kind:'maximum',threshold:.2,current:.1}],owner:'Test PM',reviewCadence:'weekly'});
 
 test('all seven modules connect with original evidence IDs and a learning result',async()=>{
   let run=await started();
@@ -32,6 +33,10 @@ test('all seven modules connect with original evidence IDs and a learning result
   run=recordDecision(run,id,decision(run),later);
   assert.equal(run.stage,'learning');
   assert.deepEqual(learningLedger(run)[0].evidenceIds,run.experiments[0].evidenceIds);
+  run=recordOutcomeReview(run,id,monitoring(),'2026-09-12T00:00:00.000Z');
+  assert.equal(run.stage,'monitoring');
+  assert.equal(learningLedger(run)[0].outcomeReviews[0].decisionId,run.experiments[0].decision.id);
+  assert.deepEqual(learningLedger(run)[0].outcomeReviews[0].evidenceIds,run.experiments[0].evidenceIds);
 });
 test('distinct customers with identical text retain both evidence records',async()=>{
   const input=fixture();input.records[1].text=input.records[0].text;
@@ -138,11 +143,14 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const snapshot=events(id);snapshot.events.forEach(e=>e.timestamp=e.type==='conversion'?'2026-09-02T00:00:00.000Z':'2026-09-01T00:00:00.000Z');
   await post(`experiments/${id}/readout`,snapshot);
   await post(`experiments/${id}/decision`,decision(run));
+  await post(`learning/${id}/monitor`,monitoring());
   const reopened=await new RunStore(env.DB).get(run.id);
   const ledger=await(await worker.fetch(req(`/api/runs/${run.id}/learning`),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
-  assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,6);
+  assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
+  assert.equal(ledger.learning[0].outcomeReviews[0].decisionId,reopened.experiments[0].decision.id);
+  assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
 test('concurrent writers cannot overwrite a newer workflow version',async t=>{

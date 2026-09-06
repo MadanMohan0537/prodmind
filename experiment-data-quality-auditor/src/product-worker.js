@@ -1,5 +1,5 @@
 import {discover, rankOpportunities} from './pipeline.js';
-import {addExperiment, startExperiment, recordReadout, recordDecision, learningLedger} from './lifecycle.js';
+import {addExperiment, startExperiment, recordReadout, recordDecision, recordOutcomeReview, learningLedger} from './lifecycle.js';
 import {RunStore, Conflict} from './store.js';
 import auditor from './worker.js';
 
@@ -57,7 +57,7 @@ export default {
     try {
       if (url.pathname === '/api/runs' && request.method === 'GET') return json({runs: await store.list()});
       if (url.pathname === '/api/runs' && request.method === 'POST') return json(await store.create(await discover(await body(request))), 201);
-      const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision))?)?$/.exec(url.pathname);
+      const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
       const [, runId, action, experimentId, transition] = match;
       const run = await store.get(runId);
@@ -73,6 +73,7 @@ export default {
       else if (action === 'experiments' && transition === 'start') next = startExperiment(run, experimentId);
       else if (action === 'experiments' && transition === 'readout') next = recordReadout(run, experimentId, input);
       else if (action === 'experiments' && transition === 'decision') next = recordDecision(run, experimentId, input);
+      else if (action === 'learning' && transition === 'monitor') next = recordOutcomeReview(run, experimentId, input);
       else return json({error: 'Not found'}, 404);
       return json(await store.save(next, input.version));
     } catch (error) {

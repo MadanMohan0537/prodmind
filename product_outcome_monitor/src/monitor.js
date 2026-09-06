@@ -27,7 +27,9 @@ export function validatePlan(input){
     return {name:required(g.name,'guardrail name'),kind,threshold:number(g.threshold,'guardrail threshold'),current:number(g.current,'guardrail current')};
   });
   if(guardrails.length>10||new Set(guardrails.map(g=>g.name)).size!==guardrails.length)throw new Error('Use at most 10 uniquely named guardrails');
-  return {schemaVersion:'1.0.0',monitorId:input.monitorId?required(input.monitorId,'monitorId'):crypto.randomUUID(),title:required(input.title,'title'),opportunityId:required(input.opportunityId,'opportunityId'),experimentId:required(input.experimentId,'experimentId'),decisionId:required(input.decisionId,'decisionId'),metric:{name:required(input.metric?.name,'metric name'),unit:required(input.metric?.unit,'metric unit')},direction,targetChange,baseline,observed,guardrails,owner:required(input.owner,'owner'),reviewCadence:required(input.reviewCadence,'reviewCadence')};
+  const evidenceIds=input.evidenceIds??[];
+  if(!Array.isArray(evidenceIds)||evidenceIds.some(id=>typeof id!=='string'||!id.trim())||new Set(evidenceIds).size!==evidenceIds.length)throw new Error('evidenceIds must contain unique non-empty strings');
+  return {schemaVersion:'1.1.0',monitorId:input.monitorId?required(input.monitorId,'monitorId'):crypto.randomUUID(),title:required(input.title,'title'),opportunityId:required(input.opportunityId,'opportunityId'),experimentId:required(input.experimentId,'experimentId'),decisionId:required(input.decisionId,'decisionId'),evidenceIds:[...evidenceIds],metric:{name:required(input.metric?.name,'metric name'),unit:required(input.metric?.unit,'metric unit')},direction,targetChange,baseline,observed,guardrails,owner:required(input.owner,'owner'),reviewCadence:required(input.reviewCadence,'reviewCadence')};
 }
 export function analyzeOutcome(input){
   const plan=validatePlan(input),base=plan.baseline.map(x=>x.value),actual=plan.observed.map(x=>x.value);
@@ -50,7 +52,9 @@ export function analyzeOutcome(input){
   const action=status==='sustained'?'Continue monitoring at the declared cadence.':status==='at_risk'?'Review the rollout and underlying data before expanding exposure.':'Collect more post-decision observations and investigate segment-level evidence.';
   return {...plan,analysis:{baselineMean:round(baselineMean),baselineStdev:round(sigma),lowerControl:round(baselineMean-3*sigma),upperControl:round(baselineMean+3*sigma),latest,relativeChange:change==null?null:round(change),targetMet,sustained,reversal,status,ewmaLambda:lambda,points,guardrailBreaches:breaches,signals,action,interpretation:'Monitoring signals identify change patterns; they do not establish that the product decision caused them.'}};
 }
-export function fromLearningDecision(decision,details){
-  if(!decision||!Array.isArray(decision.evidenceIds)||!decision.opportunityId)throw new Error('Expected a Project 7 learning-ledger decision');
-  return {...details,opportunityId:decision.opportunityId,experimentId:decision.experimentId,decisionId:decision.decisionId??decision.auditId,evidenceIds:[...decision.evidenceIds]};
+export function fromLearningDecision(entry,details){
+  if(!entry||!Array.isArray(entry.evidenceIds)||!entry.opportunityId||!entry.experimentId)throw new Error('Expected a Project 7 learning-ledger entry');
+  const decisionId=entry.decisionId??entry.decision?.id??entry.decision?.auditId??entry.auditId;
+  if(!decisionId)throw new Error('Project 7 learning-ledger entry is missing a decision identity');
+  return {...details,opportunityId:entry.opportunityId,experimentId:entry.experimentId,decisionId,evidenceIds:[...entry.evidenceIds]};
 }
