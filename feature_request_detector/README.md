@@ -1,234 +1,80 @@
 <div align="center">
 
-# ProdMind Feature Request Detector
+# Project 4: Feature Request Detector
 
-**Separate product requests from bugs—and keep every overlapping intent.**
+**Separate product requests, bugs, complaints, questions, praise, and churn signals.**
 
-Explainable · Multi-label · Local-first · Zero paid APIs · Cloudflare-ready
-
-![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-19%20passing-22c55e)
-![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
+[![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563EB)](../LICENSE)
 
 </div>
 
-Feature Request Detector is project 04 in [ProdMind](../README.md). It converts customer feedback into an inspectable set of intents instead of forcing every message into one category. A single record can be a feature request, bug report, complaint, question, praise, and churn warning at the same time.
+Project 4 adds explainable multi-label intent detection to the same normalized feedback records used by Projects 2 and 3. It identifies candidate product requests without treating classifier output as roadmap priority.
 
-## Why it exists
+## Place in ProdMind
 
-Feedback rarely arrives in tidy categories. “I love the dashboard, but it crashes and we need scheduled exports before renewal” contains praise, a bug, a feature request, urgency, business impact, and churn risk. A single-label classifier discards most of that evidence.
+Project 7 imports `detectIntents` directly, attaches the result to the source evidence ID, and passes the enriched record to the Voice-of-Customer dashboard. Project 6 later scores human-reviewed opportunities rather than raw classifier confidence.
 
-This product provides a deterministic baseline that is inexpensive, private, testable, and honest about uncertainty. It is suitable for triage and dataset bootstrapping; it does not pretend that a rule system replaces evaluated domain-specific machine learning.
+## Implemented capabilities
 
-## At a glance
+- Explicit and implicit feature-request detection
+- Bug, complaint, question, praise, churn-risk and other intent labels
+- Multiple labels on one feedback record
+- Evidence sentences for each detected intent
+- Lexical urgency and broad-impact indicators
+- Rule-derived confidence and human-review flag
+- Feedback Collector identity preservation
+- Authenticated bounded batch API
+- Optional D1 analysis metrics
+- Labeled-seed evaluation with per-label precision, recall and F1
+- Responsive light/dark frontend
 
-| | |
-|---|---|
-| **Problem** | Mixed-intent feedback gets flattened into one label and loses actionable context. |
-| **Users** | Product managers, support teams, customer-success teams, and feedback-operations owners. |
-| **Input** | Plain text or a normalized Feedback Collector event. |
-| **Output** | Multiple intent labels, confidence, sentence evidence, urgency, impact, and review status. |
-| **Runtime** | Browser-local demo or authenticated Cloudflare Worker API. |
-| **Cost posture** | The working baseline requires no paid API or hosted model. |
+## Frontend
 
-## Capabilities
-
-- Multi-label detection for feature requests, bugs, complaints, praise, questions, and churn risk
-- Explicit request detection such as “please add”
-- Implicit unmet-need detection such as “I wish there was”
-- Sentence-level evidence and matched signals
-- Confidence per detected intent and a primary intent
-- Urgency and impact indicators
-- Human-review flag for ambiguous feedback
-- Feedback Collector event compatibility
-- Browser-local analysis with no server submission
-- Secured single-record and batch API
-- Optional D1 analysis history and aggregate metrics
-- Strict CORS allowlist and output escaping
-- Versioned JSON schemas
-- Labeled evaluation seed data and per-label precision, recall, and F1
-- Responsive system-aware light and dark interface
-
-## Architecture
-
-```mermaid
-flowchart TD
-  A[Feedback text or event] --> B[Normalize and split sentences]
-  B --> C[Independent intent rules]
-  C --> D[Multi-label confidence]
-  D --> E[Evidence and review flag]
-  D --> F[Urgency and impact]
-  E --> G[(Optional D1 history)]
-```
-
-The browser and Worker import the same `public/detector.js` module, preventing classification drift between the demo and the deployed API.
-
-## Intent taxonomy
-
-| Label | What it captures |
-|---|---|
-| `feature-request` | Explicit requests and implied unmet needs |
-| `bug-report` | Broken, failing, crashing, or incorrect behavior |
-| `complaint` | Dissatisfaction that may not identify a defect |
-| `question` | Requests for information or clarification |
-| `praise` | Positive product feedback |
-| `churn-risk` | Cancellation, switching, renewal, or adoption risk |
-
-Labels are independent. A record can receive several labels, and every detected intent includes the sentence and signals that supported it.
-
-## Repository structure
-
-```text
-public/                 Responsive UI and shared detector module
-src/worker.js           Cloudflare Worker routes, auth, CORS, and D1 persistence
-schema/                 Versioned input and output contracts
-migrations/             Optional D1 database schema
-evaluation/             Labeled seed dataset
-scripts/evaluate.js     Precision, recall, F1, and exact-match report
-tests/                  Detector, API utility, and compatibility tests
-examples/               Sample feedback payloads
-wrangler.jsonc          Cloudflare development and deployment configuration
-```
-
-## Quick start
-
-Requires Node.js 20 or newer.
-
-```bash
-git clone https://github.com/MadanMohan0537/prodmind.git
-cd prodmind/feature_request_detector
-npm install
-npm test
-npm run dev
-```
-
-Open the local URL printed by Wrangler. The interface analyzes text entirely in the browser, so the demo needs neither a token nor a database.
+The application in `public/` accepts text or sample records, invokes the same detector used by the connected workflow, and displays labels, evidence, urgency, impact and review status.
 
 ## API
 
-| Method | Route | Authentication | Purpose |
-|---|---|---|---|
-| `GET` | `/api/health` | Public | Service, model, and persistence status |
-| `POST` | `/api/analyze` | Bearer token | Analyze one item or up to 500 items |
-| `GET` | `/api/metrics` | Bearer token | Aggregate persisted results |
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Report model name and persistence status |
+| `POST` | `/api/analyze` | Analyze one record or a bounded batch |
+| `GET` | `/api/metrics` | Return persisted intent counts when D1 exists |
+
+## Run, evaluate and test
 
 ```bash
-curl -X POST http://localhost:8787/api/analyze \
-  -H 'Authorization: Bearer local-development-token' \
-  -H 'Content-Type: application/json' \
-  --data @examples/sample-feedback.json
-```
-
-Representative result:
-
-```json
-{
-  "schemaVersion": "1.0.0",
-  "model": "prodmind-explainable-multilabel-v1",
-  "primaryIntent": "feature-request",
-  "isFeatureRequest": true,
-  "requestType": "explicit",
-  "confidence": 0.8199,
-  "intents": [
-    {
-      "label": "feature-request",
-      "confidence": 0.8199,
-      "evidence": [{ "sentenceIndex": 0, "sentence": "Please add CSV export." }]
-    }
-  ],
-  "urgency": { "level": "low", "score": 0 },
-  "impact": { "level": "low", "score": 0 },
-  "needsReview": false
-}
-```
-
-Input and result contracts are documented under [`schema/`](schema/). Individual invalid records produce indexed errors without failing the rest of a batch.
-
-## Cloudflare deployment
-
-1. Create the free D1 database:
-
-   ```bash
-   npx wrangler d1 create feature-request-detector-db
-   ```
-
-2. Replace the placeholder database ID in `wrangler.jsonc`.
-3. Set `ALLOWED_ORIGINS` to the exact browser origins allowed to call the API.
-4. Apply the migration and create the secret:
-
-   ```bash
-   npm run db:migrate:remote
-   npx wrangler secret put API_TOKEN
-   ```
-
-5. Deploy:
-
-   ```bash
-   npm run deploy
-   ```
-
-For local API testing, create an untracked `.dev.vars` file containing `API_TOKEN="local-development-token"`. D1 is optional: remove its binding for stateless API operation.
-
-## Security and privacy
-
-- Browser analysis keeps feedback on the device.
-- API access fails closed when `API_TOKEN` is missing.
-- Cross-origin API requests are accepted only from configured origins.
-- Bearer tokens are compared through fixed-length SHA-256 digests.
-- Inputs are length- and batch-bounded.
-- Browser-rendered evidence is HTML-escaped.
-- D1 uses parameterized statements and stores a text hash plus structured analysis. Intent evidence includes matched source sentences, so persisted rows can contain customer feedback text.
-- Internal exceptions are not exposed in API responses.
-
-Before enabling persistence for real customer data, define consent, minimization, retention, deletion, and access policies. For a public multi-tenant deployment, add per-user identity, tenant isolation, abuse controls, and a distributed rate limiter.
-
-## Evaluation
-
-The included seed dataset validates the evaluation machinery; it is not evidence of production accuracy.
-
-```bash
+cd feature_request_detector
+npm install
 npm run check
-node scripts/evaluate.js evaluation/labeled-feedback.json
+npm run evaluate
+npm run dev
 ```
 
-The current repository has **19 passing automated tests**. The bundled seed produces **8/8 exact multi-label matches**, which confirms that the rules and evaluation harness agree on a small, intentionally representative dataset—not that the detector has 100% real-world accuracy.
+## Deploy
 
-The report includes exact multi-label match, per-label precision/recall/F1, and mismatched examples. Replace or extend the seed data with anonymized feedback from the intended domain before tuning thresholds or making quality claims.
+Configure the D1 binding and allowed origins in `wrangler.jsonc`, apply the migration, set `API_TOKEN`, and run `npm run deploy`.
 
-## Honest limitations
+## Structure
 
-- Rules recognize known language patterns but do not understand arbitrary paraphrases or sarcasm.
-- The baseline rules are English-first.
-- Confidence represents accumulated rule evidence, not a calibrated probability.
-- Urgency and impact are lexical signals and require human confirmation for prioritization.
-- This detects requests; it does not decide whether a request should be built.
-- D1 metrics describe analyzed volume, not customer demand deduplicated across accounts.
-- JSON Schemas document versioned contracts; runtime enforcement is implemented with explicit validation rather than loading the schema files dynamically.
-- The D1 persistence route and browser flow still need dedicated integration tests against a deployed preview before production use.
+```text
+public/detector.js  Shared explainable intent engine
+public/             Working frontend
+src/worker.js       Secured API and optional persistence
+evaluation/         Small labeled seed
+scripts/            Evaluation runner
+schema/             Request and result contracts
+test/               Detector, evaluation and route tests
+```
 
-## Integration with ProdMind
+## Honest limits
 
-- **Feedback Collector** supplies normalized events.
-- **Sentiment Analyzer** adds sentiment and aspects independently.
-- **Topic Modeler** groups related requests into broader opportunities.
-- Future prioritization modules can combine request evidence, customer segments, frequency, effort, and strategy—but should not use this detector’s confidence as business value.
-
-## Roadmap
-
-- Domain-specific configurable phrase packs
-- English/Spanish parity with evaluated labeled data
-- Human corrections and threshold calibration
-- Semantic embedding candidate generation in an optional offline research package
-- Cross-record request deduplication through Topic Modeler
-- Export queue for downstream prioritization workflows
+- The rules are English-first and do not understand every paraphrase.
+- Confidence is not a calibrated business probability.
+- Urgency and impact are language signals that require human confirmation.
+- Request frequency does not equal customer value or strategic importance.
+- D1 counts analyzed records, not independently verified affected customers.
 
 ## License
 
 Licensed under the repository-level [Apache License 2.0](../LICENSE).
-
-## Connected ProdMind workflow
-
-This module is used by the [shared Experiment & Learning Workspace](../experiment-data-quality-auditor/). The integrated server imports this module's implementation and carries original evidence IDs through discovery, ranking, experiments and recorded decisions. The standalone API and existing database are unchanged; there is no automatic cross-database synchronization.
-
-See [shared contracts and architecture](../experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node experiment-data-quality-auditor/scripts/test-all.mjs`.
