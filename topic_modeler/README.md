@@ -1,181 +1,88 @@
 <div align="center">
 
-# ProdMind Topic Modeler
+# Project 3: Topic Modeler
 
-**Turn unstructured feedback into explainable themes, hierarchies, and drift signals.**
+**Group feedback into inspectable themes while retaining document links.**
 
-Local-first · Zero paid APIs · Cloudflare-ready · Apache-2.0
+[![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563EB)](../LICENSE)
 
 </div>
 
-Topic Modeler is project 03 in [ProdMind](../README.md). It incrementally groups feedback, explains each topic with weighted terms, builds a lightweight hierarchy, and detects changes between time windows. The usable baseline runs in the browser and on Cloudflare Workers; an optional Python research package covers BERTopic, transformer embeddings, River, and Dask.
+Project 3 converts enriched feedback into lightweight topics, weighted keywords, document assignments, a topic hierarchy, and a descriptive drift signal. Every assignment retains the Project 1 evidence ID used by downstream opportunities.
 
-## What is included
+## Place in ProdMind
 
-| Capability | Browser / Worker | Optional Python research |
-|---|---:|---:|
-| Online sparse-vector clustering | Yes | River K-Means |
-| Topic labels and keywords | Weighted class TF-IDF | BERTopic c-TF-IDF |
-| Time decay and source reliability | Yes | Yes |
-| Hierarchical topic grouping | Cosine grouping | BERTopic hierarchy |
-| Topic drift | KL divergence | KL divergence |
-| Distributed preprocessing | Not applicable | Dask |
-| Paid service required | No | No |
-
-This separation is deliberate. Cloudflare Workers cannot execute Python transformer models, BERTopic, or Dask. The Worker provides a fast deterministic production baseline; the research package trains richer models using free local hardware or a free notebook.
-
-## Architecture
-
-```mermaid
-flowchart TD
-  A[Feedback documents] --> B[Validate and tokenize]
-  B --> C[Online cosine clustering]
-  C --> D[Weighted c-TF-IDF]
-  D --> E[Topics and assignments]
-  E --> F[Hierarchy]
-  E --> G[KL drift]
-  E --> H[(Optional D1 history)]
+```text
+Normalized feedback + sentiment
+             ↓
+      Project 3 topics
+             ↓
+Request evidence + VoC dashboard + opportunities
 ```
 
-## Quick start
+The connected workspace imports `modelTopics` from `public/topic-modeler.js` and joins assignments back to feedback by document ID.
 
-Requires Node.js 20 or newer.
+## Implemented capabilities
+
+- Unicode-aware tokenization and accent normalization
+- English and Spanish stop-word filtering
+- Sparse weighted document vectors
+- Cosine-similarity grouping
+- Weighted topic keywords and labels
+- Document-to-topic assignments
+- Lightweight hierarchical grouping
+- KL-divergence drift description for bounded time windows
+- Optional D1 run, topic and assignment history
+- Authenticated Worker analysis and responsive light/dark frontend
+
+No BERTopic, transformer embedding, River, Dask, Python, or external vector database package is present.
+
+## Frontend
+
+The static application in `public/` loads feedback JSON, runs the same deterministic topic implementation, and renders topics, keywords, assignments, hierarchy and drift. The Worker provides the secured and optionally persisted path.
+
+## API
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Report service and D1 status |
+| `POST` | `/api/topics/analyze` | Build topics from a bounded document collection |
+| `GET` | `/api/runs` | List persisted runs when D1 is configured |
+
+## Run and test
 
 ```bash
 cd topic_modeler
 npm install
-npm test
+npm run check
 npm run dev
 ```
 
-Open `http://localhost:8787`. The interface models pasted text locally, so no token or database is needed for the demo.
+## Deploy
 
-## API
+Create the D1 database declared in `wrangler.jsonc`, apply the migration, set `API_TOKEN`, configure allowed origins, and run `npm run deploy`.
 
-All API routes except health require a bearer token.
+## Structure
 
-| Method | Route | Purpose |
-|---|---|---|
-| `GET` | `/api/health` | Service and persistence status |
-| `POST` | `/api/topics/analyze` | Model up to 1,000 documents and optionally persist the run |
-| `GET` | `/api/runs` | Read the latest 100 persisted model runs |
-
-Example:
-
-```bash
-curl -X POST http://localhost:8787/api/topics/analyze \
-  -H 'Authorization: Bearer local-development-token' \
-  -H 'Content-Type: application/json' \
-  --data @examples/sample-feedback.json
+```text
+public/topic-modeler.js  Shared topic implementation
+public/                  Working frontend
+src/worker.js            Authenticated API and D1 writes
+migrations/              Topic-run persistence
+schema/                  Document and result contracts
+examples/                Synthetic feedback
+test/                    Core and Worker tests
 ```
 
-Each document accepts `id`, `text`, `source`, `timestamp`, and `reliability` from 0 to 1. Analysis options include `similarityThreshold`, `hierarchyThreshold`, and `halfLifeDays`. Contracts live in [`schema/`](schema/).
+## Honest limits
 
-## Configure and deploy to Cloudflare
-
-1. Create a free D1 database:
-
-   ```bash
-   npx wrangler d1 create topic-modeler-db
-   ```
-
-2. Replace the placeholder `database_id` in `wrangler.jsonc` and set the browser origins allowed to call the API.
-
-3. Apply the migration:
-
-   ```bash
-   npm run db:migrate:remote
-   ```
-
-4. Add a strong API token without committing it:
-
-   ```bash
-   npx wrangler secret put API_TOKEN
-   ```
-
-5. Deploy:
-
-   ```bash
-   npm run deploy
-   ```
-
-For local API testing, create an untracked `.dev.vars` containing `API_TOKEN="local-development-token"`. D1 is optional; omit the binding if you only need stateless analysis.
-
-## How the baseline works
-
-1. Text is normalized, tokenized, and stripped of English and Spanish stop words.
-2. Each document becomes a normalized sparse term-frequency vector.
-3. Documents arrive one at a time and join the nearest centroid above the similarity threshold; otherwise they create a topic.
-4. Topic terms receive class TF-IDF scores multiplied by exponential time decay and source reliability.
-5. Similar topic centroids form parent groups.
-6. The corpus is split chronologically and KL divergence measures vocabulary change.
-
-Every result includes the model identifier, options, terms, assignments, similarity, sources, topic shares, hierarchy, and drift score. This makes the output inspectable instead of presenting topic labels as unexplained facts.
-
-## Optional BERTopic pipeline
-
-The [`ml/`](ml/) package implements the original research direction:
-
-```bash
-cd ml
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python src/train_bertopic.py data/sample.jsonl
-python -m unittest discover -s tests
-```
-
-It includes BERTopic with MiniLM embeddings, River incremental clustering, BERTopic hierarchy export, weighted c-TF-IDF utilities, KL drift, and Dask preprocessing. See [`ml/README.md`](ml/README.md) for the boundary between research and deployment.
-
-## Security and privacy
-
-- Browser analysis is local and sends no text to a server.
-- The Worker fails closed when `API_TOKEN` is absent.
-- CORS reflects only origins listed in `ALLOWED_ORIGINS`; it is never `*`.
-- Tokens are compared as SHA-256 digests.
-- Input length and batch size are bounded.
-- D1 statements are parameterized.
-- Persistence writes are split into bounded D1 batches.
-- Browser-rendered topic labels and terms are HTML-escaped.
-- API responses use `nosniff` and disable caching.
-
-The bearer token protects a small private deployment. For a multi-user service, add Cloudflare Access or per-user authentication and a distributed rate limiter before exposing it publicly.
-
-## Test and validate
-
-```bash
-npm run check
-python -m unittest discover -s ml/tests
-python -m py_compile ml/src/*.py
-```
-
-Tests cover tokenization, cosine similarity, topic creation, assignments, hierarchy, KL drift, validation, authorization, CORS, HTTP analysis, and the dependency-free Python weighting/drift functions.
-
-## Honest limitations
-
-- Sparse lexical similarity is fast and transparent but does not understand synonyms as well as embeddings.
-- Topic IDs are scoped to a run; long-term identity matching is future work.
-- “Online” describes incremental assignment within one analysis run; the baseline does not yet carry centroids across requests.
-- The simple chronological midpoint is a useful drift signal, not a statistical alarm system.
-- English and Spanish stop words are included; other languages work lexically but need tuned stop-word lists.
-- Browser analysis does not persist. Worker history needs D1.
-- BERTopic quality depends on corpus size, language, embeddings, and parameter tuning.
-
-## Roadmap
-
-- Stable cross-run topic identity and merge/split events
-- Sliding and calendar-based drift windows
-- Human rename/merge/split controls
-- Import from Feedback Collector's versioned event schema
-- Export compact trained topic metadata to the Worker
-- Evaluation dataset with topic-coherence and assignment-quality reports
+- Lexical similarity does not understand arbitrary synonyms or semantic equivalence.
+- Topic IDs belong to one run; stable cross-run topic identity is not implemented.
+- Drift is descriptive and not a calibrated alert.
+- Topic labels are generated from weighted terms and require human review.
+- Small or highly diverse collections may produce weak themes.
 
 ## License
 
-Licensed under the repository's [Apache License 2.0](../LICENSE).
-
-## Connected ProdMind workflow
-
-This module is used by the [shared Experiment & Learning Workspace](../experiment-data-quality-auditor/). The integrated server imports this module's implementation and carries original evidence IDs through discovery, ranking, experiments and recorded decisions. The standalone API and existing database are unchanged; there is no automatic cross-database synchronization.
-
-See [shared contracts and architecture](../experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node experiment-data-quality-auditor/scripts/test-all.mjs`.
+Licensed under the repository-level [Apache License 2.0](../LICENSE).

@@ -1,248 +1,88 @@
 <div align="center">
 
-# ProdMind Voice-of-Customer Dashboard
+# Project 5: Voice-of-Customer Dashboard
 
-**See what customers are saying, which groups are affected, and what changed.**
+**Turn enriched feedback into traceable trends, segments, and evidence views.**
 
-Evidence-first · Local-first · Explainable anomalies · Cloudflare-ready · Zero paid APIs
-
-![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-16%20passing-22c55e)
-![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
+[![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563EB)](../LICENSE)
 
 </div>
 
-Voice-of-Customer Dashboard is project 05 in [ProdMind](../README.md). It turns normalized, enriched feedback into an interactive customer-intelligence view without hiding the underlying evidence or requiring a paid analytics platform.
+Project 5 combines the normalized records, sentiment, topics, and request intents produced by Projects 1–4. It calculates bounded aggregates and exposes the records behind them so a PM can inspect evidence before assessing an opportunity.
 
-It answers four practical questions:
+## Place in ProdMind
 
-1. What are customers talking about?
-2. Which sources and customer segments are contributing?
-3. How are volume and sentiment changing over time?
-4. Which changes deserve a human review?
-
-## At a glance
-
-| | |
-|---|---|
-| **Users** | Product managers, founders, UX researchers, customer-success teams, and support leaders |
-| **Input** | Feedback Collector-compatible events enriched with sentiment, topics, and intents |
-| **Output** | KPIs, trends, topic/source/segment distributions, anomaly alerts, and source evidence |
-| **Runtime** | Browser-local dashboard or authenticated Cloudflare Worker API |
-| **Persistence** | Optional Cloudflare D1 history with fingerprint-based duplicate protection |
-| **Cost posture** | No paid model, database, visualization library, or analytics service is required |
-
-## Product flow
-
-```mermaid
-flowchart TD
-  A[Feedback Collector events] --> B[Normalize and validate]
-  B --> C[Filter and aggregate]
-  C --> D[Trends and distributions]
-  C --> E[Anomaly detection]
-  D --> F[Evidence dashboard]
-  E --> F
-  B --> G[(Optional D1 history)]
+```text
+Projects 1–4 enriched evidence
+              ↓
+ Project 5 dashboard and signals
+              ↓
+ Human-reviewed opportunities → Project 6
 ```
 
-The browser and Worker import the same `public/analytics.js` module. Local analysis and deployed API analysis therefore use the same normalization, filtering, aggregation, and alert logic.
+The connected workspace imports `buildDashboard` and persists its output in the same discovery run as the original evidence.
 
-## What is implemented
+## Implemented capabilities
 
-- Responsive dashboard with system-aware light and dark themes
-- Browser-local JSON analysis with no network submission
-- Filters for source, segment, topic, date range, and evidence text
-- Feedback volume and average-sentiment daily trends
-- Topic, source, segment, and intent distributions
-- Unique-known-customer and negative-feedback metrics
-- Evidence stream linked to every aggregate
-- Explainable rolling-baseline volume-spike and sentiment-drop alerts
-- Normalized contract compatible with earlier ProdMind modules
-- Authenticated single-request and batch APIs
-- Strict CORS allowlist, CSP, bounded inputs, and no-store responses
-- Optional D1 storage with SHA-256 fingerprint deduplication
-- Versioned JSON schemas, sample events, tests, and evaluation harness
+- Source, segment, topic, query and date filtering
+- Total feedback, sentiment and intent summaries
+- Source, segment and topic breakdowns
+- Evidence retrieval with original IDs
+- Deterministic volume-spike and sentiment-drop signals
+- Stateless dashboard analysis
+- Optional D1 event ingestion and dashboard history
+- Bounded input validation and duplicate protection
+- Responsive light/dark dashboard frontend
+- Labeled aggregate/filter evaluation fixture
 
-## Honest scope
+## Frontend
 
-| Capability | Status | Boundary |
-|---|---|---|
-| Local dashboard | Implemented | Paste JSON or load the sample dataset |
-| Stateless dashboard API | Implemented | Up to 10,000 events per analysis |
-| D1 ingestion | Implemented | Up to 500 events per request |
-| D1 historical dashboard | Implemented | Reads a bounded recent window |
-| Anomaly detection | Implemented | Transparent rolling statistical baseline |
-| Live refresh | Manual/API-driven | No background connector polling in this module |
-| WebSocket streaming | Planned | Not represented as implemented |
-| Enterprise RBAC and tenant isolation | Planned | Bearer-token demo security only |
-| ClickHouse/Druid/Flink/Spark | Deliberately deferred | Unnecessary for the zero-cost MVP workload |
-
-## Quick start
-
-Requires Node.js 20 or newer.
-
-```bash
-git clone https://github.com/MadanMohan0537/prodmind.git
-cd prodmind/voice_of_customer_dashboard
-npm install
-npm test
-npm run dev
-```
-
-Open the local URL printed by Wrangler and press **Load sample**. Analysis happens in the browser and does not require an API token or D1 database.
-
-## Event contract
-
-Only `text` is required. Earlier ProdMind modules can progressively enrich the rest of the record.
-
-```json
-{
-  "id": "ticket-42",
-  "timestamp": "2026-09-01T12:00:00Z",
-  "source": "support",
-  "segment": "New SMB",
-  "customerId": "customer-7",
-  "text": "Setup keeps returning me to step one.",
-  "sentiment": -0.8,
-  "topics": ["onboarding", "reliability"],
-  "intents": ["bug-report", "complaint"],
-  "metadata": {}
-}
-```
-
-The detector also accepts a sentiment object containing `score`, comma-separated topics, and intent objects containing `label`. See [`schema/`](schema/) for the versioned documentation contracts.
+`public/index.html`, `public/app.js`, `public/analytics.js`, and `public/styles.css` provide a deployable dashboard. The browser can analyze a local synthetic dataset; the secured Worker supports stateless analysis or persisted D1 history.
 
 ## API
 
-| Method | Route | Authentication | Purpose |
-|---|---|---|---|
-| `GET` | `/api/health` | Public | Service and persistence status |
-| `POST` | `/api/dashboard` | Bearer token | Build a stateless dashboard from supplied events |
-| `POST` | `/api/events` | Bearer token | Validate, deduplicate, and optionally persist up to 500 events |
-| `GET` | `/api/dashboard` | Bearer token | Build a dashboard from D1 history |
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Report service and persistence status |
+| `POST` | `/api/events` | Validate and persist enriched events |
+| `POST` | `/api/dashboard` | Analyze a supplied event collection |
+| `GET` | `/api/dashboard` | Query persisted dashboard history |
 
-Stateless analysis:
-
-```bash
-curl -X POST http://localhost:8787/api/dashboard \
-  -H 'Authorization: Bearer local-development-token' \
-  -H 'Content-Type: application/json' \
-  --data @examples/sample-events.json
-```
-
-Historical filters are query parameters:
-
-```text
-/api/dashboard?source=support&segment=New%20SMB&topic=onboarding&from=2026-08-01&to=2026-09-01
-```
-
-## Dashboard metrics
-
-| Metric | Definition |
-|---|---|
-| Total feedback | Records remaining after filters |
-| Known customers | Distinct non-anonymous customer IDs |
-| Average sentiment | Mean bounded sentiment score from −1 to +1 |
-| Needs attention | Records with sentiment below −0.2 |
-| Distribution share | Dimension count divided by filtered record count |
-
-These are descriptive signals, not business-impact estimates. Customer counts are only meaningful when upstream systems provide stable, consented identifiers.
-
-## Explainable anomaly detection
-
-For each daily point, the engine compares volume and sentiment with a rolling recent window:
-
-- A **volume spike** is raised when the current count exceeds the recent mean by the configured z-score threshold.
-- A **sentiment drop** is raised when current average sentiment falls below the recent baseline by the configured point threshold.
-- Every alert contains its date, observed value, baseline, score, severity, and a plain-language explanation.
-
-The defaults use a seven-day window, a `2.0` volume threshold, and a `0.3` sentiment-drop threshold. Sparse histories require at least two preceding daily observations. Alerts indicate unusual movement; they do not prove root cause.
-
-## Cloudflare deployment
-
-Create the optional D1 database:
+## Run, evaluate and test
 
 ```bash
-npx wrangler d1 create voice-of-customer-db
-```
-
-Replace the placeholder database ID in `wrangler.jsonc`, then configure and deploy:
-
-```bash
-npm run db:migrate:remote
-npx wrangler secret put API_TOKEN
-npm run deploy
-```
-
-Set `ALLOWED_ORIGINS` to the exact deployed UI origin. For stateless API operation, remove the D1 binding. For local authenticated API testing, create an untracked `.dev.vars` file containing `API_TOKEN="local-development-token"`.
-
-## Security and privacy
-
-- Browser-local mode does not transmit feedback.
-- API access fails closed if `API_TOKEN` is absent.
-- Cross-origin API access requires an exact allowlisted origin.
-- Bearer tokens are compared as fixed-length SHA-256 digests.
-- Request, batch, text, analysis, and query sizes are bounded.
-- Responses use CSP, `nosniff`, no-referrer, and no-store headers.
-- SQL statements are parameterized and duplicate fingerprints are unique.
-- Evidence is escaped before browser rendering.
-- Internal exceptions are replaced with a request identifier.
-
-D1 stores raw feedback text to preserve evidence traceability. Before using customer data, establish consent, minimization, redaction, retention, deletion, access, and tenant-isolation policies. A shared bearer token is suitable for a portfolio demo, not a public multi-tenant product.
-
-## Testing and evaluation
-
-```bash
+cd voice_of_customer_dashboard
+npm install
 npm run check
 npm run evaluate
+npm run dev
 ```
 
-The automated suite covers normalization, filtering, aggregates, empty input, anomaly detection, parsing, analysis bounds, public health, static assets, authentication, CORS, stateless analysis, persistence boundaries, invalid JSON, and unknown routes.
+## Deploy
 
-The bundled evaluation cases verify known aggregates and filters. They test the machinery, not real-world anomaly precision. Before production use, evaluate alert precision, missed incidents, time-to-detection, evidence traceability, dashboard adoption, and decision usefulness on anonymized domain data.
+Create the D1 database, apply `migrations/0001_initial.sql`, set `API_TOKEN` and allowed origins, then run `npm run deploy`.
 
-## Repository structure
+## Structure
 
 ```text
-public/analytics.js     Shared normalization, filters, aggregates, and anomalies
-public/index.html       Accessible dashboard shell
-public/app.js           Local analysis and evidence rendering
-public/styles.css       Responsive system-aware light/dark interface
-src/worker.js           Authenticated API, CORS, ingestion, and D1 queries
-migrations/             D1 event store and indexes
-schema/                 Versioned event and dashboard contracts
-examples/               Ready-to-run sample payload
-evaluation/             Labeled aggregate/filter cases
-scripts/evaluate.js     Deterministic evaluation runner
-test/                   Analytics and Worker route tests
-wrangler.jsonc          Cloudflare configuration
+public/analytics.js  Shared filters, aggregates and signals
+public/              Dashboard interface
+src/worker.js        Secured API and D1 queries
+migrations/          VoC event store
+schema/              Event and dashboard contracts
+evaluation/          Aggregate/filter fixture
+test/                Analytics and route tests
 ```
 
-## Integration with ProdMind
+## Honest limits
 
-- **Feedback Collector** supplies normalized, deduplicated records.
-- **Sentiment Analyzer** supplies bounded sentiment scores and evidence.
-- **Topic Modeler** supplies topics and hierarchical themes.
-- **Feature Request Detector** supplies multi-label intents.
-- **Voice-of-Customer Dashboard** combines those independent signals without treating any one classifier as product priority.
-
-## Roadmap
-
-1. Add saved views and human-owned alert acknowledgements.
-2. Add time-zone-aware granularity and comparison periods.
-3. Add privacy-preserving scheduled refresh for one authenticated connector.
-4. Evaluate anomaly thresholds on labeled historical incidents.
-5. Add Cloudflare Durable Objects only if collaborative live sessions require them.
-6. Add tenant identity, roles, audit logs, and retention controls before multi-tenant use.
-7. Evaluate OLAP infrastructure only after measured D1/query limits justify it.
+- Anomaly thresholds are deterministic heuristics, not trained incident detectors.
+- Feedback counts are records, not necessarily unique customers.
+- Topic and sentiment quality depends on upstream review.
+- No scheduled connector refresh, acknowledgements, tenant isolation, or notification delivery is implemented.
+- The dashboard supports product judgment; it does not decide what to build.
 
 ## License
 
 Licensed under the repository-level [Apache License 2.0](../LICENSE).
-
-## Connected ProdMind workflow
-
-This module is used by the [shared Experiment & Learning Workspace](../experiment-data-quality-auditor/). The integrated server imports this module's implementation and carries original evidence IDs through discovery, ranking, experiments and recorded decisions. The standalone API and existing database are unchanged; there is no automatic cross-database synchronization.
-
-See [shared contracts and architecture](../experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md). Run all seven JavaScript test suites from the repository root with `node experiment-data-quality-auditor/scripts/test-all.mjs`.

@@ -2,205 +2,176 @@
 
 # ProdMind
 
-**An evidence-to-learning operating system for product teams.**
+**A nine-project, evidence-to-learning operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-2563EB.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563EB)](LICENSE)
 
 </div>
 
-ProdMind connects nine focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, follows outcomes, and makes completed learning searchable without losing the original evidence.
+ProdMind connects customer evidence, product judgment, experimentation, outcome monitoring, and institutional learning in one traceable workflow. Each project solves one bounded problem; the Project 7 workspace composes their real implementations and preserves the same evidence identities from ingestion through retrieval.
 
-Every module remains independently runnable. Project 7 provides the connected workspace and shared lifecycle.
+No paid model or software service is required for the tested workflow. The connected application is designed for Cloudflare Workers and D1.
 
-~~~text
+## Product lifecycle
+
+```text
 Customer feedback
       ↓
-Normalize and validate
+1. Normalize and validate
       ↓
-Sentiment, topics and request intent
+2–4. Sentiment, topics and request intent
       ↓
-Voice-of-Customer evidence
+5. Voice-of-Customer evidence
       ↓
-Human-reviewed prioritization
+6. Human-reviewed prioritization
       ↓
-Experiment plan and event audit
+7. Experiment plan, audit and decision
       ↓
-Human decision and learning ledger
+8. Post-decision outcome monitoring
       ↓
-Post-decision outcome monitoring
-      ↓
-Searchable product learning memory
-~~~
+9. Searchable product learning memory
+```
 
-## The nine modules
+## The nine projects
 
-| # | Module | Responsibility |
-|---|---|---|
-| 01 | [Feedback Collector](feedback_collector/) | Validates and normalizes source records while preserving identities |
-| 02 | [Sentiment Analyzer](sentiment_analyzer/) | Adds explainable sentiment, confidence and review flags |
-| 03 | [Topic Modeler](topic_modeler/) | Discovers themes and retains document-to-topic links |
-| 04 | [Feature Request Detector](feature_request_detector/) | Detects requests, bugs and intent evidence |
-| 05 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Summarizes trends, segments and source evidence |
-| 06 | [Prioritization Engine](prioritization_engine/) | Ranks explicitly reviewed opportunities against capacity and dependencies |
-| 07 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Persists runs, locks plans, audits events and records decisions |
-| 08 | [Product Outcome Monitor](product_outcome_monitor/) | Detects whether expected outcomes persist and flags reversals or guardrail breaches |
-| 09 | [Product Learning Memory](product_learning_memory/) | Retrieves prior decisions, evidence and monitored outcomes across workflow runs |
+| # | Project | What it contributes | Frontend |
+|---:|---|---|---|
+| 1 | [Feedback Collector](feedback_collector/) | Validated, normalized and deduplicated feedback | Manual entry, CSV/JSON import, saved records and export |
+| 2 | [Sentiment Analyzer](sentiment_analyzer/) | Explainable sentiment, aspects and review flags | Text/batch analysis with visible evidence |
+| 3 | [Topic Modeler](topic_modeler/) | Topic assignments, keywords, hierarchy and drift | Topic exploration and assignment inspection |
+| 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
+| 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
+| 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary nine-stage ProdMind workspace |
+| 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
+| 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 
-These are implementation-level connections. Project 7 imports the actual functions from Projects 1–6, invokes Project 8 for persisted outcome reviews, and invokes Project 9 across saved runs for evidence-backed learning retrieval.
+`.github/` is supporting CI configuration, not a tenth project.
 
-## End-to-end workflow
+## What is genuinely connected
 
-1. Upload feedback with source IDs and timestamps.
-2. Run normalization, sentiment, topic and request analysis.
-3. Inspect the generated Voice-of-Customer evidence.
-4. Review suggested opportunities and enter product estimates.
-5. Rank reviewed opportunities within capacity.
-6. Create an experiment tied to its opportunity and evidence.
-7. Lock the plan before prospective exposure begins.
-8. Audit exposure and conversion events.
-9. Record an analyst-reviewed human decision.
-10. Submit baseline and post-decision metric observations for outcome monitoring.
-11. Review persistence, reversal and guardrail signals with the decision and originating feedback still attached.
-12. Search the resulting learning before committing to a similar opportunity or experiment.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It imports Project 8’s monitoring engine and Project 9’s learning-memory engine. The connected deployment therefore provides an executable product path—not a collection of README links.
 
-## Evidence lineage
+Identity lineage:
 
-~~~text
-feedback ID
-  → sentiment and intent evidence
-  → topic
-  → opportunity
-  → priority decision
-  → experiment
-  → readout
-  → reviewed decision
-  → monitored outcome
-  → searchable learning card
-~~~
+```text
+feedbackId → topicId → opportunityId → experimentId
+           → auditId → decisionId → monitorId
+```
 
-Clients cannot replace server-owned evidence links during prioritization. Experiments retain an opportunity snapshot so later reprioritization does not rewrite the original rationale.
+Every opportunity and experiment retains `evidenceIds`. Client-provided IDs cannot replace the server-owned links during prioritization or outcome monitoring.
 
-## Human decision gates
+## Primary frontend
 
-- Opportunity scoring requires explicit PM review.
-- Business value, user value, effort, risk and strategic alignment are supplied estimates.
-- Prospective plans must be locked before exposure begins.
-- Retrospective analyses cannot authorize shipping.
-- Event defects block aggregate release.
-- Shipping requires a clean latest audit, mature observation window, planned samples, completed guardrail reviews, analyst review and a named reviewer.
+The deployable interface in `experiment-data-quality-auditor/public/` supports:
 
-Counts and rate differences are descriptive. ProdMind does not claim statistical significance, causality or automatic shipping.
+1. Loading and creating D1-backed discovery runs.
+2. Uploading normalized feedback JSON.
+3. Inspecting Projects 2–5 evidence.
+4. Entering explicit opportunity assessments.
+5. Saving Project 6 rankings and portfolio selections.
+6. Creating and locking experiment plans.
+7. Auditing event snapshots and recording reviewed decisions.
+8. Uploading Project 8 monitoring snapshots.
+9. Searching Project 9 learning across saved runs.
 
-## Run all tests
+All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
-Requirements: Node.js 22.13 or later.
+## Run the complete test suite
 
-~~~bash
+Node.js 22.13 or later is recommended.
+
+```bash
 git clone https://github.com/MadanMohan0537/prodmind.git
 cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
-~~~
+```
 
-The root runner tests all nine JavaScript modules, including the evidence-to-memory lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage, decision gates, post-decision outcome signals and cross-run retrieval.
+The suite covers all nine projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, and cross-run retrieval.
 
-Optional Python ML research folders are not included in the root JavaScript runner.
+Run one project independently:
 
-## Run one module
-
-Each project retains its own examples, schemas, tests, Worker and documentation:
-
-~~~bash
+```bash
 cd feedback_collector
-npm test
-~~~
+npm install
+npm run check
+```
 
-Standalone databases remain independent. The connected workspace does not silently read or migrate them. Existing feedback must be exported through the documented integration boundary.
+## Deploy the connected product
 
-## Deploy the connected workspace
-
-~~~bash
+```bash
 cd experiment-data-quality-auditor
 npx wrangler d1 create prodmind-workflow
-~~~
-
-Replace the placeholder database ID in wrangler.jsonc, then:
-
-~~~bash
+# copy the returned database ID into wrangler.jsonc
 npx wrangler d1 migrations apply prodmind-workflow --remote
 npx wrangler secret put API_TOKEN
 npx wrangler deploy
-~~~
+```
 
-The Worker serves the responsive interface and authenticated API. Workflow state is stored in D1 rather than browser storage.
+Projects 1–6, 8, and 9 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
 
-## Security boundaries
+## Security and decision boundaries
 
-- API access fails closed without the token or database binding.
-- Mutations require the latest workflow revision.
-- Conditional updates prevent stale overwrites.
-- Raw experiment user IDs are audited but excluded from reports.
-- Feedback text and supplied identifiers are persisted; use pseudonymous data.
-- One deployment represents one trusted team. A shared token is not tenant isolation.
-- Configure abuse protection before broad public exposure.
+- Connected API access fails closed without D1 and `API_TOKEN`.
+- Mutations require the latest workflow version.
+- Cross-origin API requests are rejected.
+- Raw experiment user IDs are excluded from persisted audit reports.
+- Feedback content and customer identifiers may be sensitive; use pseudonymous data.
+- Classifier confidence is not business value.
+- Counts and rate differences are not statistical or causal proof.
+- Outcome signals do not automatically approve rollout changes.
+- Historical search results do not automatically change priorities.
+- One deployment is one trusted team; a bearer token is not tenant isolation.
 
-## Current limits
+## Honest implementation status
 
-| Area | Limit |
+| Area | Current behavior |
 |---|---|
-| Feedback | 100 records per run |
-| Feedback text | 4,000 characters per record |
-| Experiments | 20 per run |
-| Readouts | 20 per experiment |
-| Event snapshot | 10,000 events and 2 MB |
-| Persisted run | 900 KB |
-| Experiment window | 1–90 days |
-| Outcome model | Two variants and binary conversion |
-| Product memory | 20 recent runs per connected query; 20 results returned |
-
-No paid model or external inference service is required for the tested workflow. Cloudflare quotas still apply.
-
-## Roadmap planning companion
-
-The standalone [AI Roadmap Optimizer](https://github.com/MadanMohan0537/ai-roadmap-optimizer) continues the lifecycle after prioritization. It compares five delivery strategies while enforcing capacity, dependencies, commitments and deadlines.
-
-The current handoff is explicit rather than automatically synchronized. A future adapter can preserve opportunity and evidence IDs without silently mutating either product.
+| AI/NLP | Explainable deterministic baselines; no trained production model claimed |
+| Storage | D1 for standalone histories and connected versioned runs |
+| Integrations | Connector utilities exist; scheduled multi-source synchronization does not |
+| Experiment analysis | Data-quality audit and descriptive rates; no automatic significance claim |
+| Outcome analysis | Monitoring signals; no causal attribution |
+| Learning retrieval | Weighted lexical search; no embedding or semantic-equivalence claim |
+| Authentication | Shared bearer token for a small trusted deployment |
+| Cost | No paid API required; Cloudflare quotas still apply |
 
 ## Repository structure
 
-~~~text
+```text
 .
-├── feedback_collector/
-├── sentiment_analyzer/
-├── topic_modeler/
-├── feature_request_detector/
-├── voice_of_customer_dashboard/
-├── prioritization_engine/
-├── experiment-data-quality-auditor/
-├── product_outcome_monitor/
-├── product_learning_memory/
-├── .github/             Repository-wide verification
+├── feedback_collector/                 Project 1
+├── sentiment_analyzer/                 Project 2
+├── topic_modeler/                      Project 3
+├── feature_request_detector/           Project 4
+├── voice_of_customer_dashboard/        Project 5
+├── prioritization_engine/              Project 6
+├── experiment-data-quality-auditor/    Project 7 and connected app
+├── product_outcome_monitor/            Project 8
+├── product_learning_memory/            Project 9
+├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
 └── README.md
-~~~
+```
 
 ## Documentation
 
-- [Connected contracts, architecture and limits](experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md)
-- [Experiment workspace requirements](experiment-data-quality-auditor/docs/PRD.md)
-- Individual architecture and usage guides inside every module
+- [Connected contracts and limits](experiment-data-quality-auditor/docs/CONNECTED_WORKFLOW.md)
+- [Connected workspace PRD](experiment-data-quality-auditor/docs/PRD.md)
+- Each project folder contains its own implementation-aligned README and supporting schemas or documentation.
 
 ## Product principles
 
 - Preserve evidence before generating recommendations.
-- Keep scoring inputs and assumptions visible.
-- Use deterministic code for validation and statistics-sensitive gates.
-- Require human review for business estimates and consequential decisions.
+- Keep assumptions and scoring inputs visible.
+- Use deterministic code for validation and consequence-sensitive gates.
+- Require human review for business estimates and product decisions.
 - Fail closed when data quality is insufficient.
 - Claim only what the code and tests support.
 
 ## License
 
-The original modules use [Apache License 2.0](LICENSE), except where a component provides its own license. Projects 7 and 8 include their own MIT licenses. Imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–9 include their own MIT licenses; imported modules retain their original notices.
