@@ -2,6 +2,7 @@ import {discover, rankOpportunities} from './pipeline.js';
 import {addExperiment, startExperiment, recordReadout, recordDecision, recordOutcomeReview, learningLedger} from './lifecycle.js';
 import {RunStore, Conflict} from './store.js';
 import auditor from './worker.js';
+import {buildLearningMemory, searchLearningMemory} from '../../product_learning_memory/src/memory.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -57,6 +58,14 @@ export default {
     try {
       if (url.pathname === '/api/runs' && request.method === 'GET') return json({runs: await store.list()});
       if (url.pathname === '/api/runs' && request.method === 'POST') return json(await store.create(await discover(await body(request))), 201);
+      if (url.pathname === '/api/memory' && request.method === 'GET') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const memory = buildLearningMemory(await store.recent(limit));
+        const query = url.searchParams.get('q');
+        if (!query) return json(memory);
+        const filters = Object.fromEntries(['outcome','status'].flatMap(key => url.searchParams.get(key) ? [[key,url.searchParams.get(key)]] : []));
+        return json({...searchLearningMemory(memory, query, filters), summary: memory.summary});
+      }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
       const [, runId, action, experimentId, transition] = match;

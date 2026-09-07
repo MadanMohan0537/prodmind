@@ -1,6 +1,6 @@
 export class Conflict extends Error {}
 
-/** One immutable-versioned workflow snapshot; all seven stages share its IDs. */
+/** One immutable-versioned workflow snapshot; all product stages share its IDs. */
 export class RunStore {
   constructor(db) { this.db = db; }
   encode(run) {
@@ -19,6 +19,11 @@ export class RunStore {
   async list() {
     const {results} = await this.db.prepare("SELECT id, version, json_extract(payload, '$.title') AS title, json_extract(payload, '$.stage') AS stage, json_extract(payload, '$.updatedAt') AS updatedAt FROM product_runs ORDER BY rowid DESC LIMIT 50").all();
     return results;
+  }
+  async recent(limit = 20) {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 20) throw new Error('Memory limit must be an integer from 1–20');
+    const {results} = await this.db.prepare('SELECT payload FROM product_runs ORDER BY rowid DESC LIMIT ?').bind(limit).all();
+    return results.map(row => JSON.parse(row.payload));
   }
   async save(run, version) {
     const next = {...run, version: version + 1, updatedAt: new Date().toISOString()};

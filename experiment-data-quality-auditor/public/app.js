@@ -25,6 +25,11 @@ async function loadRuns() {
 }
 $('#connect').onsubmit = event => {event.preventDefault(); token = $('#token').value; $('#token').value = ''; action(async () => {await loadRuns(); notice('Connected.');});};
 $('#refresh').onclick = () => action(loadRuns);
+$('#memory-search').onsubmit = event => {event.preventDefault();action(async()=>{
+  const data=values(event.currentTarget);const params=new URLSearchParams({q:data.query});if(data.outcome)params.set('outcome',data.outcome);if(data.status)params.set('status',data.status);
+  const result=await api(`/api/memory?${params}`);const parent=$('#memory-results');parent.replaceChildren(el('p',`${result.total} matching decisions · ${Math.round(result.summary.monitoringCoverage*100)}% monitoring coverage`));
+  for(const item of result.results){const card=el('article',undefined,'card');card.append(el('h3',item.opportunityTitle),el('p',`${item.outcome} · ${item.monitoring?.status??'unmonitored'} · relevance ${item.relevance}`,'muted'),el('p',item.hypothesis),el('p',`Run ${item.runTitle} · Evidence ${item.evidenceIds.join(', ')}`));details(card,'Inspect prior decision, matches and source evidence',item);parent.append(card);}notice('Product learning search complete.');
+});};
 $('#discovery').onsubmit = event => {event.preventDefault(); action(async () => {
   const form = event.currentTarget || $('#discovery'); const file = form.elements.file.files[0];
   if (!file || file.size > 2_000_000) throw new Error('Choose a JSON file under 2 MB.');

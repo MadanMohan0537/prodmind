@@ -10,7 +10,7 @@
 
 </div>
 
-ProdMind connects eight focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, records decisions, and follows their outcomes without losing the original evidence.
+ProdMind connects nine focused product-management modules into one traceable workflow. It starts with raw customer feedback, builds reviewed opportunities, supports prioritization and experimentation, follows outcomes, and makes completed learning searchable without losing the original evidence.
 
 Every module remains independently runnable. Project 7 provides the connected workspace and shared lifecycle.
 
@@ -30,9 +30,11 @@ Experiment plan and event audit
 Human decision and learning ledger
       ↓
 Post-decision outcome monitoring
+      ↓
+Searchable product learning memory
 ~~~
 
-## The eight modules
+## The nine modules
 
 | # | Module | Responsibility |
 |---|---|---|
@@ -44,8 +46,9 @@ Post-decision outcome monitoring
 | 06 | [Prioritization Engine](prioritization_engine/) | Ranks explicitly reviewed opportunities against capacity and dependencies |
 | 07 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Persists runs, locks plans, audits events and records decisions |
 | 08 | [Product Outcome Monitor](product_outcome_monitor/) | Detects whether expected outcomes persist and flags reversals or guardrail breaches |
+| 09 | [Product Learning Memory](product_learning_memory/) | Retrieves prior decisions, evidence and monitored outcomes across workflow runs |
 
-These are implementation-level connections. Project 7 imports the actual functions from Projects 1–6 rather than copying their algorithms or linking to unrelated demos.
+These are implementation-level connections. Project 7 imports the actual functions from Projects 1–6, invokes Project 8 for persisted outcome reviews, and invokes Project 9 across saved runs for evidence-backed learning retrieval.
 
 ## End-to-end workflow
 
@@ -60,6 +63,7 @@ These are implementation-level connections. Project 7 imports the actual functio
 9. Record an analyst-reviewed human decision.
 10. Submit baseline and post-decision metric observations for outcome monitoring.
 11. Review persistence, reversal and guardrail signals with the decision and originating feedback still attached.
+12. Search the resulting learning before committing to a similar opportunity or experiment.
 
 ## Evidence lineage
 
@@ -73,6 +77,7 @@ feedback ID
   → readout
   → reviewed decision
   → monitored outcome
+  → searchable learning card
 ~~~
 
 Clients cannot replace server-owned evidence links during prioritization. Experiments retain an opportunity snapshot so later reprioritization does not rewrite the original rationale.
@@ -98,7 +103,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ~~~
 
-The root runner tests all eight JavaScript modules, including the evidence-to-learning lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage, decision gates and post-decision outcome signals.
+The root runner tests all nine JavaScript modules, including the evidence-to-memory lifecycle, real SQLite migrations, authenticated HTTP routes, persistence, stale-write protection, evidence lineage, decision gates, post-decision outcome signals and cross-run retrieval.
 
 Optional Python ML research folders are not included in the root JavaScript runner.
 
@@ -152,6 +157,7 @@ The Worker serves the responsive interface and authenticated API. Workflow state
 | Persisted run | 900 KB |
 | Experiment window | 1–90 days |
 | Outcome model | Two variants and binary conversion |
+| Product memory | 20 recent runs per connected query; 20 results returned |
 
 No paid model or external inference service is required for the tested workflow. Cloudflare quotas still apply.
 
@@ -173,6 +179,7 @@ The current handoff is explicit rather than automatically synchronized. A future
 ├── prioritization_engine/
 ├── experiment-data-quality-auditor/
 ├── product_outcome_monitor/
+├── product_learning_memory/
 ├── .github/             Repository-wide verification
 ├── .gitignore
 ├── LICENSE
