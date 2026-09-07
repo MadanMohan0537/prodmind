@@ -22,7 +22,7 @@ async function started() {let run=await ranked();run=addExperiment(run,plan(run.
 const decision = run => ({auditId:run.experiments[0].audits.at(-1).id,outcome:'iterate',reviewer:'Test analyst',rationale:'Need a powered experiment',statisticalReview:'Insufficient power; iterate, do not infer a winner',guardrailReviews:[{name:'Support rate',passed:true,evidence:'Synthetic test evidence'}]});
 const monitoring = () => ({title:'Onboarding outcome',metric:{name:'Activation',unit:'rate'},direction:'increase',targetChange:.05,baseline:['2026-08-01','2026-08-02','2026-08-03'].map((day,i)=>({period:`${day}T00:00:00.000Z`,value:.3+i*.01})),observed:['2026-09-04','2026-09-05','2026-09-06'].map(day=>({period:`${day}T00:00:00.000Z`,value:.35})),guardrails:[{name:'Support rate',kind:'maximum',threshold:.2,current:.1}],owner:'Test PM',reviewCadence:'weekly'});
 
-test('all eight modules connect with original evidence IDs and a monitored learning result',async()=>{
+test('projects 1–8 connect with original evidence IDs and a monitored learning result',async()=>{
   let run=await started();
   const id=run.experiments[0].id;
   assert.equal(run.dashboard.summary.totalFeedback,run.evidence.length);
@@ -146,10 +146,14 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   await post(`learning/${id}/monitor`,monitoring());
   const reopened=await new RunStore(env.DB).get(run.id);
   const ledger=await(await worker.fetch(req(`/api/runs/${run.id}/learning`),env)).json();
+  const memory=await(await worker.fetch(req('/api/memory?q=onboarding'),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
   assert.equal(ledger.learning[0].outcomeReviews[0].decisionId,reopened.experiments[0].decision.id);
+  assert.equal(memory.total,1);
+  assert.equal(memory.results[0].decisionId,reopened.experiments[0].decision.id);
+  assert.deepEqual(memory.results[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -177,11 +181,13 @@ test('prototype-like words remain finite topic features',async()=>{
   assert.ok(run.topics.topics.every(t=>t.keywords.every(k=>Number.isFinite(k.score))));
 });
 
-test('workspace UI exposes the eighth connected monitoring stage',()=>{
+test('workspace UI exposes monitoring and searchable product memory',()=>{
   const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
   const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
   assert.match(html,/8 Monitor/);
-  assert.match(html,/all eight modules/);
+  assert.match(html,/9 Remember/);
+  assert.match(html,/all nine modules/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
+  assert.match(app,/\/api\/memory/);
 });

@@ -11,7 +11,7 @@
 
 </div>
 
-Project 7 is the connected workspace for ProdMind. It runs the implementations from Projects 1–6, preserves their evidence links, and adds the experiment lifecycle that turns a prioritized opportunity into documented learning.
+Project 7 is the connected workspace for ProdMind. It runs Projects 1–6, preserves their evidence links, adds the experiment lifecycle, saves Project 8 outcome reviews, and exposes Project 9 search across completed learning.
 
 The repository path remains 'experiment-data-quality-auditor/' because the original event auditor is still a core component. No duplicate Project 7 folder is required.
 
@@ -362,7 +362,7 @@ Project 7 directly imports:
 
 Their standalone APIs and databases remain available and independent. The connected deployment does not silently migrate or modify existing module databases.
 
-Project 8, [Product Outcome Monitor](../product_outcome_monitor/), consumes Project 7 decision identities through an explicit handoff and follows declared outcomes after rollout. The external AI Roadmap Optimizer is a documented planning companion, not a live dependency.
+Project 8, [Product Outcome Monitor](../product_outcome_monitor/), follows declared outcomes after rollout. Project 9, [Product Learning Memory](../product_learning_memory/), searches those evidence-linked decisions and outcomes across saved runs. Both are live dependencies of this connected Worker. The external AI Roadmap Optimizer remains a documented planning companion, not a live dependency.
 
 ## License
 

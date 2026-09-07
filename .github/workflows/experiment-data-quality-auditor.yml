@@ -11,6 +11,7 @@ on:
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
       - 'product_outcome_monitor/**'
+      - 'product_learning_memory/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -22,6 +23,7 @@ on:
       - 'voice_of_customer_dashboard/**'
       - 'prioritization_engine/**'
       - 'product_outcome_monitor/**'
+      - 'product_learning_memory/**'
 permissions:
   contents: read
 jobs:

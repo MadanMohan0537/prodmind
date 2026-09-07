@@ -14,6 +14,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 6. Prioritize | `prioritization_engine/public/engine.js::prioritize` | Reviewed estimates plus server-owned opportunity/evidence IDs |
 | 7. Experiment and learn | `experiment-data-quality-auditor/src/lifecycle.js` | Locked plan, opportunity snapshot, event audits and reviewed decision |
 | 8. Monitor outcomes | `product_outcome_monitor/src/monitor.js` | Decision ID, evidence IDs, post-decision signals, guardrail breaches and persisted reviews |
+| 9. Remember learning | `product_learning_memory/src/memory.js` | Cross-run decision cards with explainable retrieval and original evidence IDs |
 
 ## Shared contracts
 
@@ -22,6 +23,8 @@ A discovery run has a server-generated UUID, revision, immutable source evidence
 Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, but cannot replace these links. An experiment stores both the opportunity ID and its ranking snapshot so later reprioritization does not rewrite the experiment's original rationale. The learning endpoint returns decisions and outcome reviews linked back to that opportunity and its original records. Project 8 monitoring is submitted through `POST /api/runs/:runId/learning/:experimentId/monitor`; the server supplies the authoritative opportunity, experiment, decision and evidence identities. Learning does not silently change prioritization scores; PMs explicitly reassess and save a new ranking.
 
 The integrated ranking uses deterministic scores without Monte Carlo simulation to reduce request computation. Project 6's standalone simulation behavior is preserved by default. No synthetic uncertainty band is attached when simulation is disabled. Dependency cycles and missing assessed dependencies are rejected before invoking the portfolio selector.
+
+Project 9 reads up to 20 recent versioned runs through `GET /api/memory`. Its weighted lexical search returns the matched fields and terms along with the decision, monitored status and source evidence. Retrieval never changes an opportunity, ranking, experiment or decision.
 
 ## Human gates
 
