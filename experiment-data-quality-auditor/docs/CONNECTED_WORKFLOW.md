@@ -15,6 +15,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 7. Experiment and learn | `experiment-data-quality-auditor/src/lifecycle.js` | Locked plan, opportunity snapshot, event audits and reviewed decision |
 | 8. Monitor outcomes | `product_outcome_monitor/src/monitor.js` | Decision ID, evidence IDs, post-decision signals, guardrail breaches and persisted reviews |
 | 9. Remember learning | `product_learning_memory/src/memory.js` | Cross-run decision cards with explainable retrieval and original evidence IDs |
+| 10. Calibrate decisions | `decision_calibration_engine/src/calibration.js` | Confidence forecasts joined to resolved monitored outcomes with full identity lineage |
 
 ## Shared contracts
 
@@ -25,6 +26,8 @@ Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, 
 The integrated ranking uses deterministic scores without Monte Carlo simulation to reduce request computation. Project 6's standalone simulation behavior is preserved by default. No synthetic uncertainty band is attached when simulation is disabled. Dependency cycles and missing assessed dependencies are rejected before invoking the portfolio selector.
 
 Project 9 reads up to 20 recent versioned runs through `GET /api/memory`. Its weighted lexical search returns the matched fields and terms along with the decision, monitored status and source evidence. Retrieval never changes an opportunity, ranking, experiment or decision.
+
+Project 10 reads the same bounded run history through `GET /api/calibration`. It treats `sustained` monitoring as a resolved success, `below_target` or `at_risk` as a resolved non-success, and keeps `emerging` or unmonitored decisions unresolved. It reports Brier score, confidence bias and fixed reliability bands while retaining run, opportunity, experiment, decision, monitor and evidence IDs. The result does not establish causality, alter scoring weights or evaluate individual team members.
 
 ## Human gates
 

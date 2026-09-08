@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the nine-project [ProdMind](../README.md) product. It executes Projects 1–6 directly, saves Project 8 outcome reviews, and exposes Project 9 retrieval across versioned runs.
+Project 7 is both the experiment workspace and the integration host for the ten-project [ProdMind](../README.md) product. It executes Projects 1–6 directly, saves Project 8 outcome reviews, exposes Project 9 retrieval, and calculates Project 10 decision calibration across versioned runs.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -20,7 +20,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 Collect → Sentiment → Topics → Requests → VoC evidence
    → Human-reviewed priority → Locked experiment
    → Event audit → Human decision → Outcome monitoring
-   → Cross-run learning search
+   → Cross-run learning search → Portfolio calibration
 ```
 
 One D1 `product_runs` record preserves the IDs and state for this lifecycle. Clients cannot replace server-owned evidence links during prioritization or monitoring.
@@ -37,6 +37,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Sample, maturity and guardrail gates before a human decision
 - Project 8 outcome persistence, reversal and guardrail signals
 - Project 9 search across recent decisions and evidence
+- Project 10 Brier scores, reliability bands and preserved decision lineage
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes
@@ -62,6 +63,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `GET` | `/api/runs/:runId/learning` | Return decisions and outcome reviews |
 | `POST` | `/api/runs/:runId/learning/:id/monitor` | Save a Project 8 review |
 | `GET` | `/api/memory?q=...` | Search Project 9 learning memory |
+| `GET` | `/api/calibration` | Calculate Project 10 portfolio calibration |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -92,7 +94,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6, 8, and 9 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–10 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -102,7 +104,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete nine-stage workspace
+public/                 Complete ten-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -116,6 +118,7 @@ docs/                   PRD and connected contracts
 - Retrospective analysis cannot authorize shipping.
 - Project 8 monitoring signals do not prove that a decision caused a change.
 - Project 9 retrieval supplies historical context, not an automatic recommendation.
+- Project 10 calibration is portfolio feedback, not an employee score or causal analysis.
 
 ## Security and limits
 

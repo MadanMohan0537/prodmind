@@ -12,6 +12,7 @@ on:
       - 'prioritization_engine/**'
       - 'product_outcome_monitor/**'
       - 'product_learning_memory/**'
+      - 'decision_calibration_engine/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -24,6 +25,7 @@ on:
       - 'prioritization_engine/**'
       - 'product_outcome_monitor/**'
       - 'product_learning_memory/**'
+      - 'decision_calibration_engine/**'
 permissions:
   contents: read
 jobs:

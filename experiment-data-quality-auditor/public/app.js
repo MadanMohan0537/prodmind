@@ -30,6 +30,14 @@ $('#memory-search').onsubmit = event => {event.preventDefault();action(async()=>
   const result=await api(`/api/memory?${params}`);const parent=$('#memory-results');parent.replaceChildren(el('p',`${result.total} matching decisions · ${Math.round(result.summary.monitoringCoverage*100)}% monitoring coverage`));
   for(const item of result.results){const card=el('article',undefined,'card');card.append(el('h3',item.opportunityTitle),el('p',`${item.outcome} · ${item.monitoring?.status??'unmonitored'} · relevance ${item.relevance}`,'muted'),el('p',item.hypothesis),el('p',`Run ${item.runTitle} · Evidence ${item.evidenceIds.join(', ')}`));details(card,'Inspect prior decision, matches and source evidence',item);parent.append(card);}notice('Product learning search complete.');
 });};
+$('#calibration-refresh').onclick = () => action(async()=>{
+  const result=await api('/api/calibration');const parent=$('#calibration-results');parent.replaceChildren();
+  const summary=result.metrics??{};const metrics=el('div',undefined,'metrics');
+  for(const [label,value] of Object.entries({'Resolved decisions':result.sampleSize,'Brier score':summary.brierScore??'—','Mean confidence':summary.meanConfidence??'—','Observed success':summary.observedSuccessRate??'—','Confidence bias':summary.confidenceBias??'—'})){const tile=el('div',undefined,'metric');tile.append(el('strong',String(value)),el('span',label));metrics.append(tile);}parent.append(metrics);
+  parent.append(el('p',result.warning,'muted'));if(result.interpretation)parent.append(el('p',result.interpretation));
+  if(result.bins.length){const table=el('div');for(const bin of result.bins){const card=el('article',undefined,'card');card.append(el('h3',`${Math.round(bin.range[0]*100)}–${Math.round(bin.range[1]*100)}% confidence`),el('p',`${bin.count} decisions · mean ${bin.meanConfidence} · observed ${bin.observedRate} · gap ${bin.gap}`));table.append(card);}parent.append(table);}
+  details(parent,'Inspect resolved and unresolved decision lineage',{forecasts:result.forecasts,unresolved:result.unresolved});notice('Portfolio calibration calculated.');
+});
 $('#discovery').onsubmit = event => {event.preventDefault(); action(async () => {
   const form = event.currentTarget || $('#discovery'); const file = form.elements.file.files[0];
   if (!file || file.size > 2_000_000) throw new Error('Choose a JSON file under 2 MB.');
