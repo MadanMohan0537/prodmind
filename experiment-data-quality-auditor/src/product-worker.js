@@ -4,6 +4,7 @@ import {RunStore, Conflict} from './store.js';
 import auditor from './worker.js';
 import {buildLearningMemory, searchLearningMemory} from '../../product_learning_memory/src/memory.js';
 import {calibrateRuns} from '../../decision_calibration_engine/src/calibration.js';
+import {assessEvidenceIntegrity} from '../../evidence_integrity_monitor/src/integrity.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -70,6 +71,10 @@ export default {
       if (url.pathname === '/api/calibration' && request.method === 'GET') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         return json(calibrateRuns(await store.recent(limit)));
+      }
+      if (url.pathname === '/api/evidence-integrity' && request.method === 'GET') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        return json(assessEvidenceIntegrity(await store.recent(limit)));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

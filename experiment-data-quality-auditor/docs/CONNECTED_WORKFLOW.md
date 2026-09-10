@@ -16,6 +16,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 8. Monitor outcomes | `product_outcome_monitor/src/monitor.js` | Decision ID, evidence IDs, post-decision signals, guardrail breaches and persisted reviews |
 | 9. Remember learning | `product_learning_memory/src/memory.js` | Cross-run decision cards with explainable retrieval and original evidence IDs |
 | 10. Calibrate decisions | `decision_calibration_engine/src/calibration.js` | Confidence forecasts joined to resolved monitored outcomes with full identity lineage |
+| 11. Verify evidence | `evidence_integrity_monitor/src/integrity.js` | Freshness, source, segment, sample-size and lineage findings for each opportunity |
 
 ## Shared contracts
 
@@ -28,6 +29,8 @@ The integrated ranking uses deterministic scores without Monte Carlo simulation 
 Project 9 reads up to 20 recent versioned runs through `GET /api/memory`. Its weighted lexical search returns the matched fields and terms along with the decision, monitored status and source evidence. Retrieval never changes an opportunity, ranking, experiment or decision.
 
 Project 10 reads the same bounded run history through `GET /api/calibration`. It treats `sustained` monitoring as a resolved success, `below_target` or `at_risk` as a resolved non-success, and keeps `emerging` or unmonitored decisions unresolved. It reports Brier score, confidence bias and fixed reliability bands while retaining run, opportunity, experiment, decision, monitor and evidence IDs. The result does not establish causality, alter scoring weights or evaluate individual team members.
+
+Project 11 assesses recent run evidence through `GET /api/evidence-integrity`. It resolves server-owned opportunity evidence IDs, then reports age, sample size, source concentration, known-segment coverage and polarized sentiment. Findings never delete evidence or change rankings. Thresholds are visible product-policy defaults rather than statistical guarantees.
 
 ## Human gates
 

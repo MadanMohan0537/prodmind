@@ -148,6 +148,7 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const ledger=await(await worker.fetch(req(`/api/runs/${run.id}/learning`),env)).json();
   const memory=await(await worker.fetch(req('/api/memory?q=onboarding'),env)).json();
   const calibration=await(await worker.fetch(req('/api/calibration'),env)).json();
+  const integrity=await(await worker.fetch(req('/api/evidence-integrity'),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -159,6 +160,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(calibration.metrics.brierScore,0.04);
   assert.equal(calibration.forecasts[0].decisionId,reopened.experiments[0].decision.id);
   assert.deepEqual(calibration.forecasts[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(integrity.summary.opportunities,1);
+  assert.equal(integrity.assessments[0].opportunityId,run.ranking.ranked[0].id);
+  assert.deepEqual(integrity.assessments[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -192,8 +196,10 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/8 Monitor/);
   assert.match(html,/9 Remember/);
   assert.match(html,/10 Calibrate/);
-  assert.match(html,/all ten modules/);
+  assert.match(html,/11 Verify/);
+  assert.match(html,/all eleven modules/);
   assert.match(app,/\/api\/calibration/);
+  assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);

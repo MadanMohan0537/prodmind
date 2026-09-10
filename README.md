@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A ten-project, evidence-to-calibrated-learning operating system for product teams.**
+**An eleven-project, evidence-to-calibrated-learning operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -34,9 +34,11 @@ Customer feedback
 9. Searchable product learning memory
       ↓
 10. Decision-confidence calibration
+      ↺
+11. Evidence-integrity monitoring
 ```
 
-## The ten projects
+## The eleven projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -46,16 +48,17 @@ Customer feedback
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary ten-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary eleven-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
+| 11 | [Product Evidence Integrity Monitor](evidence_integrity_monitor/) | Freshness, coverage, concentration and lineage checks | Standalone and connected integrity views |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It imports Project 8’s monitoring engine, Project 9’s learning-memory engine, and Project 10’s calibration engine. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It imports Project 8’s monitoring engine, Project 9’s learning-memory engine, Project 10’s calibration engine, and Project 11’s evidence-integrity engine. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -80,6 +83,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 8. Uploading Project 8 monitoring snapshots.
 9. Searching Project 9 learning across saved runs.
 10. Reviewing Project 10 portfolio calibration against resolved outcomes.
+11. Reviewing Project 11 integrity findings against original evidence IDs.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -93,7 +97,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all ten projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, and confidence calibration.
+The suite covers all eleven projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, confidence calibration, and evidence-integrity checks.
 
 Run one project independently:
 
@@ -114,7 +118,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–10 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
+Projects 1–6 and 8–11 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -128,6 +132,7 @@ Projects 1–6 and 8–10 are bundled into the connected Worker through imports.
 - Outcome signals do not automatically approve rollout changes.
 - Historical search results do not automatically change priorities.
 - Calibration results describe a portfolio and do not evaluate individual employees.
+- Evidence-integrity scores are review heuristics, not representativeness guarantees.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -141,6 +146,7 @@ Projects 1–6 and 8–10 are bundled into the connected Worker through imports.
 | Outcome analysis | Monitoring signals; no causal attribution |
 | Learning retrieval | Weighted lexical search; no embedding or semantic-equivalence claim |
 | Decision calibration | Deterministic Brier score and reliability bands; no causal claim |
+| Evidence integrity | Deterministic freshness and coverage checks; no sampling-validity claim |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -158,6 +164,7 @@ Projects 1–6 and 8–10 are bundled into the connected Worker through imports.
 ├── product_outcome_monitor/            Project 8
 ├── product_learning_memory/            Project 9
 ├── decision_calibration_engine/        Project 10
+├── evidence_integrity_monitor/         Project 11
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -181,4 +188,4 @@ Projects 1–6 and 8–10 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–10 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–11 include their own MIT licenses; imported modules retain their original notices.

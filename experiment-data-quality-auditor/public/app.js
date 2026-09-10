@@ -38,6 +38,11 @@ $('#calibration-refresh').onclick = () => action(async()=>{
   if(result.bins.length){const table=el('div');for(const bin of result.bins){const card=el('article',undefined,'card');card.append(el('h3',`${Math.round(bin.range[0]*100)}–${Math.round(bin.range[1]*100)}% confidence`),el('p',`${bin.count} decisions · mean ${bin.meanConfidence} · observed ${bin.observedRate} · gap ${bin.gap}`));table.append(card);}parent.append(table);}
   details(parent,'Inspect resolved and unresolved decision lineage',{forecasts:result.forecasts,unresolved:result.unresolved});notice('Portfolio calibration calculated.');
 });
+$('#integrity-refresh').onclick = () => action(async()=>{
+  const result=await api('/api/evidence-integrity');const parent=$('#integrity-results');parent.replaceChildren();
+  const metrics=el('div',undefined,'metrics');for(const [label,value] of Object.entries({'Opportunities':result.summary.opportunities,'Mean integrity':result.summary.meanIntegrityScore??'—','Needs attention':result.summary.needsAttention,'Blocked':result.summary.statuses.blocked})){const tile=el('div',undefined,'metric');tile.append(el('strong',String(value)),el('span',label));metrics.append(tile);}parent.append(metrics,el('p',result.method,'muted'));
+  for(const item of result.assessments){const card=el('article',undefined,'card');card.append(el('h3',item.opportunityTitle),el('p',`${item.status} · score ${item.integrityScore} · ${item.metrics.evidenceCount} linked records`,'muted'));for(const finding of item.findings)card.append(el('p',`${finding.severity}: ${finding.message}`));details(card,'Inspect integrity metrics and original evidence IDs',item);parent.append(card);}notice('Evidence integrity assessment complete.');
+});
 $('#discovery').onsubmit = event => {event.preventDefault(); action(async () => {
   const form = event.currentTarget || $('#discovery'); const file = form.elements.file.files[0];
   if (!file || file.size > 2_000_000) throw new Error('Choose a JSON file under 2 MB.');
