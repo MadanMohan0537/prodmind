@@ -5,6 +5,7 @@ import auditor from './worker.js';
 import {buildLearningMemory, searchLearningMemory} from '../../product_learning_memory/src/memory.js';
 import {calibrateRuns} from '../../decision_calibration_engine/src/calibration.js';
 import {assessEvidenceIntegrity} from '../../evidence_integrity_monitor/src/integrity.js';
+import {planFromIntegrity} from '../../research_portfolio_optimizer/src/optimizer.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -75,6 +76,11 @@ export default {
       if (url.pathname === '/api/evidence-integrity' && request.method === 'GET') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         return json(assessEvidenceIntegrity(await store.recent(limit)));
+      }
+      if (url.pathname === '/api/research-plan' && request.method === 'GET') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const capacity = Number(url.searchParams.get('capacity') ?? 8);
+        return json(planFromIntegrity(assessEvidenceIntegrity(await store.recent(limit)), capacity));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

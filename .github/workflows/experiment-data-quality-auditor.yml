@@ -14,6 +14,7 @@ on:
       - 'product_learning_memory/**'
       - 'decision_calibration_engine/**'
       - 'evidence_integrity_monitor/**'
+      - 'research_portfolio_optimizer/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -28,6 +29,7 @@ on:
       - 'product_learning_memory/**'
       - 'decision_calibration_engine/**'
       - 'evidence_integrity_monitor/**'
+      - 'research_portfolio_optimizer/**'
 permissions:
   contents: read
 jobs:

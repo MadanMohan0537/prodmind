@@ -17,6 +17,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 9. Remember learning | `product_learning_memory/src/memory.js` | Cross-run decision cards with explainable retrieval and original evidence IDs |
 | 10. Calibrate decisions | `decision_calibration_engine/src/calibration.js` | Confidence forecasts joined to resolved monitored outcomes with full identity lineage |
 | 11. Verify evidence | `evidence_integrity_monitor/src/integrity.js` | Freshness, source, segment, sample-size and lineage findings for each opportunity |
+| 12. Plan research | `research_portfolio_optimizer/src/optimizer.js` | Capacity-aware action selection linked to Project 11 findings and opportunities |
 
 ## Shared contracts
 
@@ -31,6 +32,8 @@ Project 9 reads up to 20 recent versioned runs through `GET /api/memory`. Its we
 Project 10 reads the same bounded run history through `GET /api/calibration`. It treats `sustained` monitoring as a resolved success, `below_target` or `at_risk` as a resolved non-success, and keeps `emerging` or unmonitored decisions unresolved. It reports Brier score, confidence bias and fixed reliability bands while retaining run, opportunity, experiment, decision, monitor and evidence IDs. The result does not establish causality, alter scoring weights or evaluate individual team members.
 
 Project 11 assesses recent run evidence through `GET /api/evidence-integrity`. It resolves server-owned opportunity evidence IDs, then reports age, sample size, source concentration, known-segment coverage and polarized sentiment. Findings never delete evidence or change rankings. Thresholds are visible product-policy defaults rather than statistical guarantees.
+
+Project 12 calls Project 11 and then executes `planFromIntegrity` through `GET /api/research-plan?capacity=...`. The bounded exact solver maximizes unique severity-weighted finding coverage, enforces dependencies, and returns uncovered gaps. Automatically generated catalogs admit the 16 highest-severity actions and disclose any deferred actions. Scheduling a research action does not mark the underlying finding resolved.
 
 ## Human gates
 
