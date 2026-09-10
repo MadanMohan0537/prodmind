@@ -13,6 +13,7 @@ on:
       - 'product_outcome_monitor/**'
       - 'product_learning_memory/**'
       - 'decision_calibration_engine/**'
+      - 'evidence_integrity_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -26,6 +27,7 @@ on:
       - 'product_outcome_monitor/**'
       - 'product_learning_memory/**'
       - 'decision_calibration_engine/**'
+      - 'evidence_integrity_monitor/**'
 permissions:
   contents: read
 jobs:
