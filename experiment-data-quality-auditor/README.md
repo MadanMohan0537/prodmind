@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the twelve-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–12 for outcome reviews, memory, calibration, evidence integrity, and research-portfolio planning.
+Project 7 is both the experiment workspace and the integration host for the thirteen-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–13 for outcomes, memory, calibration, evidence integrity, research planning, and strategy alignment.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -23,6 +23,7 @@ Collect → Sentiment → Topics → Requests → VoC evidence
    → Cross-run learning search → Portfolio calibration
    ↺ Evidence-integrity review
    → Capacity-aware research plan
+   → Strategic portfolio audit
 ```
 
 One D1 `product_runs` record preserves the IDs and state for this lifecycle. Clients cannot replace server-owned evidence links during prioritization or monitoring.
@@ -42,6 +43,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 10 Brier scores, reliability bands and preserved decision lineage
 - Project 11 freshness, source, segment and broken-lineage findings
 - Project 12 exact bounded research-portfolio optimization
+- Project 13 selected-effort allocation against reviewed objectives
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes
@@ -70,6 +72,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `GET` | `/api/calibration` | Calculate Project 10 portfolio calibration |
 | `GET` | `/api/evidence-integrity` | Assess Project 11 evidence integrity |
 | `GET` | `/api/research-plan?capacity=...` | Optimize a Project 12 research portfolio |
+| `POST` | `/api/strategy-audit` | Audit Project 13 strategy alignment |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -100,7 +103,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–12 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–13 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -110,7 +113,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete twelve-stage workspace
+public/                 Complete thirteen-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -127,6 +130,7 @@ docs/                   PRD and connected contracts
 - Project 10 calibration is portfolio feedback, not an employee score or causal analysis.
 - Project 11 findings are review heuristics, not proof of representative research.
 - Project 12 optimizes declared actions and effort; it cannot guarantee research success.
+- Project 13 audits declared objectives and mappings; it does not measure realized value.
 
 ## Security and limits
 
