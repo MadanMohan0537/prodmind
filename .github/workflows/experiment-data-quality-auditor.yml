@@ -15,6 +15,7 @@ on:
       - 'decision_calibration_engine/**'
       - 'evidence_integrity_monitor/**'
       - 'research_portfolio_optimizer/**'
+      - 'strategy_alignment_auditor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -30,6 +31,7 @@ on:
       - 'decision_calibration_engine/**'
       - 'evidence_integrity_monitor/**'
       - 'research_portfolio_optimizer/**'
+      - 'strategy_alignment_auditor/**'
 permissions:
   contents: read
 jobs:

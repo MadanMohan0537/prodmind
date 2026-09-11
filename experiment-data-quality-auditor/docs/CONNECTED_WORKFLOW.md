@@ -18,6 +18,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 10. Calibrate decisions | `decision_calibration_engine/src/calibration.js` | Confidence forecasts joined to resolved monitored outcomes with full identity lineage |
 | 11. Verify evidence | `evidence_integrity_monitor/src/integrity.js` | Freshness, source, segment, sample-size and lineage findings for each opportunity |
 | 12. Plan research | `research_portfolio_optimizer/src/optimizer.js` | Capacity-aware action selection linked to Project 11 findings and opportunities |
+| 13. Align strategy | `strategy_alignment_auditor/src/alignment.js` | Selected opportunity effort mapped to declared strategic objectives and ranges |
 
 ## Shared contracts
 
@@ -34,6 +35,8 @@ Project 10 reads the same bounded run history through `GET /api/calibration`. It
 Project 11 assesses recent run evidence through `GET /api/evidence-integrity`. It resolves server-owned opportunity evidence IDs, then reports age, sample size, source concentration, known-segment coverage and polarized sentiment. Findings never delete evidence or change rankings. Thresholds are visible product-policy defaults rather than statistical guarantees.
 
 Project 12 calls Project 11 and then executes `planFromIntegrity` through `GET /api/research-plan?capacity=...`. The bounded exact solver maximizes unique severity-weighted finding coverage, enforces dependencies, and returns uncovered gaps. Automatically generated catalogs admit the 16 highest-severity actions and disclose any deferred actions. Scheduling a research action does not mark the underlying finding resolved.
+
+Project 13 accepts a reviewed strategy through `POST /api/strategy-audit`, reads selected Project 6 opportunities from recent runs, and audits their effort allocation. Each selected opportunity maps to at most one primary objective, preventing duplicate effort attribution. The endpoint reports unmapped work, allocation-range exceptions, deviation, and concentration without modifying the strategy or ranking.
 
 ## Human gates
 

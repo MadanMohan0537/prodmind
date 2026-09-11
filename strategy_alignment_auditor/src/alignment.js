@@ -1,0 +1,24 @@
+const round=value=>Number(value.toFixed(4));
+const text=(value,name,max=200)=>{if(typeof value!=='string'||!value.trim()||value.length>max)throw new Error(`${name} must contain 1–${max} characters`);return value.trim();};
+const number=(value,name,min,max)=>{if(!Number.isFinite(value)||value<min||value>max)throw new Error(`${name} must be between ${min} and ${max}`);return value;};
+
+function selectedItems(runs){
+  if(!Array.isArray(runs)||runs.length>50)throw new Error('Provide an array of at most 50 product runs');const items=[];
+  for(const run of runs){if(!run||!run.ranking)continue;const selected=new Set(run.ranking.portfolio?.selected??[]);for(const item of run.ranking.ranked??[])if(selected.has(item.id))items.push({runId:run.id,runTitle:run.title,opportunityId:item.id,title:item.title,effort:item.effort,evidenceIds:[...(item.evidenceIds??[])],strategicAlignment:item.strategicAlignment});}
+  return items;
+}
+
+export function auditStrategyAlignment(runs,strategy){
+  if(!strategy||!Array.isArray(strategy.objectives)||!strategy.objectives.length||strategy.objectives.length>20)throw new Error('Provide 1–20 strategic objectives');
+  const objectiveIds=new Set();const objectives=strategy.objectives.map((item,index)=>{const id=text(item.id,`Objective ${index+1} id`,80);if(objectiveIds.has(id))throw new Error('Objective IDs must be unique');objectiveIds.add(id);const targetShare=number(item.targetShare,`${id} targetShare`,0,1);const minShare=number(item.minShare??0,`${id} minShare`,0,1);const maxShare=number(item.maxShare??1,`${id} maxShare`,0,1);if(minShare>targetShare||targetShare>maxShare)throw new Error(`${id} must satisfy minShare ≤ targetShare ≤ maxShare`);return {id,title:text(item.title,`${id} title`),targetShare,minShare,maxShare};});
+  const targetTotal=objectives.reduce((sum,o)=>sum+o.targetShare,0);if(Math.abs(targetTotal-1)>.0001)throw new Error('Objective targetShare values must sum to 1');
+  if(!Array.isArray(strategy.mappings)||strategy.mappings.length>500)throw new Error('Provide at most 500 opportunity mappings');const mapping=new Map();
+  for(const item of strategy.mappings){const opportunityId=text(item.opportunityId,'mapping opportunityId',120);const objectiveId=text(item.objectiveId,'mapping objectiveId',80);if(!objectiveIds.has(objectiveId))throw new Error(`Unknown objective: ${objectiveId}`);if(mapping.has(opportunityId))throw new Error(`Opportunity ${opportunityId} is mapped more than once`);mapping.set(opportunityId,objectiveId);}
+  const items=selectedItems(runs);if(items.some(item=>!Number.isFinite(item.effort)||item.effort<=0))throw new Error('Selected opportunities require positive effort');const totalEffort=items.reduce((sum,item)=>sum+item.effort,0);const mappedItems=items.filter(item=>mapping.has(item.opportunityId));const mappedEffort=mappedItems.reduce((sum,item)=>sum+item.effort,0);
+  const allocation=objectives.map(objective=>{const assigned=mappedItems.filter(item=>mapping.get(item.opportunityId)===objective.id);const effort=assigned.reduce((sum,item)=>sum+item.effort,0);const actualShare=totalEffort?effort/totalEffort:0;const gap=actualShare-objective.targetShare;return {...objective,effort:round(effort),actualShare:round(actualShare),gap:round(gap),status:!totalEffort?'no_portfolio':actualShare<objective.minShare?'underallocated':actualShare>objective.maxShare?'overallocated':'within_range',opportunityIds:assigned.map(item=>item.opportunityId)};});
+  const unalignedItems=items.filter(item=>!mapping.has(item.opportunityId));const coverage=totalEffort?mappedEffort/totalEffort:1;const deviation=allocation.reduce((sum,item)=>sum+Math.abs(item.actualShare-item.targetShare),0)/2;const concentration=allocation.reduce((sum,item)=>sum+item.actualShare**2,0);const findings=[];
+  if(unalignedItems.length)findings.push({code:'unmapped_work',severity:'high',message:`${unalignedItems.length} selected opportunities lack a strategic objective`});
+  for(const item of allocation)if(!['within_range','no_portfolio'].includes(item.status))findings.push({code:item.status,severity:'medium',objectiveId:item.id,message:`${item.title} is ${item.status} at ${Math.round(item.actualShare*100)}% of selected effort`});
+  if(items.length&&!mappedItems.length)findings.push({code:'zero_alignment_coverage',severity:'blocker',message:'No selected effort maps to a declared objective'});
+  return {schemaVersion:'1.0.0',strategyId:text(strategy.id??'current-strategy','strategy id',80),summary:{runs:runs.length,selectedOpportunities:items.length,totalEffort:round(totalEffort),mappedEffort:round(mappedEffort),alignmentCoverage:round(coverage),allocationDeviation:round(deviation),allocationConcentration:round(concentration),needsAttention:findings.length},allocation,selectedItems:items,unalignedItems,findings,method:'deterministic effort allocation against declared objective ranges; review strategy and mappings before action'};
+}
