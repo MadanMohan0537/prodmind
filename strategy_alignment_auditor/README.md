@@ -18,6 +18,13 @@ Product teams commonly give individual opportunities a “strategic alignment”
 
 Project 13 answers those questions with deterministic allocation analysis. It combines Project 6’s selected opportunities and effort estimates with a reviewed strategy model, while preserving the original run, opportunity, and evidence identities.
 
+## Product impact
+
+- **Decision improved:** whether selected delivery effort reflects leadership’s declared strategic allocation.
+- **Leading measures:** mapped effort, allocation deviation, objective concentration and unmapped selected work.
+- **Portfolio value:** exposes the difference between item-level alignment scores and the composition of the whole portfolio.
+- **Stop condition:** allocated effort is not realized value, revenue or benefits.
+
 ## Place in ProdMind
 
 ```text
