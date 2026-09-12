@@ -11,6 +11,13 @@
 
 Project 3 converts enriched feedback into lightweight topics, weighted keywords, document assignments, a topic hierarchy, and a descriptive drift signal. Every assignment retains the Project 1 evidence ID used by downstream opportunities.
 
+## Product impact
+
+- **Decision improved:** which recurring customer problems deserve structured investigation.
+- **Leading measures:** assignment coverage, topic concentration, unassigned records and reviewed drift signals.
+- **Portfolio value:** compresses a bounded evidence set while keeping every topic traceable to source records.
+- **Stop condition:** topic IDs are run-scoped suggestions, not stable customer-problem truth across time.
+
 ## Place in ProdMind
 
 ```text
