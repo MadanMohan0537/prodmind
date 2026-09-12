@@ -13,6 +13,13 @@ Product teams rarely fail because they have no feedback. They fail because five 
 
 Project 11 adds a deterministic evidence-quality gate to [ProdMind](../README.md). It inspects the evidence already linked to every opportunity and shows what a PM must review before reusing that evidence for prioritization, experimentation, or future planning.
 
+## Product impact
+
+- **Decision improved:** whether the evidence behind an opportunity is fit for another consequential decision.
+- **Leading measures:** broken lineage, freshness, source concentration, segment gaps and review status.
+- **Portfolio value:** makes weak evidence visible before it is amplified by scoring, experimentation or strategy work.
+- **Stop condition:** the integrity score is a policy heuristic, not proof of sampling validity or representativeness.
+
 ## Place in ProdMind
 
 ```text
