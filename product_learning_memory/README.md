@@ -11,6 +11,13 @@
 
 Project 9 turns completed ProdMind runs into searchable decision cards. Each result retains the original run, opportunity, experiment, decision, monitoring status, and customer-evidence IDs so historical context never becomes an unsupported recommendation.
 
+## Product impact
+
+- **Decision improved:** whether prior product learning is relevant enough to inform a new investigation.
+- **Leading measures:** search success, evidence-linked result rate, reused learning and false-match review.
+- **Portfolio value:** reduces repeated discovery work while preserving the context behind each historical decision.
+- **Stop condition:** lexical similarity does not prove that customers, conditions or causal mechanisms are equivalent.
+
 ## Place in ProdMind
 
 Projects 1–8 create the evidence-to-outcome trail. Project 9 searches that trail across recent D1 runs through the connected workspace’s `GET /api/memory` endpoint. A standalone Worker can also index explicitly supplied run exports.
