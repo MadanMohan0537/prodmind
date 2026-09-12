@@ -11,6 +11,13 @@
 
 Project 8 follows a Project 7 decision into the post-decision period. It compares baseline and observed metric series, detects persistence or reversal, checks declared guardrails, and retains the original opportunity, experiment, decision, and evidence identities.
 
+## Product impact
+
+- **Decision improved:** whether a shipped or retained decision remains healthy after the initial readout.
+- **Leading measures:** target persistence, reversal signals, guardrail breaches and overdue reviews.
+- **Portfolio value:** prevents a one-time experiment decision from becoming an unmonitored permanent assumption.
+- **Stop condition:** monitoring association is not causal attribution and must not trigger an automatic rollback.
+
 ## Place in ProdMind
 
 ```text
