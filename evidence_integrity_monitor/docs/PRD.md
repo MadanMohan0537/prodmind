@@ -23,6 +23,7 @@ Product managers and researchers reviewing an opportunity before prioritization,
 - Return deterministic scores for the same input, policy, and `asOf` timestamp.
 - Never fabricate missing segments or sources.
 - Preserve run, opportunity, and evidence identity.
+- Emit `portfolioItemId` as `runId:opportunityId` for every cross-run assessment.
 - Fail closed without API authentication.
 
 ## Non-goals

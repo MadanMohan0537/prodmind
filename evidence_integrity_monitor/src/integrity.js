@@ -34,7 +34,7 @@ function assessOpportunity(run,opportunity,evidenceById,asOf,policy){
   if(unknownSegmentShare>.5)add('unknown_segments','medium',`${Math.round(unknownSegmentShare*100)}% of evidence has no segment`,10);
   if(polarized)add('polarized_signal','review','Positive and negative evidence both exceed 20%; inspect segment and context differences',5);
   const integrityScore=Math.max(0,100-findings.reduce((sum,item)=>sum+item.penalty,0));
-  return {runId:run.id,runTitle:run.title,opportunityId:opportunity.id,opportunityTitle:opportunity.title,evidenceIds:ids,missingEvidenceIds,integrityScore,status:findings.some(f=>f.severity==='blocker')?'blocked':integrityScore<60?'high_risk':integrityScore<80?'review':'healthy',metrics:{evidenceCount:evidence.length,staleCount,staleShare:round(staleCount/Math.max(1,evidence.length)),sourceCount:Object.keys(sources).length,largestSourceShare:round(largestSourceShare),sourceConcentration:round(sourceConcentration),knownSegmentCount:Object.keys(segments).filter(s=>s!=='unknown').length,unknownSegmentShare:round(unknownSegmentShare)},distributions:{sources,segments,sentiments},findings};
+  return {portfolioItemId:`${run.id}:${opportunity.id}`,runId:run.id,runTitle:run.title,opportunityId:opportunity.id,opportunityTitle:opportunity.title,evidenceIds:ids,missingEvidenceIds,integrityScore,status:findings.some(f=>f.severity==='blocker')?'blocked':integrityScore<60?'high_risk':integrityScore<80?'review':'healthy',metrics:{evidenceCount:evidence.length,staleCount,staleShare:round(staleCount/Math.max(1,evidence.length)),sourceCount:Object.keys(sources).length,largestSourceShare:round(largestSourceShare),sourceConcentration:round(sourceConcentration),knownSegmentCount:Object.keys(segments).filter(s=>s!=='unknown').length,unknownSegmentShare:round(unknownSegmentShare)},distributions:{sources,segments,sentiments},findings};
 }
 
 export function assessEvidenceIntegrity(runs,input={}){
@@ -48,7 +48,7 @@ export function assessEvidenceIntegrity(runs,input={}){
     const opportunities=run.ranking?.ranked??run.opportunities??[];
     for(const opportunity of opportunities)assessments.push(assessOpportunity(run,opportunity,evidenceById,asOf,policy));
   }
-  assessments.sort((a,b)=>a.integrityScore-b.integrityScore||a.opportunityId.localeCompare(b.opportunityId));
+  assessments.sort((a,b)=>a.integrityScore-b.integrityScore||a.portfolioItemId.localeCompare(b.portfolioItemId));
   const counts=Object.fromEntries(['blocked','high_risk','review','healthy'].map(status=>[status,assessments.filter(a=>a.status===status).length]));
   return {schemaVersion:'1.0.0',generatedAt:new Date(asOf).toISOString(),policy,summary:{runs:runs.length,opportunities:assessments.length,meanIntegrityScore:assessments.length?round(assessments.reduce((sum,a)=>sum+a.integrityScore,0)/assessments.length):null,needsAttention:counts.blocked+counts.high_risk+counts.review,statuses:counts},assessments,method:'deterministic evidence fitness checks; findings require product and research review'};
 }

@@ -23,6 +23,7 @@ Product leaders, portfolio managers, product managers, and finance or strategy p
 - Analyze only selected Project 6 opportunities.
 - Weight actual allocation by explicit effort.
 - Preserve run, opportunity, and evidence identity.
+- Reject ambiguous cross-run opportunity-only mappings and accept `runId` or canonical `portfolioItemId`.
 - Report unmapped selected work.
 - Handle empty portfolios without false alerts.
 - Never mutate a ranking or strategy.

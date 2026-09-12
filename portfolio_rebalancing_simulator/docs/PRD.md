@@ -22,6 +22,7 @@ Product leaders, portfolio managers, product managers, and delivery leads conduc
 - Enforce capacity, locks, mappings, and dependencies.
 - Minimize range violation before disruption and score.
 - Preserve evidence lineage.
+- Preserve canonical run-scoped portfolio identity across mappings, locks, dependencies, and results.
 - Report the closest feasible scenario when exact alignment is unavailable.
 - Report infeasibility when no operational subset exists.
 - Never mutate a saved ranking.

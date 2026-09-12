@@ -91,7 +91,7 @@ export default {
       if (url.pathname === '/api/portfolio-rebalance' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         const input = await body(request);
-        return json(rebalancePortfolio(await store.recent(limit), input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds}));
+        return json(rebalancePortfolio(await store.recent(limit), input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

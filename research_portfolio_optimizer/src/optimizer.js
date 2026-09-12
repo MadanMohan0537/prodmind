@@ -10,19 +10,20 @@ const actionTemplates={
   unknown_segments:{title:'Resolve segment metadata',effort:1,method:'Correct source metadata without guessing customer attributes.'},
   polarized_signal:{title:'Run a segment contrast study',effort:2,method:'Compare positive and negative evidence by segment, source, and context.'},
 };
-const targetId=(opportunityId,code)=>`${opportunityId}:${code}`;
+const itemId=item=>item.portfolioItemId??(item.runId?`${item.runId}:${item.opportunityId}`:item.opportunityId);
+const targetId=(item,code)=>`${itemId(item)}:${code}`;
 
 export function deriveResearchBacklog(integrity){
   if(!integrity||!Array.isArray(integrity.assessments))throw new Error('A Project 11 integrity report is required');
   const actions=[];
   for(const item of integrity.assessments){
-    for(const finding of item.findings){const template=actionTemplates[finding.code];if(!template)continue;actions.push({id:`research-${item.opportunityId}-${finding.code}`,title:`${template.title}: ${item.opportunityTitle}`.slice(0,200),opportunityId:item.opportunityId,effort:template.effort,covers:[targetId(item.opportunityId,finding.code)],method:template.method,sourceFinding:{code:finding.code,severity:finding.severity,message:finding.message}});}
+    for(const finding of item.findings){const template=actionTemplates[finding.code];if(!template)continue;const portfolioItemId=itemId(item);actions.push({id:`research-${portfolioItemId}-${finding.code}`,title:`${template.title}: ${item.opportunityTitle}`.slice(0,200),portfolioItemId,runId:item.runId??null,opportunityId:item.opportunityId,effort:template.effort,covers:[targetId(item,finding.code)],method:template.method,sourceFinding:{code:finding.code,severity:finding.severity,message:finding.message}});}
   }
   actions.sort((a,b)=>a.id.localeCompare(b.id));return actions;
 }
 
 function normalizeTargets(integrity){
-  return integrity.assessments.flatMap(item=>item.findings.map(finding=>({id:targetId(item.opportunityId,finding.code),opportunityId:item.opportunityId,opportunityTitle:item.opportunityTitle,code:finding.code,severity:finding.severity,weight:severityWeight[finding.severity]??1,message:finding.message})));
+  return integrity.assessments.flatMap(item=>item.findings.map(finding=>({id:targetId(item,finding.code),portfolioItemId:itemId(item),runId:item.runId??null,opportunityId:item.opportunityId,opportunityTitle:item.opportunityTitle,code:finding.code,severity:finding.severity,weight:severityWeight[finding.severity]??1,message:finding.message})));
 }
 
 export function optimizeResearchPortfolio({integrity,actions,capacity}){
