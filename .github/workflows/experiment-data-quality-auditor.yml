@@ -16,6 +16,7 @@ on:
       - 'evidence_integrity_monitor/**'
       - 'research_portfolio_optimizer/**'
       - 'strategy_alignment_auditor/**'
+      - 'portfolio_rebalancing_simulator/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -32,6 +33,7 @@ on:
       - 'evidence_integrity_monitor/**'
       - 'research_portfolio_optimizer/**'
       - 'strategy_alignment_auditor/**'
+      - 'portfolio_rebalancing_simulator/**'
 permissions:
   contents: read
 jobs:

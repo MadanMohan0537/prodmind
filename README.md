@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A thirteen-project, evidence-to-strategy operating system for product teams.**
+**A fourteen-project, evidence-to-strategy operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -40,9 +40,11 @@ Customer feedback
 12. Capacity-aware research planning
       ↓
 13. Strategic portfolio alignment
+      ↓
+14. Minimum-disruption portfolio rebalancing
 ```
 
-## The thirteen projects
+## The fourteen projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -52,19 +54,20 @@ Customer feedback
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirteen-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary fourteen-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
 | 11 | [Product Evidence Integrity Monitor](evidence_integrity_monitor/) | Freshness, coverage, concentration and lineage checks | Standalone and connected integrity views |
 | 12 | [Product Research Portfolio Optimizer](research_portfolio_optimizer/) | Exact capacity-aware selection of evidence-gap research | Standalone and connected planning views |
 | 13 | [Product Strategy Alignment Auditor](strategy_alignment_auditor/) | Effort allocation against declared strategic objectives | Standalone and connected portfolio audits |
+| 14 | [Strategic Portfolio Rebalancing Simulator](portfolio_rebalancing_simulator/) | Minimum-disruption capacity, dependency and strategy scenarios | Standalone and connected scenario review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–13 for monitoring, memory, calibration, evidence integrity, research planning, and strategy alignment. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–14 for monitoring, memory, calibration, evidence integrity, research planning, strategy alignment, and rebalancing. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -92,6 +95,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 11. Reviewing Project 11 integrity findings against original evidence IDs.
 12. Optimizing Project 12 research actions within available capacity.
 13. Auditing Project 13 selected effort against declared strategic objectives.
+14. Simulating Project 14’s smallest feasible portfolio change without overwriting the saved ranking.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -105,7 +109,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all thirteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, confidence calibration, evidence integrity, research optimization, and strategy alignment.
+The suite covers all fourteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, confidence calibration, evidence integrity, research optimization, strategy alignment, and portfolio rebalancing.
 
 Run one project independently:
 
@@ -126,7 +130,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–13 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
+Projects 1–6 and 8–14 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -143,6 +147,7 @@ Projects 1–6 and 8–13 are bundled into the connected Worker through imports.
 - Evidence-integrity scores are review heuristics, not representativeness guarantees.
 - Research optimization covers declared findings; it does not prove that a study will resolve them.
 - Strategy allocation describes selected effort; it does not measure realized benefits.
+- Rebalancing produces a reviewable scenario; it never applies ranking or roadmap changes.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -159,6 +164,7 @@ Projects 1–6 and 8–13 are bundled into the connected Worker through imports.
 | Evidence integrity | Deterministic freshness and coverage checks; no sampling-validity claim |
 | Research planning | Exact bounded portfolio optimization; human effort and action assumptions remain inputs |
 | Strategy alignment | Deterministic effort-allocation audit; objectives and mappings require human review |
+| Portfolio rebalancing | Exact bounded search for up to 18 candidates; declared effort, dependencies and mappings remain human inputs |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -179,6 +185,7 @@ Projects 1–6 and 8–13 are bundled into the connected Worker through imports.
 ├── evidence_integrity_monitor/         Project 11
 ├── research_portfolio_optimizer/       Project 12
 ├── strategy_alignment_auditor/         Project 13
+├── portfolio_rebalancing_simulator/    Project 14
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -202,4 +209,4 @@ Projects 1–6 and 8–13 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–13 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–14 include their own MIT licenses; imported modules retain their original notices.
