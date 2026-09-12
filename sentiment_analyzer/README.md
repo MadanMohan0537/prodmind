@@ -11,6 +11,13 @@
 
 Project 2 enriches normalized Project 1 feedback with deterministic sentiment, language, aspect, confidence, token evidence, and a human-review flag. It is deliberately a transparent baseline rather than a claimed production ML model.
 
+## Product impact
+
+- **Decision improved:** which feedback needs immediate qualitative review and which product areas carry negative signals.
+- **Leading measures:** labeled coverage, human-review rate, correction rate and evaluation accuracy by language.
+- **Portfolio value:** supplies explainable evidence features without converting sentiment into fabricated business priority.
+- **Stop condition:** rule confidence is not a probability and cannot authorize prioritization by itself.
+
 ## Place in ProdMind
 
 The connected workspace attaches each sentiment result to the same feedback ID before topic detection, intent detection, Voice-of-Customer aggregation, prioritization, experimentation, outcome monitoring, and learning retrieval.
