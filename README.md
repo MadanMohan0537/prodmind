@@ -44,6 +44,19 @@ Customer feedback
 14. Minimum-disruption portfolio rebalancing
 ```
 
+## Portfolio impact model
+
+ProdMind is designed around decisions rather than disconnected demos:
+
+| Decision layer | Projects | Intended impact |
+|---|---|---|
+| Evidence readiness | 1–5, 11 | Trustworthy, inspectable customer signals |
+| Portfolio judgment | 6, 12–14 | Explicit trade-offs across product, research and strategy capacity |
+| Experiment governance | 7 | Prospective plans, data-quality gates and reviewed decisions |
+| Learning feedback | 8–10 | Monitored outcomes, reusable context and confidence calibration |
+
+The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
+
 ## The fourteen projects
 
 | # | Project | What it contributes | Frontend |

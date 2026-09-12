@@ -11,6 +11,13 @@
 
 Project 6 scores opportunities using explicit PM estimates, reports score contributions and uncertainty assumptions, and builds a capacity-aware portfolio. It does not invent business value from upstream sentiment or request volume.
 
+## Product impact
+
+- **Decision improved:** which reviewed opportunities fit the current capacity and declared product priorities.
+- **Leading measures:** assessment completion, selected capacity, dependency exceptions and sensitivity to weights.
+- **Portfolio value:** makes trade-offs and human assumptions inspectable before experiments or roadmap commitments.
+- **Stop condition:** a high score is not a revenue forecast, and the greedy portfolio is not a global mathematical optimum.
+
 ## Place in ProdMind
 
 Projects 1–5 produce evidence-linked opportunity candidates. A PM supplies reviewed value, strategy, feasibility, urgency, effort, risk, confidence, uncertainty and dependencies. Project 7 preserves the selected opportunity and evidence snapshot when an experiment is created.

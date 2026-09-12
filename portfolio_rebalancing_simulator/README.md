@@ -13,6 +13,13 @@ Project 13 identifies where selected product effort is inconsistent with declare
 
 Project 14 searches the complete bounded Project 6 backlog and produces a reviewable rebalance scenario. It never modifies a saved ranking.
 
+## Product impact
+
+- **Decision improved:** what smallest set of portfolio additions and removals can improve strategic allocation within constraints.
+- **Leading measures:** range violation, change count, capacity use, retained commitments and scenario acceptance.
+- **Portfolio value:** turns a strategy exception into a concrete, evidence-linked alternative without silently rewriting the roadmap.
+- **Stop condition:** an exact solution is optimal only for the bounded candidate set, declared inputs and objective order.
+
 ## Place in ProdMind
 
 ```text

@@ -11,6 +11,13 @@
 
 Project 5 combines the normalized records, sentiment, topics, and request intents produced by Projects 1–4. It calculates bounded aggregates and exposes the records behind them so a PM can inspect evidence before assessing an opportunity.
 
+## Product impact
+
+- **Decision improved:** where customer signals are changing by source, segment, topic and time.
+- **Leading measures:** evidence coverage, trend magnitude, source diversity and record-level drill-through use.
+- **Portfolio value:** turns enriched evidence into a review surface without hiding the observations behind aggregate charts.
+- **Stop condition:** volume spikes and sentiment shifts are investigation signals, not roadmap decisions.
+
 ## Place in ProdMind
 
 ```text

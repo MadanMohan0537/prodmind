@@ -11,6 +11,13 @@
 
 Feedback Collector is the ingestion boundary for [ProdMind](../README.md). It accepts individual records or bounded batches, validates the normalized contract, creates a canonical SHA-256 fingerprint, and stores unique feedback in Cloudflare D1. Original source IDs remain available for every downstream decision.
 
+## Product impact
+
+- **Decision improved:** whether incoming customer evidence is trustworthy enough to enter discovery.
+- **Leading measures:** accepted, rejected and duplicate records; connector success; unresolved validation errors.
+- **Portfolio value:** prevents every downstream insight from inheriting malformed, repeated or untraceable evidence.
+- **Stop condition:** ingestion success never proves that feedback is representative; Project 11 evaluates evidence fitness later.
+
 ## Place in ProdMind
 
 ```text
@@ -35,7 +42,7 @@ The connected workspace imports `prepareRecord` directly. Standalone D1 data is 
 - Generic paginated JSON mapping plus Zendesk mapping and retry utilities
 - Responsive frontend with light and dark color schemes
 
-Connector utilities fetch and map data when called, but the Worker does not schedule connectors automatically.
+The Worker schedules the configured Zendesk connector hourly through a Cron Trigger. Other connector shapes remain mapping utilities rather than live scheduled integrations.
 
 ## Frontend
 
@@ -89,7 +96,7 @@ wrangler.jsonc   Cloudflare bindings
 ## Honest limits
 
 - Only the Zendesk connector has an exercised fetch-and-pagination test.
-- There is no cron schedule or connector credential-management UI.
+- Zendesk has an hourly Cron Trigger; the other mapping templates have no scheduled synchronization or credential-management UI.
 - Similar text is a review signal; it is not proof that two customers are duplicates.
 - A bearer token protects a small trusted deployment, not a multi-tenant SaaS product.
 - Configure retention, redaction, access control and abuse protection before using sensitive feedback.

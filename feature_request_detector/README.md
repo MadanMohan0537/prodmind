@@ -11,6 +11,13 @@
 
 Project 4 adds explainable multi-label intent detection to the same normalized feedback records used by Projects 2 and 3. It identifies candidate product requests without treating classifier output as roadmap priority.
 
+## Product impact
+
+- **Decision improved:** whether a record expresses a request, defect, complaint, question, praise or churn risk.
+- **Leading measures:** per-label precision and recall, review rate and correction patterns.
+- **Portfolio value:** separates request-shaped evidence from general sentiment before opportunity formation.
+- **Stop condition:** request frequency and classifier confidence never substitute for value, strategy or feasibility review.
+
 ## Place in ProdMind
 
 Project 7 imports `detectIntents` directly, attaches the result to the source evidence ID, and passes the enriched record to the Voice-of-Customer dashboard. Project 6 later scores human-reviewed opportunities rather than raw classifier confidence.

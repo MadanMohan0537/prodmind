@@ -13,6 +13,13 @@ Project 11 can reveal stale, concentrated, narrow, polarized, or disconnected ev
 
 Project 12 converts those findings into a research backlog and selects the combination that covers the most important evidence risk within available capacity. The result is deterministic, inspectable, and connected to the original opportunity and finding identities.
 
+## Product impact
+
+- **Decision improved:** which evidence gaps the research team should investigate with limited capacity.
+- **Leading measures:** severity-weighted gap coverage, capacity use, deferred actions and unresolved findings.
+- **Portfolio value:** allocates research effort across the portfolio instead of reacting to the loudest request.
+- **Stop condition:** scheduling an action does not mean the evidence gap has been resolved.
+
 ## Place in ProdMind
 
 ```text

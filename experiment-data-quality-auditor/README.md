@@ -14,6 +14,13 @@ Project 7 is both the experiment workspace and the integration host for the four
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
+## Product impact
+
+- **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
+- **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
+- **Portfolio value:** provides one D1-backed control plane for all fourteen modules and preserves the decision trail.
+- **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
+
 ## Connected lifecycle
 
 ```text
