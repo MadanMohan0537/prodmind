@@ -7,6 +7,7 @@ import {calibrateRuns} from '../../decision_calibration_engine/src/calibration.j
 import {assessEvidenceIntegrity} from '../../evidence_integrity_monitor/src/integrity.js';
 import {planFromIntegrity} from '../../research_portfolio_optimizer/src/optimizer.js';
 import {auditStrategyAlignment} from '../../strategy_alignment_auditor/src/alignment.js';
+import {rebalancePortfolio} from '../../portfolio_rebalancing_simulator/src/rebalance.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -86,6 +87,11 @@ export default {
       if (url.pathname === '/api/strategy-audit' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         return json(auditStrategyAlignment(await store.recent(limit), await body(request)));
+      }
+      if (url.pathname === '/api/portfolio-rebalance' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request);
+        return json(rebalancePortfolio(await store.recent(limit), input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

@@ -19,6 +19,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 11. Verify evidence | `evidence_integrity_monitor/src/integrity.js` | Freshness, source, segment, sample-size and lineage findings for each opportunity |
 | 12. Plan research | `research_portfolio_optimizer/src/optimizer.js` | Capacity-aware action selection linked to Project 11 findings and opportunities |
 | 13. Align strategy | `strategy_alignment_auditor/src/alignment.js` | Selected opportunity effort mapped to declared strategic objectives and ranges |
+| 14. Rebalance portfolio | `portfolio_rebalancing_simulator/src/rebalance.js` | Reviewable additions and removals linked to the saved ranking and original evidence |
 
 ## Shared contracts
 
@@ -37,6 +38,8 @@ Project 11 assesses recent run evidence through `GET /api/evidence-integrity`. I
 Project 12 calls Project 11 and then executes `planFromIntegrity` through `GET /api/research-plan?capacity=...`. The bounded exact solver maximizes unique severity-weighted finding coverage, enforces dependencies, and returns uncovered gaps. Automatically generated catalogs admit the 16 highest-severity actions and disclose any deferred actions. Scheduling a research action does not mark the underlying finding resolved.
 
 Project 13 accepts a reviewed strategy through `POST /api/strategy-audit`, reads selected Project 6 opportunities from recent runs, and audits their effort allocation. Each selected opportunity maps to at most one primary objective, preventing duplicate effort attribution. The endpoint reports unmapped work, allocation-range exceptions, deviation, and concentration without modifying the strategy or ranking.
+
+Project 14 accepts the same reviewed strategy plus capacity and optional locked opportunity IDs through `POST /api/portfolio-rebalance`. It searches up to 18 Project 6 candidates exactly, enforces declared dependencies, objective mappings, capacity and locked commitments, then lexicographically minimizes allocation-range violation and portfolio changes before maximizing score and utilization. The response is a scenario with retained evidence lineage; it does not mutate the saved ranking.
 
 ## Human gates
 

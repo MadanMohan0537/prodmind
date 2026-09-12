@@ -152,6 +152,7 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const researchPlan=await(await worker.fetch(req('/api/research-plan?capacity=4'),env)).json();
   const strategy={id:'test-strategy',objectives:[{id:'activation',title:'Improve activation',targetShare:1,minShare:.8,maxShare:1}],mappings:[{opportunityId:run.ranking.ranked[0].id,objectiveId:'activation'}]};
   const strategyAudit=await(await worker.fetch(req('/api/strategy-audit',strategy),env)).json();
+  const rebalance=await(await worker.fetch(req('/api/portfolio-rebalance',{strategy,capacity:5,lockedOpportunityIds:[run.ranking.ranked[0].id]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -172,6 +173,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(strategyAudit.strategyId,'test-strategy');
   assert.equal(strategyAudit.summary.alignmentCoverage,1);
   assert.deepEqual(strategyAudit.selectedItems[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(rebalance.optimal,true);
+  assert.ok(rebalance.selected.some(item=>item.opportunityId===run.ranking.ranked[0].id));
+  assert.deepEqual(rebalance.selected[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -208,11 +212,13 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/11 Verify/);
   assert.match(html,/12 Plan research/);
   assert.match(html,/13 Align strategy/);
-  assert.match(html,/all thirteen modules/);
+  assert.match(html,/14 Rebalance/);
+  assert.match(html,/all fourteen modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
   assert.match(app,/\/api\/strategy-audit/);
+  assert.match(app,/\/api\/portfolio-rebalance/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
