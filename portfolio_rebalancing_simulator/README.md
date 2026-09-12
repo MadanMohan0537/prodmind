@@ -40,6 +40,7 @@ Approved changes return through the normal Project 6 workflow
 - Then maximizes total Project 6 score and capacity use
 - Returns added, removed, retained, and complete selected sets
 - Preserves run, opportunity, dependency, objective, and evidence identities
+- Uses canonical `portfolioItemId` values so repeated opportunity IDs remain distinct across runs
 - Returns `aligned`, `closest_feasible`, or `infeasible`
 - Reports exact-search combinations and optimality scope
 - Includes an authenticated Cloudflare Worker API
@@ -85,7 +86,7 @@ Content-Type: application/json
   },
   "options": {
     "capacity": 20,
-    "lockedOpportunityIds": ["opp-1"]
+    "lockedPortfolioItemIds": ["run-2026-q4:opp-1"]
   }
 }
 ```
@@ -98,7 +99,7 @@ Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 ```
 
-The connected request contains `strategy`, `capacity`, and optional `lockedOpportunityIds`. Project 7 supplies recent D1-backed runs and invokes the same engine directly.
+The connected request contains `strategy`, `capacity`, and optional `lockedPortfolioItemIds`. Project 7 supplies recent D1-backed runs and invokes the same engine directly. Legacy `lockedOpportunityIds` and opportunity-only mappings remain supported when each ID occurs in only one run; ambiguous values are rejected.
 
 ## Run locally
 

@@ -50,6 +50,7 @@ The auditor does not rewrite the strategy, change the roadmap, or convert an obj
 - Handles an empty portfolio without inventing findings
 - Ignores deferred Project 6 opportunities
 - Preserves run, opportunity, and evidence lineage
+- Uses `portfolioItemId` (`runId:opportunityId`) for unambiguous cross-run mappings
 - Includes an authenticated Cloudflare Worker API
 - Includes system-aware light and dark interfaces
 - Integrates directly with the Project 7 D1 workspace
@@ -79,6 +80,7 @@ The auditor does not rewrite the strategy, change the roadmap, or convert an obj
   "mappings": [
     {
       "opportunityId": "opp-topic-1",
+      "runId": "run-2026-q4",
       "objectiveId": "activation"
     }
   ]
@@ -184,7 +186,7 @@ strategy_alignment_auditor/
 - The concentration metric has no universal “good” threshold.
 - The auditor does not compare financial returns or estimate opportunity cost.
 - It does not automatically reprioritize, stop, or fund work.
-- Cross-run opportunity IDs must be unique for unambiguous mappings.
+- A legacy mapping containing only `opportunityId` remains valid when that ID appears in one run. Repeated IDs require `runId` or `portfolioItemId`; ambiguous input is rejected rather than guessed.
 - One deployment remains a trusted-team workspace, not tenant-isolated SaaS.
 
 ## Research basis

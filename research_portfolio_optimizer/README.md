@@ -41,7 +41,8 @@ This is the closing loop between detecting an evidence problem and deciding what
 - Returns selected actions plus uncovered evidence gaps
 - Reports the number of combinations evaluated
 - Makes an exact optimality claim only within the bounded action catalog
-- Preserves opportunity IDs, finding codes, severities, and source messages
+- Preserves canonical portfolio-item IDs, run and opportunity IDs, finding codes, severities, and source messages
+- Keeps identical opportunity IDs from different discovery runs as separate research targets
 - Provides an authenticated Cloudflare Worker and light/dark frontend
 - Runs directly inside the connected Project 7 workspace
 - Requires no paid model, solver, or external database

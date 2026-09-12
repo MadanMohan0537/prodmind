@@ -27,6 +27,8 @@ A discovery run has a server-generated UUID, revision, immutable source evidence
 
 Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, but cannot replace these links. An experiment stores both the opportunity ID and its ranking snapshot so later reprioritization does not rewrite the experiment's original rationale. The learning endpoint returns decisions and outcome reviews linked back to that opportunity and its original records. Project 8 monitoring is submitted through `POST /api/runs/:runId/learning/:experimentId/monitor`; the server supplies the authoritative opportunity, experiment, decision and evidence identities. Learning does not silently change prioritization scores; PMs explicitly reassess and save a new ranking.
 
+Opportunity IDs are scoped to a discovery run. Cross-run Projects 11–14 therefore expose `portfolioItemId` as `runId:opportunityId`. Research targets, strategy mappings, locks, dependencies, and scenario results use this canonical identity. Legacy opportunity-only mappings and locks are accepted only when the ID is unique across the selected runs; ambiguous requests fail explicitly.
+
 The integrated ranking uses deterministic scores without Monte Carlo simulation to reduce request computation. Project 6's standalone simulation behavior is preserved by default. No synthetic uncertainty band is attached when simulation is disabled. Dependency cycles and missing assessed dependencies are rejected before invoking the portfolio selector.
 
 Project 9 reads up to 20 recent versioned runs through `GET /api/memory`. Its weighted lexical search returns the matched fields and terms along with the decision, monitored status and source evidence. Retrieval never changes an opportunity, ranking, experiment or decision.
@@ -39,7 +41,7 @@ Project 12 calls Project 11 and then executes `planFromIntegrity` through `GET /
 
 Project 13 accepts a reviewed strategy through `POST /api/strategy-audit`, reads selected Project 6 opportunities from recent runs, and audits their effort allocation. Each selected opportunity maps to at most one primary objective, preventing duplicate effort attribution. The endpoint reports unmapped work, allocation-range exceptions, deviation, and concentration without modifying the strategy or ranking.
 
-Project 14 accepts the same reviewed strategy plus capacity and optional locked opportunity IDs through `POST /api/portfolio-rebalance`. It searches up to 18 Project 6 candidates exactly, enforces declared dependencies, objective mappings, capacity and locked commitments, then lexicographically minimizes allocation-range violation and portfolio changes before maximizing score and utilization. The response is a scenario with retained evidence lineage; it does not mutate the saved ranking.
+Project 14 accepts the same reviewed strategy plus capacity and optional locked portfolio-item IDs through `POST /api/portfolio-rebalance`. It searches up to 18 Project 6 candidates exactly, enforces declared dependencies, objective mappings, capacity and locked commitments, then lexicographically minimizes allocation-range violation and portfolio changes before maximizing score and utilization. The response is a scenario with retained evidence lineage; it does not mutate the saved ranking.
 
 ## Human gates
 

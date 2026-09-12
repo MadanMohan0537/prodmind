@@ -23,4 +23,4 @@ Project 7 imports the engine directly. The API uses the workspace’s existing b
 
 ## Data boundary
 
-Strategy mappings refer to server-owned opportunity IDs. The engine reads selected opportunities from the saved Project 6 portfolio and retains evidence IDs in the result. It never edits saved runs.
+Strategy mappings refer to server-owned portfolio items. The engine creates `portfolioItemId` as `runId:opportunityId`, reads selected opportunities from saved Project 6 portfolios, and retains evidence IDs in the result. Legacy opportunity-only mappings work only when unambiguous. It never edits saved runs.

@@ -72,11 +72,11 @@ Project 7 imports and executes the shared implementation functions from Projects
 Identity lineage:
 
 ```text
-feedbackId → topicId → opportunityId → experimentId
+feedbackId → topicId → runId:opportunityId → experimentId
            → auditId → decisionId → monitorId
 ```
 
-Every opportunity and experiment retains `evidenceIds`. Client-provided IDs cannot replace the server-owned links during prioritization or outcome monitoring.
+Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
 
 ## Primary frontend
 

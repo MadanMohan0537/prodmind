@@ -32,6 +32,7 @@ The monitor does not delete evidence, infer business value, or automatically blo
 ## What is implemented
 
 - Evidence-ID resolution and broken-lineage blocking
+- Canonical `portfolioItemId` values that keep repeated opportunity IDs distinct across runs
 - Configurable freshness window and stale-record share
 - Source diversity, largest-source share, and concentration index
 - Known-segment coverage and unknown-segment share

@@ -46,6 +46,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 12 exact bounded research-portfolio optimization
 - Project 13 selected-effort allocation against reviewed objectives
 - Project 14 exact bounded portfolio scenarios with capacity, dependency and locked-work constraints
+- Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes

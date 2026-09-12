@@ -21,6 +21,8 @@ D1 runs → Project 11 assessEvidenceIntegrity()
 
 Both engines are imported directly by Project 7, so identity contracts do not pass through a second service.
 
+Project 12 keys each target and generated action with Project 11's `portfolioItemId` (`runId:opportunityId`). This prevents findings for identically named opportunities in different discovery runs from being merged or double-counted.
+
 ## Solver
 
 The engine enumerates `2ⁿ` action subsets for `n ≤ 16`. A subset is feasible when total effort is within capacity and every dependency is also selected. The objective compares:
