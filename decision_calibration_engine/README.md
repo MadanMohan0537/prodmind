@@ -11,6 +11,13 @@
 
 Project 10 closes a judgment-quality gap in [ProdMind](../README.md). Project 6 records a PM’s confidence before prioritization; Projects 7 and 8 later record the decision and monitored result. This engine joins those records and reports whether stated confidence aligns with resolved outcomes across the portfolio.
 
+## Product impact
+
+- **Decision improved:** whether the organization should adjust how it interprets stated confidence across future portfolio reviews.
+- **Leading measures:** resolved forecast count, Brier score, confidence bias and reliability-band sample sizes.
+- **Portfolio value:** creates feedback on decision judgment without silently changing scoring weights.
+- **Stop condition:** small samples remain directional and calibration must never become an employee-performance score.
+
 ## Place in ProdMind
 
 ```text
