@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A fourteen-project, evidence-to-strategy operating system for product teams.**
+**A fifteen-project, evidence-to-resilient-portfolio operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -42,6 +42,8 @@ Customer feedback
 13. Strategic portfolio alignment
       ↓
 14. Minimum-disruption portfolio rebalancing
+      ↓
+15. Declared-scenario portfolio resilience testing
 ```
 
 ## Portfolio impact model
@@ -51,13 +53,13 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Decision layer | Projects | Intended impact |
 |---|---|---|
 | Evidence readiness | 1–5, 11 | Trustworthy, inspectable customer signals |
-| Portfolio judgment | 6, 12–14 | Explicit trade-offs across product, research and strategy capacity |
+| Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment governance | 7 | Prospective plans, data-quality gates and reviewed decisions |
 | Learning feedback | 8–10 | Monitored outcomes, reusable context and confidence calibration |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The fourteen projects
+## The fifteen projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -67,7 +69,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary fourteen-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary fifteen-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -75,12 +77,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 12 | [Product Research Portfolio Optimizer](research_portfolio_optimizer/) | Exact capacity-aware selection of evidence-gap research | Standalone and connected planning views |
 | 13 | [Product Strategy Alignment Auditor](strategy_alignment_auditor/) | Effort allocation against declared strategic objectives | Standalone and connected portfolio audits |
 | 14 | [Strategic Portfolio Rebalancing Simulator](portfolio_rebalancing_simulator/) | Minimum-disruption capacity, dependency and strategy scenarios | Standalone and connected scenario review |
+| 15 | [Product Portfolio Resilience Stress Tester](portfolio_resilience_stress_tester/) | Declared capacity, dependency and effort shocks | Standalone and connected resilience review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–14 for monitoring, memory, calibration, evidence integrity, research planning, strategy alignment, and rebalancing. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–15 for monitoring, memory, calibration, evidence integrity, research planning, strategy alignment, rebalancing, and resilience testing. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -109,6 +112,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 12. Optimizing Project 12 research actions within available capacity.
 13. Auditing Project 13 selected effort against declared strategic objectives.
 14. Simulating Project 14’s smallest feasible portfolio change without overwriting the saved ranking.
+15. Stress-testing Project 15 portfolios against declared capacity, dependency and effort scenarios.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -122,7 +126,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all fourteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, confidence calibration, evidence integrity, research optimization, strategy alignment, and portfolio rebalancing.
+The suite covers all fifteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, post-decision monitoring, cross-run retrieval, confidence calibration, evidence integrity, research optimization, strategy alignment, portfolio rebalancing, and resilience testing.
 
 Run one project independently:
 
@@ -143,7 +147,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–14 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
+Projects 1–6 and 8–15 are bundled into the connected Worker through imports. Their standalone D1 databases remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -161,6 +165,7 @@ Projects 1–6 and 8–14 are bundled into the connected Worker through imports.
 - Research optimization covers declared findings; it does not prove that a study will resolve them.
 - Strategy allocation describes selected effort; it does not measure realized benefits.
 - Rebalancing produces a reviewable scenario; it never applies ranking or roadmap changes.
+- Resilience scores evaluate declared scenarios; they are not likelihood forecasts and never change the portfolio.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -178,6 +183,7 @@ Projects 1–6 and 8–14 are bundled into the connected Worker through imports.
 | Research planning | Exact bounded portfolio optimization; human effort and action assumptions remain inputs |
 | Strategy alignment | Deterministic effort-allocation audit; objectives and mappings require human review |
 | Portfolio rebalancing | Exact bounded search for up to 18 candidates; declared effort, dependencies and mappings remain human inputs |
+| Portfolio resilience | Deterministic bounded scenario analysis; scenario likelihood and business impact remain human judgments |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -199,6 +205,7 @@ Projects 1–6 and 8–14 are bundled into the connected Worker through imports.
 ├── research_portfolio_optimizer/       Project 12
 ├── strategy_alignment_auditor/         Project 13
 ├── portfolio_rebalancing_simulator/    Project 14
+├── portfolio_resilience_stress_tester/ Project 15
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -222,4 +229,4 @@ Projects 1–6 and 8–14 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–14 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–15 include their own MIT licenses; imported modules retain their original notices.
