@@ -17,6 +17,7 @@ on:
       - 'research_portfolio_optimizer/**'
       - 'strategy_alignment_auditor/**'
       - 'portfolio_rebalancing_simulator/**'
+      - 'portfolio_resilience_stress_tester/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -34,6 +35,7 @@ on:
       - 'research_portfolio_optimizer/**'
       - 'strategy_alignment_auditor/**'
       - 'portfolio_rebalancing_simulator/**'
+      - 'portfolio_resilience_stress_tester/**'
 permissions:
   contents: read
 jobs:

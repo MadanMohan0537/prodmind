@@ -20,6 +20,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 12. Plan research | `research_portfolio_optimizer/src/optimizer.js` | Capacity-aware action selection linked to Project 11 findings and opportunities |
 | 13. Align strategy | `strategy_alignment_auditor/src/alignment.js` | Selected opportunity effort mapped to declared strategic objectives and ranges |
 | 14. Rebalance portfolio | `portfolio_rebalancing_simulator/src/rebalance.js` | Reviewable additions and removals linked to the saved ranking and original evidence |
+| 15. Stress portfolio | `portfolio_resilience_stress_tester/src/stress.js` | Declared capacity, dependency and effort shocks linked to canonical portfolio items |
 
 ## Shared contracts
 
@@ -27,7 +28,7 @@ A discovery run has a server-generated UUID, revision, immutable source evidence
 
 Every opportunity holds `evidenceIds`. Clients may submit titles and estimates, but cannot replace these links. An experiment stores both the opportunity ID and its ranking snapshot so later reprioritization does not rewrite the experiment's original rationale. The learning endpoint returns decisions and outcome reviews linked back to that opportunity and its original records. Project 8 monitoring is submitted through `POST /api/runs/:runId/learning/:experimentId/monitor`; the server supplies the authoritative opportunity, experiment, decision and evidence identities. Learning does not silently change prioritization scores; PMs explicitly reassess and save a new ranking.
 
-Opportunity IDs are scoped to a discovery run. Cross-run Projects 11–14 therefore expose `portfolioItemId` as `runId:opportunityId`. Research targets, strategy mappings, locks, dependencies, and scenario results use this canonical identity. Legacy opportunity-only mappings and locks are accepted only when the ID is unique across the selected runs; ambiguous requests fail explicitly.
+Opportunity IDs are scoped to a discovery run. Cross-run Projects 11–15 therefore expose `portfolioItemId` as `runId:opportunityId`. Research targets, strategy mappings, locks, dependencies, and scenario results use this canonical identity. Legacy opportunity-only mappings and locks are accepted only when the ID is unique across the selected runs; ambiguous requests fail explicitly.
 
 The integrated ranking uses deterministic scores without Monte Carlo simulation to reduce request computation. Project 6's standalone simulation behavior is preserved by default. No synthetic uncertainty band is attached when simulation is disabled. Dependency cycles and missing assessed dependencies are rejected before invoking the portfolio selector.
 
@@ -42,6 +43,8 @@ Project 12 calls Project 11 and then executes `planFromIntegrity` through `GET /
 Project 13 accepts a reviewed strategy through `POST /api/strategy-audit`, reads selected Project 6 opportunities from recent runs, and audits their effort allocation. Each selected opportunity maps to at most one primary objective, preventing duplicate effort attribution. The endpoint reports unmapped work, allocation-range exceptions, deviation, and concentration without modifying the strategy or ranking.
 
 Project 14 accepts the same reviewed strategy plus capacity and optional locked portfolio-item IDs through `POST /api/portfolio-rebalance`. It searches up to 18 Project 6 candidates exactly, enforces declared dependencies, objective mappings, capacity and locked commitments, then lexicographically minimizes allocation-range violation and portfolio changes before maximizing score and utilization. The response is a scenario with retained evidence lineage; it does not mutate the saved ranking.
+
+Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 
 ## Human gates
 
