@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the fourteen-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–14 for outcomes, memory, calibration, evidence integrity, research planning, strategy alignment, and portfolio rebalancing.
+Project 7 is both the experiment workspace and the integration host for the fifteen-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–15 for outcomes, memory, calibration, evidence integrity, research planning, strategy alignment, portfolio rebalancing, and resilience testing.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all fourteen modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all fifteen modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -32,6 +32,7 @@ Collect → Sentiment → Topics → Requests → VoC evidence
    → Capacity-aware research plan
    → Strategic portfolio audit
    → Minimum-disruption rebalance scenario
+   → Declared-scenario resilience test
 ```
 
 One D1 `product_runs` record preserves the IDs and state for this lifecycle. Clients cannot replace server-owned evidence links during prioritization or monitoring.
@@ -53,6 +54,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 12 exact bounded research-portfolio optimization
 - Project 13 selected-effort allocation against reviewed objectives
 - Project 14 exact bounded portfolio scenarios with capacity, dependency and locked-work constraints
+- Project 15 deterministic portfolio stress scenarios and weakest-case exposure
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
@@ -84,6 +86,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `GET` | `/api/research-plan?capacity=...` | Optimize a Project 12 research portfolio |
 | `POST` | `/api/strategy-audit` | Audit Project 13 strategy alignment |
 | `POST` | `/api/portfolio-rebalance` | Simulate a Project 14 portfolio rebalance |
+| `POST` | `/api/portfolio-stress` | Assess Project 15 portfolio resilience |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -114,7 +117,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–14 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–15 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -124,7 +127,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete fourteen-stage workspace
+public/                 Complete fifteen-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -143,6 +146,7 @@ docs/                   PRD and connected contracts
 - Project 12 optimizes declared actions and effort; it cannot guarantee research success.
 - Project 13 audits declared objectives and mappings; it does not measure realized value.
 - Project 14 returns a reviewable scenario and never overwrites the saved Project 6 ranking.
+- Project 15 evaluates declared scenarios; it does not predict their likelihood or change the portfolio.
 
 ## Security and limits
 
