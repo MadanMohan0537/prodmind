@@ -18,6 +18,7 @@ on:
       - 'strategy_alignment_auditor/**'
       - 'portfolio_rebalancing_simulator/**'
       - 'portfolio_resilience_stress_tester/**'
+      - 'benefits_realization_tracker/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -36,6 +37,7 @@ on:
       - 'strategy_alignment_auditor/**'
       - 'portfolio_rebalancing_simulator/**'
       - 'portfolio_resilience_stress_tester/**'
+      - 'benefits_realization_tracker/**'
 permissions:
   contents: read
 jobs:
