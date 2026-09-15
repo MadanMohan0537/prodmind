@@ -155,6 +155,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const rebalance=await(await worker.fetch(req('/api/portfolio-rebalance',{strategy,capacity:5,lockedOpportunityIds:[run.ranking.ranked[0].id]}),env)).json();
   const stress=await(await worker.fetch(req('/api/portfolio-stress',{strategy,capacity:5,scenarios:[{id:'baseline'},{id:'capacity-loss',capacityFactor:.1}]}),env)).json();
   const benefits=await(await worker.fetch(req('/api/benefits-realization',{asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}]}),env)).json();
+  const assuranceInput={asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}],reviews:[{id:'pir-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,reviewer:'Product council',reviewedAt:'2026-10-01',decision:'continue',rationale:'Evidence and measurement are complete; continue monitoring.',actions:[]}]};
+  const assurance=await(await worker.fetch(req('/api/investment-assurance',assuranceInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -184,6 +186,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(benefits.summary.measured,1);
   assert.deepEqual(benefits.benefits[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(benefits.benefits[0].decisionIds[0],reopened.experiments[0].decision.id);
+  assert.equal(assurance.summary.complete,1);
+  assert.deepEqual(assurance.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.deepEqual(assurance.reviews[0].benefitIds,['activation']);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -223,7 +228,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/14 Rebalance/);
   assert.match(html,/15 Stress test/);
   assert.match(html,/16 Realize benefits/);
-  assert.match(html,/all sixteen modules/);
+  assert.match(html,/17 Assure investment/);
+  assert.match(html,/all seventeen modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -231,6 +237,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/portfolio-rebalance/);
   assert.match(app,/\/api\/portfolio-stress/);
   assert.match(app,/\/api\/benefits-realization/);
+  assert.match(app,/\/api\/investment-assurance/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
