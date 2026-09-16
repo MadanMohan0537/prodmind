@@ -20,6 +20,7 @@ on:
       - 'portfolio_resilience_stress_tester/**'
       - 'benefits_realization_tracker/**'
       - 'investment_assurance_review/**'
+      - 'assumption_risk_register/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -40,6 +41,7 @@ on:
       - 'portfolio_resilience_stress_tester/**'
       - 'benefits_realization_tracker/**'
       - 'investment_assurance_review/**'
+      - 'assumption_risk_register/**'
 permissions:
   contents: read
 jobs:
