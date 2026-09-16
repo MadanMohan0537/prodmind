@@ -11,6 +11,7 @@ import {rebalancePortfolio} from '../../portfolio_rebalancing_simulator/src/reba
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
+import {assessAssumptions} from '../../assumption_risk_register/src/assumptions.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -111,6 +112,10 @@ export default {
         const runs = await store.recent(limit);
         const benefitReport = trackBenefits(runs, {benefits:input.benefits, asOf:input.asOf});
         return json(reviewInvestments(runs, benefitReport, {reviews:input.reviews}));
+      }
+      if (url.pathname === '/api/assumption-risk' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        return json(assessAssumptions(await store.recent(limit), await body(request)));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

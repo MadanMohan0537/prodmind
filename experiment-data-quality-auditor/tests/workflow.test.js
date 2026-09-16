@@ -157,6 +157,7 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const benefits=await(await worker.fetch(req('/api/benefits-realization',{asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}]}),env)).json();
   const assuranceInput={asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}],reviews:[{id:'pir-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,reviewer:'Product council',reviewedAt:'2026-10-01',decision:'continue',rationale:'Evidence and measurement are complete; continue monitoring.',actions:[]}]};
   const assurance=await(await worker.fetch(req('/api/investment-assurance',assuranceInput),env)).json();
+  const assumptions=await(await worker.fetch(req('/api/assumption-risk',{asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'testing',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -189,6 +190,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(assurance.summary.complete,1);
   assert.deepEqual(assurance.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.deepEqual(assurance.reviews[0].benefitIds,['activation']);
+  assert.equal(assumptions.summary.assumptions,1);
+  assert.deepEqual(assumptions.assumptions[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.deepEqual(assumptions.assumptions[0].linkedExperimentIds,[run.experiments[0].id]);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -229,7 +233,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/15 Stress test/);
   assert.match(html,/16 Realize benefits/);
   assert.match(html,/17 Assure investment/);
-  assert.match(html,/all seventeen modules/);
+  assert.match(html,/18 Test assumptions/);
+  assert.match(html,/all eighteen modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -238,6 +243,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/portfolio-stress/);
   assert.match(app,/\/api\/benefits-realization/);
   assert.match(app,/\/api\/investment-assurance/);
+  assert.match(app,/\/api\/assumption-risk/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);

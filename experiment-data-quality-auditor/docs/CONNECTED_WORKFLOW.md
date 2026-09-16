@@ -23,6 +23,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 15. Stress portfolio | `portfolio_resilience_stress_tester/src/stress.js` | Declared capacity, dependency and effort shocks linked to canonical portfolio items |
 | 16. Realize benefits | `benefits_realization_tracker/src/benefits.js` | Expected and observed measures linked to selected work, decisions and original evidence |
 | 17. Assure investment | `investment_assurance_review/src/assurance.js` | Post-implementation checks, named decision and corrective actions linked to benefits and evidence |
+| 18. Test assumptions | `assumption_risk_register/src/assumptions.js` | Explicit product assumptions, authoritative evidence links and a validation queue |
 
 ## Shared contracts
 
@@ -51,6 +52,8 @@ Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-
 Project 16 accepts 1–100 benefit profiles through `POST /api/benefits-realization`. It resolves each canonical portfolio item against selected Project 6 work, retains the experiment, decision, outcome-review and evidence IDs, and calculates increase or decrease progress against dated targets. It never adds incompatible units, infers causal attribution, or changes portfolio state.
 
 Project 17 accepts benefit profiles and 1–100 named investment reviews through `POST /api/investment-assurance`. Project 7 first builds the Project 16 report from authoritative recent runs, then checks evidence, decision, benefit, measurement and attribution completeness. `continue`, `correct`, `close`, or `escalate` remains a human-supplied decision; corrective and escalation reviews require owned actions.
+
+Project 18 accepts 1–200 assumption records through `POST /api/assumption-risk`. It validates each assumption against a selected canonical portfolio item and rejects evidence or experiment links outside that opportunity. Importance, uncertainty, owner, status, review date and validation method remain explicit inputs. Its exposure score orders unresolved validation work but is not a probability or automated decision.
 
 ## Human gates
 
