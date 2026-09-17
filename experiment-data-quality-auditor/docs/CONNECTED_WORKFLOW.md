@@ -24,6 +24,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 16. Realize benefits | `benefits_realization_tracker/src/benefits.js` | Expected and observed measures linked to selected work, decisions and original evidence |
 | 17. Assure investment | `investment_assurance_review/src/assurance.js` | Post-implementation checks, named decision and corrective actions linked to benefits and evidence |
 | 18. Test assumptions | `assumption_risk_register/src/assumptions.js` | Explicit product assumptions, authoritative evidence links and a validation queue |
+| 19. Release safely | `release_readiness_controller/src/readiness.js` | Ship-decision, progressive rollout, monitoring and rollback readiness checks |
 
 ## Shared contracts
 
@@ -54,6 +55,8 @@ Project 16 accepts 1–100 benefit profiles through `POST /api/benefits-realizat
 Project 17 accepts benefit profiles and 1–100 named investment reviews through `POST /api/investment-assurance`. Project 7 first builds the Project 16 report from authoritative recent runs, then checks evidence, decision, benefit, measurement and attribution completeness. `continue`, `correct`, `close`, or `escalate` remains a human-supplied decision; corrective and escalation reviews require owned actions.
 
 Project 18 accepts 1–200 assumption records through `POST /api/assumption-risk`. It validates each assumption against a selected canonical portfolio item and rejects evidence or experiment links outside that opportunity. Importance, uncertainty, owner, status, review date and validation method remain explicit inputs. Its exposure score orders unresolved validation work but is not a probability or automated decision.
+
+Project 19 accepts Project 18 assumptions and 1–50 release plans through `POST /api/release-readiness`. Project 7 builds the authoritative assumption report, then checks for a reviewed `ship` decision, staged exposure, named monitors, rollback triggers, last-known-good version, ownership, compatibility, communications, and unresolved high-exposure assumptions. It never deploys or changes traffic.
 
 ## Human gates
 
