@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**An eighteen-project, evidence-to-accountable-learning operating system for product teams.**
+**A nineteen-project, evidence-to-safe-value-delivery operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -50,6 +50,8 @@ Customer feedback
 17. Post-implementation investment assurance
       ↺
 18. Explicit assumption validation
+      ↓
+19. Progressive release and rollback readiness
 ```
 
 ## Portfolio impact model
@@ -60,12 +62,12 @@ ProdMind is designed around decisions rather than disconnected demos:
 |---|---|---|
 | Evidence readiness | 1–5, 11, 18 | Trustworthy customer signals and explicit assumptions |
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
-| Experiment governance | 7 | Prospective plans, data-quality gates and reviewed decisions |
+| Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning and value | 8–10, 16–17 | Monitored outcomes, reusable context, realized benefits and accountable closure |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The eighteen projects
+## The nineteen projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -87,12 +89,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 16 | [Product Benefits Realization Tracker](benefits_realization_tracker/) | Expected-versus-observed benefits with complete evidence lineage | Standalone and connected realization ledger |
 | 17 | [Product Investment Assurance Review](investment_assurance_review/) | Post-implementation completeness, named decisions and corrective actions | Standalone and connected assurance review |
 | 18 | [Product Assumption Risk Register](assumption_risk_register/) | Explicit assumptions, authoritative links and validation urgency | Standalone and connected assumption review |
+| 19 | [Product Release Readiness & Rollback Controller](release_readiness_controller/) | Progressive exposure, observable triggers and reversible delivery | Standalone and connected release gate |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–18 for monitoring, memory, calibration, evidence integrity, research planning, portfolio governance, benefits realization, assurance, and assumption validation. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–19 for monitoring, memory, portfolio governance, benefits realization, assurance, assumption validation, and release readiness. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -102,6 +105,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → benefitId
            → assuranceReviewId → actionId
            ↺ assumptionId → evidenceId / experimentId
+           → releaseId → monitor / rollback trigger
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -128,6 +132,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 16. Comparing Project 16 benefit targets with observed measures and original decision evidence.
 17. Recording Project 17 post-implementation assurance decisions and accountable corrective actions.
 18. Registering Project 18 assumptions and ordering evidence-linked validation work.
+19. Verifying Project 19 progressive rollout, monitoring and rollback readiness.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -141,7 +146,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all eighteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, stale-write protection, decision gates, monitoring, retrieval, calibration, evidence integrity, portfolio governance, benefits realization, investment assurance, and assumption validation.
+The suite covers all nineteen projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, decision gates, portfolio governance, benefits realization, assurance, assumption validation, and release readiness.
 
 Run one project independently:
 
@@ -162,7 +167,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–18 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–19 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -184,6 +189,7 @@ Projects 1–6 and 8–18 are bundled into the connected Worker through imports.
 - Benefit progress compares declared targets and observations; it does not prove causality or combine unlike units.
 - Investment assurance records a human decision; completeness checks never make or apply that decision.
 - Assumption exposure prioritizes declared uncertainty; it is not probability or automated judgment.
+- Release readiness validates declared controls; it never deploys, changes traffic, or triggers rollback.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -205,6 +211,7 @@ Projects 1–6 and 8–18 are bundled into the connected Worker through imports.
 | Benefits realization | Deterministic target progress with reviewed attribution; no causal or fabricated ROI claim |
 | Investment assurance | Deterministic completeness checks plus named human decisions; no automated go/kill claim |
 | Assumption risk | Deterministic importance/uncertainty heuristic; assumptions and validation methods remain human inputs |
+| Release readiness | Deterministic declared-control checks; no deployment access or safety guarantee |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -230,6 +237,7 @@ Projects 1–6 and 8–18 are bundled into the connected Worker through imports.
 ├── benefits_realization_tracker/       Project 16
 ├── investment_assurance_review/        Project 17
 ├── assumption_risk_register/           Project 18
+├── release_readiness_controller/       Project 19
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -253,4 +261,4 @@ Projects 1–6 and 8–18 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–18 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–19 include their own MIT licenses; imported modules retain their original notices.
