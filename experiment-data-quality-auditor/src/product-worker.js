@@ -12,6 +12,7 @@ import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stre
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
 import {assessAssumptions} from '../../assumption_risk_register/src/assumptions.js';
+import {assessReleaseReadiness} from '../../release_readiness_controller/src/readiness.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -116,6 +117,12 @@ export default {
       if (url.pathname === '/api/assumption-risk' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         return json(assessAssumptions(await store.recent(limit), await body(request)));
+      }
+      if (url.pathname === '/api/release-readiness' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions:input.assumptions, asOf:input.asOf});
+        return json(assessReleaseReadiness(runs, assumptions, {releases:input.releases}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);

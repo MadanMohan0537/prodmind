@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the eighteen-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–18 for outcomes, memory, calibration, evidence integrity, research planning, portfolio governance, benefits realization, assurance, and assumption validation.
+Project 7 is both the experiment workspace and the integration host for the nineteen-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–19 for outcomes, memory, portfolio governance, benefits, assurance, assumption validation, and release readiness.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -36,6 +36,7 @@ Collect → Sentiment → Topics → Requests → VoC evidence
    → Expected-versus-observed benefits review
    → Named post-implementation assurance decision
    ↺ Explicit assumptions and validation queue
+   → Progressive release and rollback readiness
 ```
 
 One D1 `product_runs` record preserves the IDs and state for this lifecycle. Clients cannot replace server-owned evidence links during prioritization or monitoring.
@@ -61,8 +62,9 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 16 deterministic benefit progress with owner, dates, attribution note and full evidence lineage
 - Project 17 post-implementation completeness checks, named review decision and corrective actions
 - Project 18 explicit assumption categories, authoritative links, deadlines and validation priority
+- Project 19 progressive rollout, monitoring, ownership and rollback readiness checks
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
-- Canonical `portfolioItemId` contracts across Projects 11–18 to prevent cross-run ID collisions
+- Canonical `portfolioItemId` contracts across Projects 11–19 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes
@@ -97,6 +99,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/benefits-realization` | Build a Project 16 benefits ledger |
 | `POST` | `/api/investment-assurance` | Run a Project 17 post-implementation assurance review |
 | `POST` | `/api/assumption-risk` | Assess a Project 18 assumption register |
+| `POST` | `/api/release-readiness` | Assess a Project 19 release and rollback plan |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -127,7 +130,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–18 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–19 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -137,7 +140,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete eighteen-stage workspace
+public/                 Complete nineteen-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -160,6 +163,7 @@ docs/                   PRD and connected contracts
 - Project 16 reports target progress; it does not prove attribution, combine unlike units or fabricate ROI.
 - Project 17 checks review completeness; it never chooses or applies an investment decision.
 - Project 18 exposes declared uncertainty; its prioritization score is not probability or proof.
+- Project 19 checks declared readiness; it never deploys, changes traffic or executes rollback.
 
 ## Security and limits
 

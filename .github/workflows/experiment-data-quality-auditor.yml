@@ -21,6 +21,7 @@ on:
       - 'benefits_realization_tracker/**'
       - 'investment_assurance_review/**'
       - 'assumption_risk_register/**'
+      - 'release_readiness_controller/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -42,6 +43,7 @@ on:
       - 'benefits_realization_tracker/**'
       - 'investment_assurance_review/**'
       - 'assumption_risk_register/**'
+      - 'release_readiness_controller/**'
 permissions:
   contents: read
 jobs:
