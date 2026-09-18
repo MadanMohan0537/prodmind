@@ -22,6 +22,7 @@ on:
       - 'investment_assurance_review/**'
       - 'assumption_risk_register/**'
       - 'release_readiness_controller/**'
+      - 'feature_adoption_analyzer/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -44,6 +45,7 @@ on:
       - 'investment_assurance_review/**'
       - 'assumption_risk_register/**'
       - 'release_readiness_controller/**'
+      - 'feature_adoption_analyzer/**'
 permissions:
   contents: read
 jobs:
