@@ -159,6 +159,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const assurance=await(await worker.fetch(req('/api/investment-assurance',assuranceInput),env)).json();
   const assumptions=await(await worker.fetch(req('/api/assumption-risk',{asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'testing',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}]}),env)).json();
   const release=await(await worker.fetch(req('/api/release-readiness',{asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'supported',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}],releases:[{id:'rel-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,version:'1.2.0',releaseOwner:'PM',onCallOwner:'SRE',strategy:'canary',rolloutSteps:[{trafficPercent:5,minimumMinutes:30},{trafficPercent:100,minimumMinutes:60}],monitors:[{name:'errors',source:'Workers Analytics',direction:'above',threshold:.02,windowMinutes:15}],rollback:{lastKnownGoodVersion:'1.1.0',owner:'SRE',procedure:'Restore version 1.1.0.',maxDecisionMinutes:10,triggerMonitors:['errors']},backwardCompatible:true,communicationPlan:'Notify support.'}]}),env)).json();
+  const adoptionInput={asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'supported',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}],releases:[{id:'rel-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,version:'1.2.0',releaseOwner:'PM',onCallOwner:'SRE',strategy:'canary',rolloutSteps:[{trafficPercent:5,minimumMinutes:30},{trafficPercent:100,minimumMinutes:60}],monitors:[{name:'errors',source:'Workers Analytics',direction:'above',threshold:.02,windowMinutes:15}],rollback:{lastKnownGoodVersion:'1.1.0',owner:'SRE',procedure:'Restore version 1.1.0.',maxDecisionMinutes:10,triggerMonitors:['errors']},backwardCompatible:true,communicationPlan:'Notify support.'}],journeys:[{id:'journey-1',releaseId:'rel-1',stages:['exposed','activated','retained'],minSegmentSize:1,events:[{eventId:'ad-1',userId:'anonymous-1',stage:'exposed',timestamp:'2026-10-02T00:00:00Z',segment:'smb'},{eventId:'ad-2',userId:'anonymous-1',stage:'activated',timestamp:'2026-10-02T00:10:00Z',segment:'smb'},{eventId:'ad-3',userId:'anonymous-1',stage:'retained',timestamp:'2026-10-09T00:00:00Z',segment:'smb'}]}]};
+  const adoption=await(await worker.fetch(req('/api/feature-adoption',adoptionInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -197,6 +199,11 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(release.summary.releases,1);
   assert.deepEqual(release.releases[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.ok(release.releases[0].failedChecks.includes('ship-decision'));
+  assert.equal(adoption.summary.journeys,1);
+  assert.equal(adoption.journeys[0].readinessStatus,'blocked');
+  assert.deepEqual(adoption.journeys[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.deepEqual(adoption.journeys[0].shipDecisionIds,[]);
+  assert.equal(adoption.journeys[0].completionRate,1);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -239,7 +246,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/17 Assure investment/);
   assert.match(html,/18 Test assumptions/);
   assert.match(html,/19 Release safely/);
-  assert.match(html,/all nineteen modules/);
+  assert.match(html,/20 Measure adoption/);
+  assert.match(html,/all twenty modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -250,6 +258,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/investment-assurance/);
   assert.match(app,/\/api\/assumption-risk/);
   assert.match(app,/\/api\/release-readiness/);
+  assert.match(app,/\/api\/feature-adoption/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);

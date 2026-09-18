@@ -25,6 +25,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 17. Assure investment | `investment_assurance_review/src/assurance.js` | Post-implementation checks, named decision and corrective actions linked to benefits and evidence |
 | 18. Test assumptions | `assumption_risk_register/src/assumptions.js` | Explicit product assumptions, authoritative evidence links and a validation queue |
 | 19. Release safely | `release_readiness_controller/src/readiness.js` | Ship-decision, progressive rollout, monitoring and rollback readiness checks |
+| 20. Measure adoption | `feature_adoption_analyzer/src/adoption.js` | Ordered journey, time-to-value and privacy-suppressed segment analysis |
 
 ## Shared contracts
 
@@ -57,6 +58,8 @@ Project 17 accepts benefit profiles and 1–100 named investment reviews through
 Project 18 accepts 1–200 assumption records through `POST /api/assumption-risk`. It validates each assumption against a selected canonical portfolio item and rejects evidence or experiment links outside that opportunity. Importance, uncertainty, owner, status, review date and validation method remain explicit inputs. Its exposure score orders unresolved validation work but is not a probability or automated decision.
 
 Project 19 accepts Project 18 assumptions and 1–50 release plans through `POST /api/release-readiness`. Project 7 builds the authoritative assumption report, then checks for a reviewed `ship` decision, staged exposure, named monitors, rollback triggers, last-known-good version, ownership, compatibility, communications, and unresolved high-exposure assumptions. It never deploys or changes traffic.
+
+Project 20 accepts the same upstream assumptions and releases plus 1–20 adoption journeys through `POST /api/feature-adoption`. Project 7 reconstructs the Project 18 and 19 reports, then calculates ordered step conversion, completion, median time-to-value, invalid users, and segment results. Segment metrics below the declared cohort threshold are omitted. The analysis is descriptive: it does not resolve identities, infer causality, or make product decisions.
 
 ## Human gates
 
