@@ -26,6 +26,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 18. Test assumptions | `assumption_risk_register/src/assumptions.js` | Explicit product assumptions, authoritative evidence links and a validation queue |
 | 19. Release safely | `release_readiness_controller/src/readiness.js` | Ship-decision, progressive rollout, monitoring and rollback readiness checks |
 | 20. Measure adoption | `feature_adoption_analyzer/src/adoption.js` | Ordered journey, time-to-value and privacy-suppressed segment analysis |
+| 21. Govern lifecycle | `product_lifecycle_planner/src/lifecycle.js` | Retain, invest, consolidate and retire plan safeguards |
 
 ## Shared contracts
 
@@ -60,6 +61,8 @@ Project 18 accepts 1–200 assumption records through `POST /api/assumption-risk
 Project 19 accepts Project 18 assumptions and 1–50 release plans through `POST /api/release-readiness`. Project 7 builds the authoritative assumption report, then checks for a reviewed `ship` decision, staged exposure, named monitors, rollback triggers, last-known-good version, ownership, compatibility, communications, and unresolved high-exposure assumptions. It never deploys or changes traffic.
 
 Project 20 accepts the same upstream assumptions and releases plus 1–20 adoption journeys through `POST /api/feature-adoption`. Project 7 reconstructs the Project 18 and 19 reports, then calculates ordered step conversion, completion, median time-to-value, invalid users, and segment results. Segment metrics below the declared cohort threshold are omitted. The analysis is descriptive: it does not resolve identities, infer causality, or make product decisions.
+
+Project 21 accepts Projects 18–20 inputs plus 1–50 lifecycle plans through `POST /api/product-lifecycle`. Project 7 reconstructs the authoritative upstream reports before checking a human-selected retain, invest, consolidate, or retire action. Consolidation and retirement require sufficient notice, a ready replacement, migration guidance, dependency plans, pre-sunset communications, exit criteria, and Product, Engineering, and Support approval. The engine never recommends or executes removal.
 
 ## Human gates
 

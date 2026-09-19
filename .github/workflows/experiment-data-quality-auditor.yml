@@ -23,6 +23,7 @@ on:
       - 'assumption_risk_register/**'
       - 'release_readiness_controller/**'
       - 'feature_adoption_analyzer/**'
+      - 'product_lifecycle_planner/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -46,6 +47,7 @@ on:
       - 'assumption_risk_register/**'
       - 'release_readiness_controller/**'
       - 'feature_adoption_analyzer/**'
+      - 'product_lifecycle_planner/**'
 permissions:
   contents: read
 jobs:

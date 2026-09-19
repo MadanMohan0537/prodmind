@@ -14,6 +14,7 @@ import {reviewInvestments} from '../../investment_assurance_review/src/assurance
 import {assessAssumptions} from '../../assumption_risk_register/src/assumptions.js';
 import {assessReleaseReadiness} from '../../release_readiness_controller/src/readiness.js';
 import {analyzeAdoption} from '../../feature_adoption_analyzer/src/adoption.js';
+import {planLifecycle} from '../../product_lifecycle_planner/src/lifecycle.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -131,6 +132,14 @@ export default {
         const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
         const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
         return json(analyzeAdoption(runs, readiness, {journeys: input.journeys}));
+      }
+      if (url.pathname === '/api/product-lifecycle' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
+        const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
+        const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
+        return json(planLifecycle(runs, adoption, {plans: input.plans}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
