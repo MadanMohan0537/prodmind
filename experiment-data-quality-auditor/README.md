@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the twenty-one-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–21 for outcomes, memory, portfolio governance, benefits, assurance, assumption validation, release readiness, adoption measurement, and lifecycle governance.
+Project 7 is both the experiment workspace and the integration host for the twenty-two-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–22 for outcomes, memory, portfolio governance, benefits, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, and sunset assurance.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all twenty-one modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all twenty-two modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -65,8 +65,9 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 19 progressive rollout, monitoring, ownership and rollback readiness checks
 - Project 20 ordered adoption funnels, time-to-value and privacy-suppressed segment results
 - Project 21 governed retain, invest, consolidate and retire plans
+- Project 22 aggregate migration and sunset-readiness reconciliation
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
-- Canonical `portfolioItemId` contracts across Projects 11–21 to prevent cross-run ID collisions
+- Canonical `portfolioItemId` contracts across Projects 11–22 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes
@@ -104,6 +105,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/release-readiness` | Assess a Project 19 release and rollback plan |
 | `POST` | `/api/feature-adoption` | Analyze a Project 20 release-linked adoption journey |
 | `POST` | `/api/product-lifecycle` | Validate a Project 21 lifecycle or deprecation plan |
+| `POST` | `/api/sunset-migration` | Assess a Project 22 aggregate migration snapshot |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -134,7 +136,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–21 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–22 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -144,7 +146,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete twenty-one-stage workspace
+public/                 Complete twenty-two-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -170,6 +172,7 @@ docs/                   PRD and connected contracts
 - Project 19 checks declared readiness; it never deploys, changes traffic or executes rollback.
 - Project 20 describes event journeys; it does not resolve identities, prove causality or choose product actions.
 - Project 21 validates declared lifecycle controls; it never recommends or executes retirement, sends notices or migrates dependencies.
+- Project 22 reconciles supplied aggregate evidence; it never notifies, migrates, disables, revokes or deletes.
 
 ## Security and limits
 

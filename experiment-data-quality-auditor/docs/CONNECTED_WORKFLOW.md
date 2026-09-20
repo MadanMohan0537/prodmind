@@ -27,6 +27,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 19. Release safely | `release_readiness_controller/src/readiness.js` | Ship-decision, progressive rollout, monitoring and rollback readiness checks |
 | 20. Measure adoption | `feature_adoption_analyzer/src/adoption.js` | Ordered journey, time-to-value and privacy-suppressed segment analysis |
 | 21. Govern lifecycle | `product_lifecycle_planner/src/lifecycle.js` | Retain, invest, consolidate and retire plan safeguards |
+| 22. Verify migration | `sunset_migration_monitor/src/monitor.js` | Aggregate cohort, dependency, notice, exception and zero-use reconciliation |
 
 ## Shared contracts
 
@@ -63,6 +64,8 @@ Project 19 accepts Project 18 assumptions and 1–50 release plans through `POST
 Project 20 accepts the same upstream assumptions and releases plus 1–20 adoption journeys through `POST /api/feature-adoption`. Project 7 reconstructs the Project 18 and 19 reports, then calculates ordered step conversion, completion, median time-to-value, invalid users, and segment results. Segment metrics below the declared cohort threshold are omitted. The analysis is descriptive: it does not resolve identities, infer causality, or make product decisions.
 
 Project 21 accepts Projects 18–20 inputs plus 1–50 lifecycle plans through `POST /api/product-lifecycle`. Project 7 reconstructs the authoritative upstream reports before checking a human-selected retain, invest, consolidate, or retire action. Consolidation and retirement require sufficient notice, a ready replacement, migration guidance, dependency plans, pre-sunset communications, exit criteria, and Product, Engineering, and Support approval. The engine never recommends or executes removal.
+
+Project 22 accepts Projects 18–21 inputs plus 1–50 aggregate migration snapshots through `POST /api/sunset-migration`. Project 7 reconstructs every upstream report, then reconciles customer cohorts, dependency evidence, delivered notices, exceptions, sustained zero use, shutdown checks, and final cross-functional approval. An unresolved plan after its target date becomes `overdue_hold`; no result invokes a shutdown.
 
 ## Human gates
 

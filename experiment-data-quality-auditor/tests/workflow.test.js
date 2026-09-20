@@ -161,7 +161,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const release=await(await worker.fetch(req('/api/release-readiness',{asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'supported',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}],releases:[{id:'rel-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,version:'1.2.0',releaseOwner:'PM',onCallOwner:'SRE',strategy:'canary',rolloutSteps:[{trafficPercent:5,minimumMinutes:30},{trafficPercent:100,minimumMinutes:60}],monitors:[{name:'errors',source:'Workers Analytics',direction:'above',threshold:.02,windowMinutes:15}],rollback:{lastKnownGoodVersion:'1.1.0',owner:'SRE',procedure:'Restore version 1.1.0.',maxDecisionMinutes:10,triggerMonitors:['errors']},backwardCompatible:true,communicationPlan:'Notify support.'}]}),env)).json();
   const adoptionInput={asOf:'2026-10-01',assumptions:[{id:'a-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,statement:'New users understand the onboarding change.',category:'usability',status:'supported',importance:5,uncertainty:.6,owner:'PM',reviewBy:'2026-11-01',validationMethod:'Moderated task study.',linkedEvidenceIds:[run.ranking.ranked[0].evidenceIds[0]],linkedExperimentIds:[run.experiments[0].id]}],releases:[{id:'rel-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,version:'1.2.0',releaseOwner:'PM',onCallOwner:'SRE',strategy:'canary',rolloutSteps:[{trafficPercent:5,minimumMinutes:30},{trafficPercent:100,minimumMinutes:60}],monitors:[{name:'errors',source:'Workers Analytics',direction:'above',threshold:.02,windowMinutes:15}],rollback:{lastKnownGoodVersion:'1.1.0',owner:'SRE',procedure:'Restore version 1.1.0.',maxDecisionMinutes:10,triggerMonitors:['errors']},backwardCompatible:true,communicationPlan:'Notify support.'}],journeys:[{id:'journey-1',releaseId:'rel-1',stages:['exposed','activated','retained'],minSegmentSize:1,events:[{eventId:'ad-1',userId:'anonymous-1',stage:'exposed',timestamp:'2026-10-02T00:00:00Z',segment:'smb'},{eventId:'ad-2',userId:'anonymous-1',stage:'activated',timestamp:'2026-10-02T00:10:00Z',segment:'smb'},{eventId:'ad-3',userId:'anonymous-1',stage:'retained',timestamp:'2026-10-09T00:00:00Z',segment:'smb'}]}]};
   const adoption=await(await worker.fetch(req('/api/feature-adoption',adoptionInput),env)).json();
-  const lifecycle=await(await worker.fetch(req('/api/product-lifecycle',{...adoptionInput,plans:[{id:'life-1',journeyId:'journey-1',action:'retire',owner:'Product council',rationale:'Consolidate the workflow only after migration and reviewed customer notice.',decisionAt:'2026-10-10T00:00:00Z',sunsetAt:'2027-02-10T00:00:00Z',minimumNoticeDays:90,replacement:{name:'Unified onboarding',status:'available',migrationGuide:'Move saved configuration to Unified onboarding.'},dependencies:[{id:'support-playbook',owner:'Support',status:'planned',migrationTarget:'Unified onboarding'}],communications:[{audience:'affected customers',channel:'email and in-product',scheduledAt:'2026-11-01T00:00:00Z'}],approvals:['product','engineering','support'].map(role=>({role,reviewer:`${role} lead`,decision:'approved',reviewedAt:'2026-10-11T00:00:00Z'})),exitCriteria:[{name:'No active legacy journeys',measure:'No legacy activation events for 30 days'}]}]}),env)).json();
+  const lifecycleInput={...adoptionInput,plans:[{id:'life-1',journeyId:'journey-1',action:'retire',owner:'Product council',rationale:'Consolidate the workflow only after migration and reviewed customer notice.',decisionAt:'2026-10-10T00:00:00Z',sunsetAt:'2027-02-10T00:00:00Z',minimumNoticeDays:90,replacement:{name:'Unified onboarding',status:'available',migrationGuide:'Move saved configuration to Unified onboarding.'},dependencies:[{id:'support-playbook',owner:'Support',status:'planned',migrationTarget:'Unified onboarding'}],communications:[{audience:'affected customers',channel:'email and in-product',scheduledAt:'2026-11-01T00:00:00Z'}],approvals:['product','engineering','support'].map(role=>({role,reviewer:`${role} lead`,decision:'approved',reviewedAt:'2026-10-11T00:00:00Z'})),exitCriteria:[{name:'No active legacy journeys',measure:'No legacy activation events for 30 days'}]}]};
+  const lifecycle=await(await worker.fetch(req('/api/product-lifecycle',lifecycleInput),env)).json();
+  const sunset=await(await worker.fetch(req('/api/sunset-migration',{...lifecycleInput,snapshots:[{id:'sunset-1',planId:'life-1',asOf:'2027-02-01T00:00:00Z',minimumZeroDays:14,cohorts:[{id:'smb',label:'SMB customers',owner:'CS',total:1,migrated:1,exempted:0,blocked:0,lastMeasuredAt:'2027-01-31T00:00:00Z'}],dependencies:[{id:'support-playbook',status:'verified',verifiedBy:'Support lead',evidence:'Updated playbook is live.'}],notices:[{audience:'affected customers',channel:'email and in-product',status:'delivered',receipt:'campaign-1'}],exceptions:[],telemetry:{legacyUsageCount:0,replacementUsageCount:1,consecutiveZeroDays:21,lastObservedAt:'2027-01-31T00:00:00Z'},shutdownChecks:[{name:'Archive configuration',passed:true,evidence:'Export verified.'}],approvals:['product','engineering','support'].map(role=>({role,reviewer:`${role} lead`,decision:'approved',reviewedAt:'2027-02-01T00:00:00Z'}))}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -209,6 +211,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(lifecycle.plans[0].action,'retire');
   assert.deepEqual(lifecycle.plans[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(lifecycle.plans[0].journeyId,'journey-1');
+  assert.equal(sunset.summary.ready,1);
+  assert.equal(sunset.snapshots[0].migration.coverage,1);
+  assert.deepEqual(sunset.snapshots[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(sunset.snapshots[0].planId,'life-1');
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -253,7 +259,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/19 Release safely/);
   assert.match(html,/20 Measure adoption/);
   assert.match(html,/21 Govern lifecycle/);
-  assert.match(html,/all twenty-one modules/);
+  assert.match(html,/22 Verify migration/);
+  assert.match(html,/all twenty-two modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -266,6 +273,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/release-readiness/);
   assert.match(app,/\/api\/feature-adoption/);
   assert.match(app,/\/api\/product-lifecycle/);
+  assert.match(app,/\/api\/sunset-migration/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
