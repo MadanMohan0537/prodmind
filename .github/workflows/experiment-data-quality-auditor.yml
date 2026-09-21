@@ -25,6 +25,7 @@ on:
       - 'feature_adoption_analyzer/**'
       - 'product_lifecycle_planner/**'
       - 'sunset_migration_monitor/**'
+      - 'sunset_outcome_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -50,6 +51,7 @@ on:
       - 'feature_adoption_analyzer/**'
       - 'product_lifecycle_planner/**'
       - 'sunset_migration_monitor/**'
+      - 'sunset_outcome_monitor/**'
 permissions:
   contents: read
 jobs:

@@ -16,6 +16,7 @@ import {assessReleaseReadiness} from '../../release_readiness_controller/src/rea
 import {analyzeAdoption} from '../../feature_adoption_analyzer/src/adoption.js';
 import {planLifecycle} from '../../product_lifecycle_planner/src/lifecycle.js';
 import {monitorSunsets} from '../../sunset_migration_monitor/src/monitor.js';
+import {reviewSunsetOutcomes} from '../../sunset_outcome_monitor/src/outcomes.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -150,6 +151,16 @@ export default {
         const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
         const lifecycle = planLifecycle(runs, adoption, {plans: input.plans});
         return json(monitorSunsets(runs, lifecycle, {snapshots: input.snapshots}));
+      }
+      if (url.pathname === '/api/sunset-outcomes' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
+        const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
+        const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
+        const lifecycle = planLifecycle(runs, adoption, {plans: input.plans});
+        const sunset = monitorSunsets(runs, lifecycle, {snapshots: input.snapshots});
+        return json(reviewSunsetOutcomes(runs, sunset, {reviews: input.reviews}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
