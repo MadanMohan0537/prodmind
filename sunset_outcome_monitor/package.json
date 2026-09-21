@@ -1,0 +1,1 @@
+{"name":"prodmind-sunset-outcome-monitor","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test","check":"node --check src/outcomes.js && node --check src/worker.js && node --test"}}
