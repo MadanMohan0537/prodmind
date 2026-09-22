@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A twenty-two-project, evidence-to-responsible-sunset operating system for product teams.**
+**A twenty-three-project, evidence-to-post-sunset-assurance operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -58,6 +58,8 @@ Customer feedback
 21. Govern retention, investment, consolidation or retirement
       ↓
 22. Verify migration and sunset readiness
+      ↓
+23. Verify post-sunset outcomes and reversibility
 ```
 
 ## Portfolio impact model
@@ -69,11 +71,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Evidence readiness | 1–5, 11, 18 | Trustworthy customer signals and explicit assumptions |
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
-| Learning, value and lifecycle | 8–10, 16–17, 20–22 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions and migration assurance |
+| Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The twenty-two projects
+## The twenty-three projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -83,7 +85,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-two-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-three-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -99,12 +101,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 20 | [Feature Adoption Journey Analyzer](feature_adoption_analyzer/) | Ordered adoption, time-to-value and privacy-safe segment analysis | Standalone and connected adoption view |
 | 21 | [Product Lifecycle & Deprecation Planner](product_lifecycle_planner/) | Migration, notice, dependency and approval safeguards for lifecycle decisions | Standalone and connected lifecycle gate |
 | 22 | [Customer Migration & Sunset Monitor](sunset_migration_monitor/) | Aggregate migration, notice delivery, exception and zero-use reconciliation | Standalone and connected sunset gate |
+| 23 | [Product Sunset Outcome & Reversibility Monitor](sunset_outcome_monitor/) | Post-sunset customer harm, incidents, residual traffic, savings, recovery and corrective-action review | Standalone and connected outcome review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–22 for monitoring, memory, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, and sunset assurance. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–23 for monitoring, memory, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, sunset assurance, and post-sunset closeout. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -118,6 +121,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → journeyId → ordered stage observations
            → lifecyclePlanId → dependencies / notices / approvals
            → migrationSnapshotId → cohorts / receipts / exceptions
+           → outcomeReviewId → harm / incidents / savings / rollback / actions
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -148,6 +152,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 20. Measuring Project 20 ordered adoption, time-to-value, and privacy-suppressed segments.
 21. Validating Project 21 retain, invest, consolidate, and retire safeguards.
 22. Reconciling Project 22 migration cohorts, notices, dependencies, zero-use evidence, and final approvals.
+23. Reviewing Project 23 post-sunset outcomes, residual traffic, realized savings, reversibility, corrective actions, and the named human closeout decision.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -161,7 +166,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all twenty-two projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, decision gates, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle safeguards, and sunset reconciliation.
+The suite covers all twenty-three projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, decision gates, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle safeguards, and sunset reconciliation.
 
 Run one project independently:
 
@@ -182,7 +187,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–22 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–23 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -208,6 +213,7 @@ Projects 1–6 and 8–22 are bundled into the connected Worker through imports.
 - Feature adoption describes ordered pseudonymous events; it neither proves causality nor identifies people or selects product actions.
 - Lifecycle planning validates human-declared safeguards; it never recommends, announces, migrates, disables, or deletes a capability.
 - Sunset monitoring reconciles aggregate evidence; it never performs communication, migration, shutdown, revocation, or deletion.
+- Sunset outcome review compares declared post-sunset evidence; it never closes, restores, deploys, reroutes, or deletes a service and does not claim causal savings.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -233,6 +239,7 @@ Projects 1–6 and 8–22 are bundled into the connected Worker through imports.
 | Feature adoption | Deterministic ordered-event funnels with small-cohort suppression; no causal or identity-resolution claim |
 | Product lifecycle | Deterministic notice, migration, dependency, communication and approval checks; no automatic retirement |
 | Sunset migration | Deterministic aggregate reconciliation and sustained-zero-use gate; no customer identity or shutdown action |
+| Sunset outcomes | Deterministic customer-harm, incident, residual-traffic, savings and reversibility checks plus a named human decision; no automatic close or restore |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -262,6 +269,7 @@ Projects 1–6 and 8–22 are bundled into the connected Worker through imports.
 ├── feature_adoption_analyzer/          Project 20
 ├── product_lifecycle_planner/          Project 21
 ├── sunset_migration_monitor/           Project 22
+├── sunset_outcome_monitor/             Project 23
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -285,4 +293,4 @@ Projects 1–6 and 8–22 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–22 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–23 include their own MIT licenses; imported modules retain their original notices.
