@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import worker from '../src/worker.js';
+const payload={runs:[],sunsetReport:{schemaVersion:'1.0.0',snapshots:[{id:'s',planId:'p',journeyId:'j',releaseId:'rel',portfolioItemId:'r:o',title:'Feature',action:'retire',sunsetAt:'2027-01-01T00:00:00Z',asOf:'2027-01-01T00:00:00Z',status:'ready_for_human_sunset',evidenceIds:[],shipDecisionIds:[],assumptionIds:[]}]},input:{reviews:[{id:'r',snapshotId:'s',reviewedAt:'2027-02-01T00:00:00Z',observationWindowDays:30,support:{baselineContacts:10,observedContacts:10,maximumIncreaseRate:.1},incidents:{critical:0,customerImpacting:0,maximumCritical:0,maximumCustomerImpacting:0},residualTrafficCount:0,economics:{expectedMonthlySavings:100,observedMonthlySavings:90,minimumRealizationRate:.8,currency:'USD'},rollback:{owner:'Eng',available:true,testedAt:'2027-01-15T00:00:00Z',procedure:'Restore archive.',recoveryMinutes:10,maximumRecoveryMinutes:20},correctiveActions:[],decision:{choice:'close',reviewer:'Council',rationale:'Checks passed.',reviewedAt:'2027-02-01T00:00:00Z'}}]}};
+const req=(body=payload,token='secret')=>new Request('https://x/api/sunset-outcomes',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+test('health is public',async()=>assert.equal((await worker.fetch(new Request('https://x/api/health'),{})).status,200));
+test('returns outcome status',async()=>{const response=await worker.fetch(req(),{API_TOKEN:'secret'});assert.equal(response.status,200);assert.equal((await response.json()).summary.closed,1)});
+test('fails closed',async()=>{assert.equal((await worker.fetch(req(),{})).status,503);assert.equal((await worker.fetch(req(payload,'bad'),{API_TOKEN:'secret'})).status,401)});
+test('rejects invalid input',async()=>assert.equal((await worker.fetch(req({...payload,input:{reviews:[]}}),{API_TOKEN:'secret'})).status,422));
