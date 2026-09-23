@@ -1,0 +1,1 @@
+{"name":"prodmind-decision-provenance-pack","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test","check":"node --check src/provenance.js && node --check src/worker.js && node --test"}}

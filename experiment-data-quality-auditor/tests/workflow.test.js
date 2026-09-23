@@ -166,6 +166,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const sunset=await(await worker.fetch(req('/api/sunset-migration',{...lifecycleInput,snapshots:[{id:'sunset-1',planId:'life-1',asOf:'2027-02-01T00:00:00Z',minimumZeroDays:14,cohorts:[{id:'smb',label:'SMB customers',owner:'CS',total:1,migrated:1,exempted:0,blocked:0,lastMeasuredAt:'2027-01-31T00:00:00Z'}],dependencies:[{id:'support-playbook',status:'verified',verifiedBy:'Support lead',evidence:'Updated playbook is live.'}],notices:[{audience:'affected customers',channel:'email and in-product',status:'delivered',receipt:'campaign-1'}],exceptions:[],telemetry:{legacyUsageCount:0,replacementUsageCount:1,consecutiveZeroDays:21,lastObservedAt:'2027-01-31T00:00:00Z'},shutdownChecks:[{name:'Archive configuration',passed:true,evidence:'Export verified.'}],approvals:['product','engineering','support'].map(role=>({role,reviewer:`${role} lead`,decision:'approved',reviewedAt:'2027-02-01T00:00:00Z'}))}]}),env)).json();
   const sunsetOutcomeInput={...lifecycleInput,snapshots:[{id:'sunset-1',planId:'life-1',asOf:'2027-02-01T00:00:00Z',minimumZeroDays:14,cohorts:[{id:'smb',label:'SMB customers',owner:'CS',total:1,migrated:1,exempted:0,blocked:0,lastMeasuredAt:'2027-01-31T00:00:00Z'}],dependencies:[{id:'support-playbook',status:'verified',verifiedBy:'Support lead',evidence:'Updated playbook is live.'}],notices:[{audience:'affected customers',channel:'email and in-product',status:'delivered',receipt:'campaign-1'}],exceptions:[],telemetry:{legacyUsageCount:0,replacementUsageCount:1,consecutiveZeroDays:21,lastObservedAt:'2027-01-31T00:00:00Z'},shutdownChecks:[{name:'Archive configuration',passed:true,evidence:'Export verified.'}],approvals:['product','engineering','support'].map(role=>({role,reviewer:`${role} lead`,decision:'approved',reviewedAt:'2027-02-01T00:00:00Z'}))}],reviews:[{id:'outcome-1',snapshotId:'sunset-1',reviewedAt:'2027-03-05T00:00:00Z',observationWindowDays:30,support:{baselineContacts:10,observedContacts:10,maximumIncreaseRate:.1},incidents:{critical:0,customerImpacting:0,maximumCritical:0,maximumCustomerImpacting:0},residualTrafficCount:0,economics:{expectedMonthlySavings:100,observedMonthlySavings:90,minimumRealizationRate:.8,currency:'USD'},rollback:{owner:'Engineering',available:true,testedAt:'2027-02-15T00:00:00Z',procedure:'Restore archived Worker route.',recoveryMinutes:20,maximumRecoveryMinutes:30},correctiveActions:[],decision:{choice:'close',reviewer:'Product council',rationale:'Observation window passed with no declared harm.',reviewedAt:'2027-03-05T00:00:00Z'}}]};
   const sunsetOutcome=await(await worker.fetch(req('/api/sunset-outcomes',sunsetOutcomeInput),env)).json();
+  const governanceInput={...sunsetOutcomeInput,packs:[{id:'governance-1',outcomeReviewId:'outcome-1',generatedAt:'2027-03-06T00:00:00Z',owner:'Records owner',purpose:'Preserve the reviewed product retirement decision.',classification:'confidential',retentionDays:365,approvals:['product','engineering','governance'].map((role,index)=>({role,reviewer:`Independent reviewer ${index}`,decision:'approved',reviewedAt:'2027-03-07T00:00:00Z'})),review:{author:'Pack author',certifier:'Governance lead',decision:'certify',rationale:'Authoritative lineage, artifact coverage, and approvals are complete.',reviewedAt:'2027-03-07T00:00:00Z'}}]};
+  const governance=await(await worker.fetch(req('/api/governance-pack',governanceInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -220,6 +222,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(sunsetOutcome.summary.closed,1);
   assert.equal(sunsetOutcome.reviews[0].snapshotId,'sunset-1');
   assert.deepEqual(sunsetOutcome.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(governance.summary.certified,1);
+  assert.equal(governance.packs[0].artifacts.length,7);
+  assert.equal(governance.packs[0].packDigest.length,64);
+  assert.deepEqual(governance.packs[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -266,7 +272,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/21 Govern lifecycle/);
   assert.match(html,/22 Verify migration/);
   assert.match(html,/23 Verify outcomes/);
-  assert.match(html,/all twenty-three modules/);
+  assert.match(html,/24 Package provenance/);
+  assert.match(html,/all twenty-four modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -281,6 +288,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/product-lifecycle/);
   assert.match(app,/\/api\/sunset-migration/);
   assert.match(app,/\/api\/sunset-outcomes/);
+  assert.match(app,/\/api\/governance-pack/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
