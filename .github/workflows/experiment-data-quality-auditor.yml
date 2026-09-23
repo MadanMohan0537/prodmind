@@ -26,6 +26,7 @@ on:
       - 'product_lifecycle_planner/**'
       - 'sunset_migration_monitor/**'
       - 'sunset_outcome_monitor/**'
+      - 'decision_provenance_pack/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -52,6 +53,7 @@ on:
       - 'product_lifecycle_planner/**'
       - 'sunset_migration_monitor/**'
       - 'sunset_outcome_monitor/**'
+      - 'decision_provenance_pack/**'
 permissions:
   contents: read
 jobs:
