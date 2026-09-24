@@ -27,6 +27,7 @@ on:
       - 'sunset_migration_monitor/**'
       - 'sunset_outcome_monitor/**'
       - 'decision_provenance_pack/**'
+      - 'governance_obligation_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -54,6 +55,7 @@ on:
       - 'sunset_migration_monitor/**'
       - 'sunset_outcome_monitor/**'
       - 'decision_provenance_pack/**'
+      - 'governance_obligation_monitor/**'
 permissions:
   contents: read
 jobs:
