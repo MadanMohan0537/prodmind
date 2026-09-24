@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A twenty-four-project, evidence-to-governed-decision-record operating system for product teams.**
+**A twenty-five-project, evidence-to-continuously-governed-decision operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -62,6 +62,8 @@ Customer feedback
 23. Verify post-sunset outcomes and reversibility
       ↓
 24. Package decision provenance and governance evidence
+      ↓
+25. Monitor digest continuity, obligations, reviews and retention
 ```
 
 ## Portfolio impact model
@@ -74,11 +76,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
-| Governance and accountability | 24 | Canonical artifact chain, integrity digests, independent approvals, retention metadata and human certification |
+| Governance and accountability | 24–25 | Canonical provenance, integrity digests, human certification, dated obligations and continuous review |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The twenty-four projects
+## The twenty-five projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -88,7 +90,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-four-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-five-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -106,12 +108,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 22 | [Customer Migration & Sunset Monitor](sunset_migration_monitor/) | Aggregate migration, notice delivery, exception and zero-use reconciliation | Standalone and connected sunset gate |
 | 23 | [Product Sunset Outcome & Reversibility Monitor](sunset_outcome_monitor/) | Post-sunset customer harm, incidents, residual traffic, savings, recovery and corrective-action review | Standalone and connected outcome review |
 | 24 | [Product Decision Provenance & Governance Pack](decision_provenance_pack/) | Canonical SHA-256 artifact chain, approval separation, retention controls and named certification | Standalone and connected governance-pack review |
+| 25 | [Product Governance Obligation & Review Monitor](governance_obligation_monitor/) | Digest continuity, dated obligations, review cadence, certification freshness and retention decisions | Standalone and connected governance-monitor review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–24 for monitoring, memory, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, sunset assurance, post-sunset closeout, and decision provenance. The connected deployment therefore provides an executable product path—not a collection of README links.
+Project 7 imports and executes the shared implementation functions from Projects 1–6. It also imports the engines behind Projects 8–25 for monitoring, memory, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, sunset assurance, post-sunset closeout, decision provenance, and continuous governance review. The connected deployment therefore provides an executable product path—not a collection of README links.
 
 Identity lineage:
 
@@ -127,6 +130,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → migrationSnapshotId → cohorts / receipts / exceptions
            → outcomeReviewId → harm / incidents / savings / rollback / actions
            → governancePackId → canonical artifacts / SHA-256 chain / approvals
+           → governanceMonitorId → obligations / review windows / retention action
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -159,6 +163,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 22. Reconciling Project 22 migration cohorts, notices, dependencies, zero-use evidence, and final approvals.
 23. Reviewing Project 23 post-sunset outcomes, residual traffic, realized savings, reversibility, corrective actions, and the named human closeout decision.
 24. Packaging Project 24 authoritative artifacts, digest lineage, approval separation, retention metadata, and named certification.
+25. Monitoring Project 25 digest continuity, owned obligations, review and certification windows, and retention decisions.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -172,7 +177,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all twenty-four projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, decision gates, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle safeguards, sunset reconciliation, and provenance packs.
+The suite covers all twenty-five projects, shared contracts, authenticated routes, real SQLite migrations, evidence lineage, decision gates, portfolio governance, benefits realization, assurance, assumption validation, release readiness, adoption measurement, lifecycle safeguards, sunset reconciliation, provenance packs, and continuous governance controls.
 
 Run one project independently:
 
@@ -193,7 +198,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–24 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–25 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -221,6 +226,7 @@ Projects 1–6 and 8–24 are bundled into the connected Worker through imports.
 - Sunset monitoring reconciles aggregate evidence; it never performs communication, migration, shutdown, revocation, or deletion.
 - Sunset outcome review compares declared post-sunset evidence; it never closes, restores, deploys, reroutes, or deletes a service and does not claim causal savings.
 - Decision provenance produces integrity digests and governance checks; it does not create digital signatures, establish signer identity, or certify legal compliance.
+- Governance monitoring detects declared control failures; it does not recertify, dispose of records, or change a product.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -248,6 +254,7 @@ Projects 1–6 and 8–24 are bundled into the connected Worker through imports.
 | Sunset migration | Deterministic aggregate reconciliation and sustained-zero-use gate; no customer identity or shutdown action |
 | Sunset outcomes | Deterministic customer-harm, incident, residual-traffic, savings and reversibility checks plus a named human decision; no automatic close or restore |
 | Decision provenance | Deterministic sorted-key JSON and SHA-256 artifact chain with human certification; no signature or legal-compliance claim |
+| Governance obligations | Deterministic digest, deadline, review, certification and retention checks with named human action; no automated recertification or disposition |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -279,6 +286,7 @@ Projects 1–6 and 8–24 are bundled into the connected Worker through imports.
 ├── sunset_migration_monitor/           Project 22
 ├── sunset_outcome_monitor/             Project 23
 ├── decision_provenance_pack/           Project 24
+├── governance_obligation_monitor/      Project 25
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
@@ -302,4 +310,4 @@ Projects 1–6 and 8–24 are bundled into the connected Worker through imports.
 
 ## License
 
-The repository-level modules use [Apache License 2.0](LICENSE). Projects 7–24 include their own MIT licenses; imported modules retain their original notices.
+The repository-level modules use [Apache License 2.0](LICENSE). Project folders retain their included license notices.
