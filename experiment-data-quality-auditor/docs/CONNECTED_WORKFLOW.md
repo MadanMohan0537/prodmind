@@ -30,6 +30,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 22. Verify migration | `sunset_migration_monitor/src/monitor.js` | Aggregate cohort, dependency, notice, exception and zero-use reconciliation |
 | 23. Verify outcomes | `sunset_outcome_monitor/src/outcomes.js` | Post-sunset customer harm, incidents, residual traffic, savings, reversibility and corrective-action checks |
 | 24. Package provenance | `decision_provenance_pack/src/provenance.js` | Canonical artifact records, linked SHA-256 digests, approval separation, retention and certification checks |
+| 25. Monitor governance | `governance_obligation_monitor/src/obligations.js` | Digest continuity, owned obligations, review cadence, certification freshness and retention action |
 
 ## Shared contracts
 
@@ -72,6 +73,8 @@ Project 22 accepts Projects 18–21 inputs plus 1–50 aggregate migration snaps
 Project 23 accepts Projects 18–22 inputs plus 1–50 outcome reviews through `POST /api/sunset-outcomes`. Project 7 reconstructs all authoritative upstream reports before checking the observation window, support burden, incidents, residual traffic, observed-versus-expected savings, rollback evidence, corrective actions, and a named human decision. A human `close` choice is blocked when a check fails; `extend_monitoring` and `restore_service` remain action-required records. No result executes either choice.
 
 Project 24 accepts Projects 18–23 inputs plus 1–50 governance-pack requests through `POST /api/governance-pack`. Project 7 reconstructs every upstream report, selects artifacts through server-owned IDs, canonicalizes their JSON, and creates a linked SHA-256 digest chain. Certification additionally requires artifact coverage, complete lineage, independent reviewers, Product, Engineering and Governance approval, fresh review timing, and classification-specific retention. The digests are integrity checks rather than signatures, and certification is not legal compliance.
+
+Project 25 accepts Projects 18–24 inputs plus 1–50 governance monitors through `POST /api/governance-obligations`. Project 7 reconstructs the complete upstream chain and authoritative Project 24 digest before comparing the reviewed digest, checking 1–100 owned obligations, and calculating review, certification, and retention dates. Continue is blocked when controls fail; remediate, recertify, and dispose are recorded human actions, never executed by the Worker.
 
 ## Human gates
 
