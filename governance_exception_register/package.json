@@ -1,0 +1,1 @@
+{"name":"prodmind-governance-exception-register","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test","check":"node --check src/exceptions.js && node --check src/worker.js && node --test"}}
