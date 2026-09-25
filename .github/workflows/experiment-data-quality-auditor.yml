@@ -28,6 +28,7 @@ on:
       - 'sunset_outcome_monitor/**'
       - 'decision_provenance_pack/**'
       - 'governance_obligation_monitor/**'
+      - 'governance_exception_register/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -56,6 +57,7 @@ on:
       - 'sunset_outcome_monitor/**'
       - 'decision_provenance_pack/**'
       - 'governance_obligation_monitor/**'
+      - 'governance_exception_register/**'
 permissions:
   contents: read
 jobs:
