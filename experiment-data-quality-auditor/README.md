@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the twenty-five-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–25 for outcomes, memory, portfolio governance, benefits, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, sunset assurance, decision provenance, and continuous governance review.
+Project 7 is both the experiment workspace and the integration host for the twenty-six-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–26 for outcomes, memory, portfolio governance, benefits, assurance, assumption validation, release readiness, adoption measurement, lifecycle governance, sunset assurance, decision provenance, continuous governance review, and controlled exceptions.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all twenty-five modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all twenty-six modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -69,8 +69,9 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 23 post-sunset outcome, realized-savings, reversibility and corrective-action review
 - Project 24 canonical artifact chain, digest integrity, approval separation, retention and named certification
 - Project 25 digest-continuity, obligation, review-cadence, certification-freshness and retention checks
+- Project 26 scoped, expiring exception requests with compensating controls, remediation and independent approval
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
-- Canonical `portfolioItemId` contracts across Projects 11–24 to prevent cross-run ID collisions
+- Canonical `portfolioItemId` contracts across Projects 11–26 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
 - Authenticated, same-origin Worker API
 - Responsive frontend supporting light and dark system themes
@@ -112,6 +113,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/sunset-outcomes` | Review a Project 23 post-sunset outcome and named human decision |
 | `POST` | `/api/governance-pack` | Build a Project 24 digest-linked decision provenance pack |
 | `POST` | `/api/governance-obligations` | Review Project 25 time-dependent governance controls |
+| `POST` | `/api/governance-exceptions` | Review Project 26 temporary governance exceptions |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -142,7 +144,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–25 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–26 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -152,7 +154,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete twenty-five-stage workspace
+public/                 Complete twenty-six-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -182,6 +184,7 @@ docs/                   PRD and connected contracts
 - Project 23 validates supplied post-sunset evidence; it never closes, restores, deploys, reroutes or deletes and does not claim causal savings.
 - Project 24 creates digest-linked records and process checks; it never signs, establishes identity, or certifies legal compliance.
 - Project 25 detects time-dependent control failures; it never recertifies, disposes of records, or changes a product.
+- Project 26 records temporary human risk acceptance; it never changes a failed upstream result, waives policy, or bypasses a control.
 
 ## Security and limits
 

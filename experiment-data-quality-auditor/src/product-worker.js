@@ -19,6 +19,7 @@ import {monitorSunsets} from '../../sunset_migration_monitor/src/monitor.js';
 import {reviewSunsetOutcomes} from '../../sunset_outcome_monitor/src/outcomes.js';
 import {buildDecisionProvenancePacks} from '../../decision_provenance_pack/src/provenance.js';
 import {monitorGovernanceObligations} from '../../governance_obligation_monitor/src/obligations.js';
+import {governExceptions} from '../../governance_exception_register/src/exceptions.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -186,6 +187,19 @@ export default {
         const outcomes = reviewSunsetOutcomes(runs, sunset, {reviews: input.reviews});
         const provenance = await buildDecisionProvenancePacks(runs, {assumptions, readiness, adoption, lifecycle, sunset, outcomes}, {packs: input.packs});
         return json(monitorGovernanceObligations(runs, provenance, {monitors: input.monitors}));
+      }
+      if (url.pathname === '/api/governance-exceptions' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
+        const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
+        const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
+        const lifecycle = planLifecycle(runs, adoption, {plans: input.plans});
+        const sunset = monitorSunsets(runs, lifecycle, {snapshots: input.snapshots});
+        const outcomes = reviewSunsetOutcomes(runs, sunset, {reviews: input.reviews});
+        const provenance = await buildDecisionProvenancePacks(runs, {assumptions, readiness, adoption, lifecycle, sunset, outcomes}, {packs: input.packs});
+        const obligations = monitorGovernanceObligations(runs, provenance, {monitors: input.monitors});
+        return json(governExceptions(runs, obligations, {registers: input.registers}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
