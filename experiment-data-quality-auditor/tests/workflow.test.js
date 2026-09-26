@@ -170,7 +170,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const governance=await(await worker.fetch(req('/api/governance-pack',governanceInput),env)).json();
   const governanceMonitor=await(await worker.fetch(req('/api/governance-obligations',{...governanceInput,monitors:[{id:'monitor-1',governancePackId:'governance-1',asOf:'2027-03-15T00:00:00Z',observedPackDigest:governance.packs[0].packDigest,reviewIntervalDays:90,certificationValidDays:365,obligations:[{id:'quarterly-control',type:'control_test',owner:'Governance lead',dueAt:'2027-04-01T00:00:00Z',status:'open'}],review:{reviewer:'Independent governance reviewer',decision:'continue',rationale:'Pack digest and time-bound controls remain current.',reviewedAt:'2027-03-15T00:00:00Z'}}]}),env)).json();
   const exceptionMonitor={id:'exception-monitor',governancePackId:'governance-1',asOf:'2027-03-15T00:00:00Z',observedPackDigest:'b'.repeat(64),reviewIntervalDays:90,certificationValidDays:365,obligations:[{id:'remediate-digest',type:'corrective_action',owner:'Governance lead',dueAt:'2027-04-01T00:00:00Z',status:'open'}],review:{reviewer:'Independent governance reviewer',decision:'continue',rationale:'Digest mismatch requires a controlled response.',reviewedAt:'2027-03-15T00:00:00Z'}};
-  const governanceExceptions=await(await worker.fetch(req('/api/governance-exceptions',{...governanceInput,monitors:[exceptionMonitor],registers:[{id:'register-1',monitorId:'exception-monitor',asOf:'2027-03-16T00:00:00Z',exceptions:[{id:'exception-1',targetType:'check',targetId:'digest-continuity',requester:'Product owner',owner:'Governance owner',rationale:'Temporary exception while the authoritative export is restored.',riskRating:'medium',requestedAt:'2027-03-15T00:00:00Z',expiresAt:'2027-04-14T00:00:00Z',compensatingControls:[{id:'daily-review',owner:'Records lead',description:'Review immutable exports every day.',evidence:'Control ticket 12',reviewedAt:'2027-03-16T00:00:00Z'}],remediationObligationId:'remediate-digest',approvals:['product','governance'].map((role,index)=>({role,reviewer:`Exception approver ${index}`,decision:'approved',reviewedAt:'2027-03-16T00:00:00Z'})),review:{reviewer:'Risk chair',decision:'approve',rationale:'Narrow and expiring acceptance with compensating control.',reviewedAt:'2027-03-16T00:00:00Z'}}]}]}),env)).json();
+  const exceptionRegister={id:'register-1',monitorId:'exception-monitor',asOf:'2027-03-16T00:00:00Z',exceptions:[{id:'exception-1',targetType:'check',targetId:'digest-continuity',requester:'Product owner',owner:'Governance owner',rationale:'Temporary exception while the authoritative export is restored.',riskRating:'medium',requestedAt:'2027-03-15T00:00:00Z',expiresAt:'2027-04-14T00:00:00Z',compensatingControls:[{id:'daily-review',owner:'Records lead',description:'Review immutable exports every day.',evidence:'Control ticket 12',reviewedAt:'2027-03-16T00:00:00Z'}],remediationObligationId:'remediate-digest',approvals:['product','governance'].map((role,index)=>({role,reviewer:`Exception approver ${index}`,decision:'approved',reviewedAt:'2027-03-16T00:00:00Z'})),review:{reviewer:'Risk chair',decision:'approve',rationale:'Narrow and expiring acceptance with compensating control.',reviewedAt:'2027-03-16T00:00:00Z'}}]};
+  const governanceExceptions=await(await worker.fetch(req('/api/governance-exceptions',{...governanceInput,monitors:[exceptionMonitor],registers:[exceptionRegister]}),env)).json();
+  const verificationMonitor={id:'verification-monitor',governancePackId:'governance-1',asOf:'2027-04-10T00:00:00Z',observedPackDigest:governance.packs[0].packDigest,reviewIntervalDays:90,certificationValidDays:365,obligations:[{id:'remediate-digest',type:'corrective_action',owner:'Governance lead',dueAt:'2027-04-01T00:00:00Z',status:'completed',completedAt:'2027-03-25T00:00:00Z',evidence:'Reconstructed export digest verified.'}],review:{reviewer:'Follow-up governance reviewer',decision:'continue',rationale:'Digest continuity and remediation are verified.',reviewedAt:'2027-04-10T00:00:00Z'}};
+  const exceptionExit=await(await worker.fetch(req('/api/exception-exits',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[{id:'exit-1',registerId:'register-1',exceptionId:'exception-1',verificationMonitorId:'verification-monitor',asOf:'2027-04-10T00:00:00Z',observationWindowDays:14,observedDays:21,residualRisk:'low',effectivenessTests:[{id:'digest-stability',owner:'Records lead',criterion:'Digest remains stable for the observation window.',passed:true,evidence:'21-day digest report.',verifiedAt:'2027-04-09T00:00:00Z'}],approvals:['product','governance'].map((role,index)=>({role,reviewer:`Exit approver ${index}`,decision:'approved',reviewedAt:'2027-04-10T00:00:00Z'})),review:{reviewer:'Independent closer',decision:'close',rationale:'The target and remediation remain effective.',reviewedAt:'2027-04-10T00:00:00Z'}}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -235,6 +238,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(governanceExceptions.summary.active,1);
   assert.equal(governanceExceptions.registers[0].underlyingStatus,'blocked_continue');
   assert.deepEqual(governanceExceptions.registers[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(exceptionExit.summary.verifiedClosed,1);
+  assert.equal(exceptionExit.reviews[0].exceptionId,'exception-1');
+  assert.deepEqual(exceptionExit.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -284,7 +290,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/24 Package provenance/);
   assert.match(html,/25 Monitor governance/);
   assert.match(html,/26 Govern exceptions/);
-  assert.match(html,/all twenty-six modules/);
+  assert.match(html,/27 Verify exception exits/);
+  assert.match(html,/all twenty-seven modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -302,6 +309,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/governance-pack/);
   assert.match(app,/\/api\/governance-obligations/);
   assert.match(app,/\/api\/governance-exceptions/);
+  assert.match(app,/\/api\/exception-exits/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
