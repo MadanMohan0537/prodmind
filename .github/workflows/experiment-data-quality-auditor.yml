@@ -29,6 +29,7 @@ on:
       - 'decision_provenance_pack/**'
       - 'governance_obligation_monitor/**'
       - 'governance_exception_register/**'
+      - 'exception_exit_verifier/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -58,6 +59,7 @@ on:
       - 'decision_provenance_pack/**'
       - 'governance_obligation_monitor/**'
       - 'governance_exception_register/**'
+      - 'exception_exit_verifier/**'
 permissions:
   contents: read
 jobs:
