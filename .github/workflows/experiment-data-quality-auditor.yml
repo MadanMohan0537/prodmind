@@ -30,6 +30,7 @@ on:
       - 'governance_obligation_monitor/**'
       - 'governance_exception_register/**'
       - 'exception_exit_verifier/**'
+      - 'control_recurrence_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -60,6 +61,7 @@ on:
       - 'governance_obligation_monitor/**'
       - 'governance_exception_register/**'
       - 'exception_exit_verifier/**'
+      - 'control_recurrence_monitor/**'
 permissions:
   contents: read
 jobs:

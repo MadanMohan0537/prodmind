@@ -174,6 +174,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const governanceExceptions=await(await worker.fetch(req('/api/governance-exceptions',{...governanceInput,monitors:[exceptionMonitor],registers:[exceptionRegister]}),env)).json();
   const verificationMonitor={id:'verification-monitor',governancePackId:'governance-1',asOf:'2027-04-10T00:00:00Z',observedPackDigest:governance.packs[0].packDigest,reviewIntervalDays:90,certificationValidDays:365,obligations:[{id:'remediate-digest',type:'corrective_action',owner:'Governance lead',dueAt:'2027-04-01T00:00:00Z',status:'completed',completedAt:'2027-03-25T00:00:00Z',evidence:'Reconstructed export digest verified.'}],review:{reviewer:'Follow-up governance reviewer',decision:'continue',rationale:'Digest continuity and remediation are verified.',reviewedAt:'2027-04-10T00:00:00Z'}};
   const exceptionExit=await(await worker.fetch(req('/api/exception-exits',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[{id:'exit-1',registerId:'register-1',exceptionId:'exception-1',verificationMonitorId:'verification-monitor',asOf:'2027-04-10T00:00:00Z',observationWindowDays:14,observedDays:21,residualRisk:'low',effectivenessTests:[{id:'digest-stability',owner:'Records lead',criterion:'Digest remains stable for the observation window.',passed:true,evidence:'21-day digest report.',verifiedAt:'2027-04-09T00:00:00Z'}],approvals:['product','governance'].map((role,index)=>({role,reviewer:`Exit approver ${index}`,decision:'approved',reviewedAt:'2027-04-10T00:00:00Z'})),review:{reviewer:'Independent closer',decision:'close',rationale:'The target and remediation remain effective.',reviewedAt:'2027-04-10T00:00:00Z'}}]}),env)).json();
+  const recurrenceMonitor={...verificationMonitor,id:'recurrence-monitor',asOf:'2027-05-01T00:00:00Z',review:{reviewer:'Recurrence reviewer',decision:'continue',rationale:'Control remains stable after verified exit.',reviewedAt:'2027-05-01T00:00:00Z'}};
+  const recurrence=await(await worker.fetch(req('/api/control-recurrence',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[recurrenceMonitor],surveillance:[{id:'surveillance-1',exitReviewId:'exit-1',asOf:'2027-05-02T00:00:00Z',monitorIds:['recurrence-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'keep_closed',rationale:'Follow-up control evidence remains stable.',reviewedAt:'2027-05-02T00:00:00Z'}}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -241,6 +243,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(exceptionExit.summary.verifiedClosed,1);
   assert.equal(exceptionExit.reviews[0].exceptionId,'exception-1');
   assert.deepEqual(exceptionExit.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(recurrence.summary.stable,1);
+  assert.equal(recurrence.surveillance[0].recurrenceCount,0);
+  assert.deepEqual(recurrence.surveillance[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -291,7 +296,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/25 Monitor governance/);
   assert.match(html,/26 Govern exceptions/);
   assert.match(html,/27 Verify exception exits/);
-  assert.match(html,/all twenty-seven modules/);
+  assert.match(html,/28 Monitor recurrence/);
+  assert.match(html,/all twenty-eight modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -310,6 +316,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/governance-obligations/);
   assert.match(app,/\/api\/governance-exceptions/);
   assert.match(app,/\/api\/exception-exits/);
+  assert.match(app,/\/api\/control-recurrence/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
