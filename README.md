@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A twenty-seven-project, evidence-to-verified-remediation operating system for product teams.**
+**A twenty-eight-project, evidence-to-continuous-control-assurance operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -68,6 +68,8 @@ Customer feedback
 26. Govern temporary exceptions without hiding failed controls
       ↓
 27. Verify corrective-action effectiveness before exception exit
+      ↓
+28. Monitor post-exit control regression and recurrence
 ```
 
 ## Portfolio impact model
@@ -80,11 +82,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
-| Governance and accountability | 24–27 | Canonical provenance, continuous review, expiring exceptions, and verified corrective-action effectiveness |
+| Governance and accountability | 24–28 | Provenance, continuous review, controlled exceptions, verified remediation, and recurrence surveillance |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The twenty-seven projects
+## The twenty-eight projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -94,7 +96,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-seven-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary twenty-eight-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -115,12 +117,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 25 | [Product Governance Obligation & Review Monitor](governance_obligation_monitor/) | Digest continuity, dated obligations, review cadence, certification freshness and retention decisions | Standalone and connected governance-monitor review |
 | 26 | [Product Governance Exception & Waiver Register](governance_exception_register/) | Time-bounded exception scope, compensating controls, remediation linkage and independent approval | Standalone and connected exception review |
 | 27 | [Product Exception Exit & Corrective-Action Verifier](exception_exit_verifier/) | Follow-up control assessment, effectiveness evidence, observation windows and independent exit review | Standalone and connected exit verification |
+| 28 | [Product Control Regression & Recurrence Monitor](control_recurrence_monitor/) | Post-exit target stability, remediation durability, monitoring coverage and cadence | Standalone and connected recurrence review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–27. The connected path now spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, and verified remediation effectiveness—not a collection of README links.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–28. The connected path spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, verified remediation, and recurrence surveillance.
 
 Identity lineage:
 
@@ -139,6 +142,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → governanceMonitorId → obligations / review windows / retention action
            → exceptionRegisterId → scope / controls / remediation / approvals / expiry
            → exceptionExitReviewId → follow-up monitor / effectiveness tests / closure approval
+           → recurrenceSurveillanceId → later snapshots / stability / cadence / human action
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -174,6 +178,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 25. Monitoring Project 25 digest continuity, owned obligations, review and certification windows, and retention decisions.
 26. Governing Project 26 temporary exceptions without overwriting the failed Project 25 result.
 27. Verifying Project 27 target resolution and corrective-action effectiveness before exception exit.
+28. Monitoring Project 28 follow-up snapshots for post-exit control recurrence.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -187,7 +192,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all twenty-seven projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, continuous controls, exception governance, and remediation effectiveness.
+The suite covers all twenty-eight projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, exception governance, remediation effectiveness, and recurrence surveillance.
 
 Run one project independently:
 
@@ -208,7 +213,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–27 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–28 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -239,6 +244,7 @@ Projects 1–6 and 8–27 are bundled into the connected Worker through imports.
 - Governance monitoring detects declared control failures; it does not recertify, dispose of records, or change a product.
 - Exception governance records temporary human risk acceptance; it never changes the underlying failure, waives policy, or bypasses a control.
 - Exception exit verification evaluates supplied follow-up evidence; it never closes an exception or guarantees future control performance.
+- Control recurrence monitoring treats missing coverage as a failure; it never reopens an exception or changes product state.
 - One deployment is one trusted team; a bearer token is not tenant isolation.
 
 ## Honest implementation status
@@ -269,6 +275,7 @@ Projects 1–6 and 8–27 are bundled into the connected Worker through imports.
 | Governance obligations | Deterministic digest, deadline, review, certification and retention checks with named human action; no automated recertification or disposition |
 | Governance exceptions | Deterministic scope, expiry, compensating-control, remediation and approval checks; no policy waiver or technical bypass |
 | Exception exits | Deterministic follow-up target, remediation, effectiveness, observation and approval checks; no automated closure |
+| Control recurrence | Deterministic post-exit stability, remediation, coverage and cadence checks; no automated reopening |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -303,6 +310,7 @@ Projects 1–6 and 8–27 are bundled into the connected Worker through imports.
 ├── governance_obligation_monitor/      Project 25
 ├── governance_exception_register/     Project 26
 ├── exception_exit_verifier/           Project 27
+├── control_recurrence_monitor/        Project 28
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
