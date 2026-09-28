@@ -22,6 +22,7 @@ import {monitorGovernanceObligations} from '../../governance_obligation_monitor/
 import {governExceptions} from '../../governance_exception_register/src/exceptions.js';
 import {verifyExceptionExits} from '../../exception_exit_verifier/src/exits.js';
 import {monitorRecurrence} from '../../control_recurrence_monitor/src/recurrence.js';
+import {planControlImprovements} from '../../control_improvement_planner/src/planner.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -234,6 +235,30 @@ export default {
         const exits = verifyExceptionExits(runs, exceptions, verification, {reviews: input.exitReviews});
         const followups = monitorGovernanceObligations(runs, provenance, {monitors: input.recurrenceMonitors});
         return json(monitorRecurrence(runs, exits, followups, {surveillance: input.surveillance}));
+      }
+      if (url.pathname === '/api/control-improvements' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
+        const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
+        const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
+        const lifecycle = planLifecycle(runs, adoption, {plans: input.plans});
+        const sunset = monitorSunsets(runs, lifecycle, {snapshots: input.snapshots});
+        const outcomes = reviewSunsetOutcomes(runs, sunset, {reviews: input.reviews});
+        const provenance = await buildDecisionProvenancePacks(runs, {assumptions, readiness, adoption, lifecycle, sunset, outcomes}, {packs: input.packs});
+        const baseline = monitorGovernanceObligations(runs, provenance, {monitors: input.baselineMonitors});
+        const exceptions = governExceptions(runs, baseline, {registers: input.registers});
+        const verification = monitorGovernanceObligations(runs, provenance, {monitors: input.verificationMonitors});
+        const exits = verifyExceptionExits(runs, exceptions, verification, {reviews: input.exitReviews});
+        const followups = monitorGovernanceObligations(runs, provenance, {monitors: input.recurrenceMonitors});
+        const recurrence = monitorRecurrence(runs, exits, followups, {surveillance: input.surveillance});
+        return json(planControlImprovements(runs, recurrence, {
+          asOf: input.improvementAsOf,
+          capacity: input.improvementCapacity,
+          minimumCoverageRate: input.minimumCoverageRate,
+          candidates: input.improvementCandidates,
+          review: input.improvementReview,
+        }));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
