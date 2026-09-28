@@ -34,6 +34,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 26. Govern exceptions | `governance_exception_register/src/exceptions.js` | Scoped targets, risk-based expiry, compensating controls, remediation links and independent approval |
 | 27. Verify exception exits | `exception_exit_verifier/src/exits.js` | Follow-up target resolution, remediation completion, effectiveness evidence, observation and closure approval |
 | 28. Monitor recurrence | `control_recurrence_monitor/src/recurrence.js` | Post-exit target stability, remediation durability, snapshot coverage and cadence |
+| 29. Plan control improvements | `control_improvement_planner/src/planner.js` | Capacity-feasible recurrence response with dependencies, ownership and verification windows |
 
 ## Shared contracts
 
@@ -84,6 +85,8 @@ Project 26 accepts Projects 18–25 inputs plus 1–50 exception registers throu
 Project 27 accepts the Projects 18–26 baseline plus a later Project 25 monitor and 1–50 exit reviews through `POST /api/exception-exits`. Project 7 reconstructs both monitor snapshots before checking target resolution, completed evidenced remediation, explicit effectiveness tests, the observation window, residual risk, approval, and reviewer separation. A passing report is verification evidence; it does not mutate or close the exception.
 
 Project 28 accepts the Project 27 exit chain plus 1–24 later Project 25 snapshots per surveillance review through `POST /api/control-recurrence`. Project 7 rebuilds the full baseline, exit, and follow-up reports before checking lineage, target stability, maintained remediation, snapshot coverage, and cadence. Keep-closed is blocked by recurrence or evidence gaps; reopen and escalate remain named human actions.
+
+Project 29 accepts the same authoritative chain plus declared improvement candidates through `POST /api/control-improvements`. Project 7 rebuilds Project 28 server-side before deriving actionable targets. An exact bounded optimizer maximizes unique recurrence-risk coverage within capacity while enforcing dependencies. Approval is blocked below the declared coverage threshold; control changes and work assignment remain external human actions.
 
 ## Human gates
 

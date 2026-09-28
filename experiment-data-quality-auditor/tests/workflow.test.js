@@ -176,6 +176,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const exceptionExit=await(await worker.fetch(req('/api/exception-exits',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[{id:'exit-1',registerId:'register-1',exceptionId:'exception-1',verificationMonitorId:'verification-monitor',asOf:'2027-04-10T00:00:00Z',observationWindowDays:14,observedDays:21,residualRisk:'low',effectivenessTests:[{id:'digest-stability',owner:'Records lead',criterion:'Digest remains stable for the observation window.',passed:true,evidence:'21-day digest report.',verifiedAt:'2027-04-09T00:00:00Z'}],approvals:['product','governance'].map((role,index)=>({role,reviewer:`Exit approver ${index}`,decision:'approved',reviewedAt:'2027-04-10T00:00:00Z'})),review:{reviewer:'Independent closer',decision:'close',rationale:'The target and remediation remain effective.',reviewedAt:'2027-04-10T00:00:00Z'}}]}),env)).json();
   const recurrenceMonitor={...verificationMonitor,id:'recurrence-monitor',asOf:'2027-05-01T00:00:00Z',review:{reviewer:'Recurrence reviewer',decision:'continue',rationale:'Control remains stable after verified exit.',reviewedAt:'2027-05-01T00:00:00Z'}};
   const recurrence=await(await worker.fetch(req('/api/control-recurrence',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[recurrenceMonitor],surveillance:[{id:'surveillance-1',exitReviewId:'exit-1',asOf:'2027-05-02T00:00:00Z',monitorIds:['recurrence-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'keep_closed',rationale:'Follow-up control evidence remains stable.',reviewedAt:'2027-05-02T00:00:00Z'}}]}),env)).json();
+  const regressedMonitor={...recurrenceMonitor,id:'regressed-monitor',observedPackDigest:'c'.repeat(64),asOf:'2027-05-08T00:00:00Z',review:{reviewer:'Recurrence reviewer',decision:'continue',rationale:'Digest recurrence requires improvement planning.',reviewedAt:'2027-05-08T00:00:00Z'}};
+  const improvement=await(await worker.fetch(req('/api/control-improvements',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[regressedMonitor],surveillance:[{id:'surveillance-improvement',exitReviewId:'exit-1',asOf:'2027-05-09T00:00:00Z',monitorIds:['regressed-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'escalate',rationale:'The target recurred and needs preventive improvement.',reviewedAt:'2027-05-09T00:00:00Z'}}],improvementAsOf:'2027-05-10T00:00:00Z',improvementCapacity:3,minimumCoverageRate:1,improvementCandidates:[{id:'improvement-1',title:'Prevent digest recurrence',owner:'Platform lead',effort:3,covers:['surveillance-improvement'],dependencies:[],response:'prevent',dueAt:'2027-06-01T00:00:00Z',successMetric:'Three weekly monitors show stable digest continuity.',verificationWindowDays:30}],improvementReview:{reviewer:'Product governance council',decision:'approve',rationale:'The plan covers the observed recurrence within capacity.',reviewedAt:'2027-05-10T00:00:00Z'}}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -246,6 +248,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(recurrence.summary.stable,1);
   assert.equal(recurrence.surveillance[0].recurrenceCount,0);
   assert.deepEqual(recurrence.surveillance[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(improvement.status,'approved');
+  assert.equal(improvement.summary.actionableFindings,1);
+  assert.equal(improvement.summary.coverageRate,1);
+  assert.deepEqual(improvement.coveredTargets[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -297,7 +303,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/26 Govern exceptions/);
   assert.match(html,/27 Verify exception exits/);
   assert.match(html,/28 Monitor recurrence/);
-  assert.match(html,/all twenty-eight modules/);
+  assert.match(html,/all twenty-nine modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);

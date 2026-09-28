@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the twenty-eight-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–28 for outcomes, portfolio governance, lifecycle assurance, provenance, continuous review, exceptions, verified remediation, and recurrence surveillance.
+Project 7 is both the experiment workspace and the integration host for the twenty-nine-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–29 for outcomes, portfolio governance, lifecycle assurance, provenance, continuous review, exceptions, verified remediation, recurrence surveillance, and control improvement planning.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all twenty-eight modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all twenty-nine modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -72,6 +72,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 26 scoped, expiring exception requests with compensating controls, remediation and independent approval
 - Project 27 follow-up target, remediation, effectiveness, observation-window and independent closure verification
 - Project 28 post-exit recurrence, remediation durability, coverage and cadence monitoring
+- Project 29 evidence-linked, capacity-aware control improvement planning
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -118,6 +119,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/governance-exceptions` | Review Project 26 temporary governance exceptions |
 | `POST` | `/api/exception-exits` | Verify Project 27 remediation effectiveness and exception exit readiness |
 | `POST` | `/api/control-recurrence` | Monitor Project 28 post-exit control recurrence |
+| `POST` | `/api/control-improvements` | Optimize and review Project 29 control improvements |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -148,7 +150,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–28 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–29 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -158,7 +160,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete twenty-eight-stage workspace
+public/                 Complete twenty-nine-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -191,6 +193,7 @@ docs/                   PRD and connected contracts
 - Project 26 records temporary human risk acceptance; it never changes a failed upstream result, waives policy, or bypasses a control.
 - Project 27 verifies exit evidence; it never closes an exception, changes a monitor, or guarantees future control effectiveness.
 - Project 28 detects recurrence in supplied follow-up snapshots; it never reopens an exception or changes a control.
+- Project 29 selects from declared improvement candidates; it never changes controls, creates assignments, or interprets risk points as probabilities.
 
 ## Security and limits
 
