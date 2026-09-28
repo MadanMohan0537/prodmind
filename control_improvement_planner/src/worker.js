@@ -1,0 +1,66 @@
+import {planControlImprovements} from './planner.js';
+
+const securityHeaders = {
+  'Cache-Control': 'no-store',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'no-referrer',
+  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+};
+
+const json = (value, status = 200) => Response.json(value, {status, headers: securityHeaders});
+
+async function authorized(request, token) {
+  const digest = async value => new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)));
+  const [provided, expected] = await Promise.all([
+    digest(request.headers.get('Authorization') ?? ''),
+    digest(`Bearer ${token}`),
+  ]);
+  let difference = 0;
+  for (let index = 0; index < provided.length; index++) difference |= provided[index] ^ expected[index];
+  return difference === 0;
+}
+
+async function readJson(request) {
+  if (request.headers.get('Content-Type')?.split(';')[0] !== 'application/json') throw new Error('Use application/json');
+  const reader = request.body?.getReader();
+  if (!reader) throw new Error('Request body required');
+  const chunks = [];
+  let size = 0;
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 2_000_000) {
+      await reader.cancel();
+      throw new RangeError('Request exceeds 2 MB');
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === '/api/health') return json({service: 'prodmind-control-improvement-planner', configured: Boolean(env.API_TOKEN)});
+    if (!url.pathname.startsWith('/api/')) return env.ASSETS ? env.ASSETS.fetch(request) : json({error: 'Static assets unavailable'}, 503);
+    if (!env.API_TOKEN) return json({error: 'Set API_TOKEN before use'}, 503);
+    const origin = request.headers.get('Origin');
+    if (origin && origin !== url.origin) return json({error: 'Cross-origin requests are not allowed'}, 403);
+    if (!await authorized(request, env.API_TOKEN)) return json({error: 'Unauthorized'}, 401);
+    if (url.pathname !== '/api/control-improvements' || request.method !== 'POST') return json({error: 'Not found'}, 404);
+    try {
+      const payload = await readJson(request);
+      return json(planControlImprovements(payload.runs, payload.recurrenceReport, payload.input));
+    } catch (error) {
+      return json({error: error.message}, error instanceof RangeError ? 413 : 422);
+    }
+  },
+};
+

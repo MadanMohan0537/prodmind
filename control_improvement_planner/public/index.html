@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Control improvement planner | ProdMind</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">PRODMIND / PROJECT 29</p>
+      <h1>Turn recurrence evidence into feasible improvement work.</h1>
+      <p class="lede">Build an evidence-linked, capacity-constrained control improvement portfolio without silently changing a control or assigning work.</p>
+    </header>
+    <section class="panel" aria-labelledby="planner-title">
+      <h2 id="planner-title">Plan improvements</h2>
+      <label>API token<input id="token" type="password" autocomplete="off"></label>
+      <label>Request JSON<textarea id="payload" spellcheck="false"></textarea></label>
+      <div class="actions"><button id="sample" type="button" class="secondary">Load example</button><button id="run" type="button">Build portfolio</button></div>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+    <section id="result" aria-live="polite"></section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
+
