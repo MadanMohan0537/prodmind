@@ -35,6 +35,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 27. Verify exception exits | `exception_exit_verifier/src/exits.js` | Follow-up target resolution, remediation completion, effectiveness evidence, observation and closure approval |
 | 28. Monitor recurrence | `control_recurrence_monitor/src/recurrence.js` | Post-exit target stability, remediation durability, snapshot coverage and cadence |
 | 29. Plan control improvements | `control_improvement_planner/src/planner.js` | Capacity-feasible recurrence response with dependencies, ownership and verification windows |
+| 30. Verify improvement outcomes | `control_improvement_outcome_monitor/src/outcomes.js` | Delivery, effort, lineage, observation-window and later-recurrence assurance |
 
 ## Shared contracts
 
@@ -87,6 +88,8 @@ Project 27 accepts the Projects 18–26 baseline plus a later Project 25 monitor
 Project 28 accepts the Project 27 exit chain plus 1–24 later Project 25 snapshots per surveillance review through `POST /api/control-recurrence`. Project 7 rebuilds the full baseline, exit, and follow-up reports before checking lineage, target stability, maintained remediation, snapshot coverage, and cadence. Keep-closed is blocked by recurrence or evidence gaps; reopen and escalate remain named human actions.
 
 Project 29 accepts the same authoritative chain plus declared improvement candidates through `POST /api/control-improvements`. Project 7 rebuilds Project 28 server-side before deriving actionable targets. An exact bounded optimizer maximizes unique recurrence-risk coverage within capacity while enforcing dependencies. Approval is blocked below the declared coverage threshold; control changes and work assignment remain external human actions.
+
+Project 30 accepts the approved Project 29 inputs, delivery evidence, actual effort, and later Project 28 surveillance through `POST /api/control-improvement-outcomes`. Project 7 reconstructs both the original recurrence response and the later verification report. Close is blocked unless delivery, schedule, effort tolerance, lineage, follow-up coverage, verification duration, and recurrence checks pass; no task or control is changed automatically.
 
 ## Human gates
 

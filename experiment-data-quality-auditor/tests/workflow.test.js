@@ -178,6 +178,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const recurrence=await(await worker.fetch(req('/api/control-recurrence',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[recurrenceMonitor],surveillance:[{id:'surveillance-1',exitReviewId:'exit-1',asOf:'2027-05-02T00:00:00Z',monitorIds:['recurrence-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'keep_closed',rationale:'Follow-up control evidence remains stable.',reviewedAt:'2027-05-02T00:00:00Z'}}]}),env)).json();
   const regressedMonitor={...recurrenceMonitor,id:'regressed-monitor',observedPackDigest:'c'.repeat(64),asOf:'2027-05-08T00:00:00Z',review:{reviewer:'Recurrence reviewer',decision:'continue',rationale:'Digest recurrence requires improvement planning.',reviewedAt:'2027-05-08T00:00:00Z'}};
   const improvement=await(await worker.fetch(req('/api/control-improvements',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[regressedMonitor],surveillance:[{id:'surveillance-improvement',exitReviewId:'exit-1',asOf:'2027-05-09T00:00:00Z',monitorIds:['regressed-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'escalate',rationale:'The target recurred and needs preventive improvement.',reviewedAt:'2027-05-09T00:00:00Z'}}],improvementAsOf:'2027-05-10T00:00:00Z',improvementCapacity:3,minimumCoverageRate:1,improvementCandidates:[{id:'improvement-1',title:'Prevent digest recurrence',owner:'Platform lead',effort:3,covers:['surveillance-improvement'],dependencies:[],response:'prevent',dueAt:'2027-06-01T00:00:00Z',successMetric:'Three weekly monitors show stable digest continuity.',verificationWindowDays:30}],improvementReview:{reviewer:'Product governance council',decision:'approve',rationale:'The plan covers the observed recurrence within capacity.',reviewedAt:'2027-05-10T00:00:00Z'}}),env)).json();
+  const outcomeStableMonitor={...verificationMonitor,id:'outcome-stable-monitor',asOf:'2027-06-25T00:00:00Z',review:{reviewer:'Outcome reviewer',decision:'continue',rationale:'Digest continuity remains stable after the improvement.',reviewedAt:'2027-06-25T00:00:00Z'}};
+  const improvementOutcome=await(await worker.fetch(req('/api/control-improvement-outcomes',{...governanceInput,baselineMonitors:[exceptionMonitor],registers:[exceptionRegister],verificationMonitors:[verificationMonitor],exitReviews:[exceptionExit.reviews[0]],recurrenceMonitors:[regressedMonitor],surveillance:[{id:'surveillance-improvement',exitReviewId:'exit-1',asOf:'2027-05-09T00:00:00Z',monitorIds:['regressed-monitor'],minimumSnapshots:1,maximumCadenceDays:30,review:{reviewer:'Governance council',decision:'escalate',rationale:'The target recurred and needs preventive improvement.',reviewedAt:'2027-05-09T00:00:00Z'}}],improvementAsOf:'2027-05-10T00:00:00Z',improvementCapacity:3,minimumCoverageRate:1,improvementCandidates:[{id:'improvement-1',title:'Prevent digest recurrence',owner:'Platform lead',effort:3,covers:['surveillance-improvement'],dependencies:[],response:'prevent',dueAt:'2027-06-01T00:00:00Z',successMetric:'Three weekly monitors show stable digest continuity.',verificationWindowDays:30}],improvementReview:{reviewer:'Product governance council',decision:'approve',rationale:'The plan covers the observed recurrence within capacity.',reviewedAt:'2027-05-10T00:00:00Z'},outcomeRecurrenceMonitors:[outcomeStableMonitor],outcomeSurveillance:[{id:'surveillance-outcome',exitReviewId:'exit-1',asOf:'2027-06-26T00:00:00Z',monitorIds:['outcome-stable-monitor'],minimumSnapshots:1,maximumCadenceDays:90,review:{reviewer:'Outcome council',decision:'keep_closed',rationale:'The control remains stable after implementation.',reviewedAt:'2027-06-26T00:00:00Z'}}],maximumEffortVarianceRate:.25,improvementOutcomeReviews:[{id:'improvement-outcome-1',improvementActionId:'improvement-1',asOf:'2027-06-26T00:00:00Z',completedAt:'2027-05-20T00:00:00Z',actualEffort:3,minimumFollowups:1,followupSurveillanceIds:['surveillance-outcome'],deliveryEvidence:'Change record 42 deployed.',successEvidence:'Follow-up monitor shows stable digest continuity.',review:{reviewer:'Product governance council',decision:'close',rationale:'Delivery and observation evidence satisfy the approved plan.',reviewedAt:'2027-06-26T00:00:00Z'}}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -252,6 +254,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(improvement.summary.actionableFindings,1);
   assert.equal(improvement.summary.coverageRate,1);
   assert.deepEqual(improvement.coveredTargets[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(improvementOutcome.summary.verifiedEffective,1);
+  assert.equal(improvementOutcome.reviews[0].status,'verified_effective');
+  assert.deepEqual(improvementOutcome.reviews[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -303,7 +308,9 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/26 Govern exceptions/);
   assert.match(html,/27 Verify exception exits/);
   assert.match(html,/28 Monitor recurrence/);
-  assert.match(html,/all twenty-nine modules/);
+  assert.match(html,/29 Plan improvements/);
+  assert.match(html,/30 Verify improvements/);
+  assert.match(html,/all thirty modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -323,6 +330,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/governance-exceptions/);
   assert.match(app,/\/api\/exception-exits/);
   assert.match(app,/\/api\/control-recurrence/);
+  assert.match(app,/\/api\/control-improvements/);
+  assert.match(app,/\/api\/control-improvement-outcomes/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
