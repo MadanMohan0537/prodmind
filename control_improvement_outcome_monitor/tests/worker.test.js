@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import worker from '../src/worker.js';
+
+const payload={runs:[],improvementReport:{schemaVersion:'1.0.0',status:'approved',selectedActions:[{id:'a',title:'Improve control',owner:'Lead',response:'prevent',effort:2,covers:['s'],dueAt:'2027-06-01T00:00:00Z',successMetric:'Stable checks.',verificationWindowDays:7}],coveredTargets:[{id:'s',exitReviewId:'x',governancePackId:'g',portfolioItemId:'p',evidenceIds:['f']}]},recurrenceReport:{schemaVersion:'1.0.0',surveillance:[{id:'later',exitReviewId:'x',governancePackId:'g',portfolioItemId:'p',asOf:'2027-06-20T00:00:00Z',status:'stable',recurrenceCount:0,failedChecks:[]}]},input:{maximumEffortVarianceRate:.25,reviews:[{id:'o',improvementActionId:'a',asOf:'2027-06-21T00:00:00Z',completedAt:'2027-06-01T00:00:00Z',actualEffort:2,minimumFollowups:1,followupSurveillanceIds:['later'],deliveryEvidence:'Change deployed.',successEvidence:'Checks stable.',review:{reviewer:'Council',decision:'close',rationale:'Evidence complete.',reviewedAt:'2027-06-21T00:00:00Z'}}]}};
+const request=(body=payload,token='secret',origin)=>new Request('https://test.example/api/control-improvement-outcomes',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json',...(origin?{Origin:origin}:{})},body:JSON.stringify(body)});
+test('authenticated Worker returns verified outcomes',async()=>{const response=await worker.fetch(request(),{API_TOKEN:'secret'});assert.equal(response.status,200);assert.equal((await response.json()).summary.verifiedEffective,1)});
+test('Worker fails closed without configuration or authorization',async()=>{assert.equal((await worker.fetch(request(),{})).status,503);assert.equal((await worker.fetch(request(payload,'bad'),{API_TOKEN:'secret'})).status,401)});
+test('Worker rejects cross-origin and invalid requests',async()=>{assert.equal((await worker.fetch(request(payload,'secret','https://other.example'),{API_TOKEN:'secret'})).status,403);const invalid=structuredClone(payload);invalid.input.maximumEffortVarianceRate=9;assert.equal((await worker.fetch(request(invalid),{API_TOKEN:'secret'})).status,422)});
+

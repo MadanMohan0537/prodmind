@@ -32,6 +32,7 @@ on:
       - 'exception_exit_verifier/**'
       - 'control_recurrence_monitor/**'
       - 'control_improvement_planner/**'
+      - 'control_improvement_outcome_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -64,6 +65,7 @@ on:
       - 'exception_exit_verifier/**'
       - 'control_recurrence_monitor/**'
       - 'control_improvement_planner/**'
+      - 'control_improvement_outcome_monitor/**'
 permissions:
   contents: read
 jobs:
