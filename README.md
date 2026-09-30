@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A thirty-project, evidence-to-verified-improvement operating system for product teams.**
+**A thirty-one-project, evidence-to-calibrated-improvement operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -74,6 +74,8 @@ Customer feedback
 29. Convert recurrence evidence into a capacity-feasible improvement portfolio
       ↓
 30. Verify improvement delivery and later control outcomes
+      ↓
+31. Calibrate improvement planning from verified portfolio evidence
 ```
 
 ## Portfolio impact model
@@ -86,11 +88,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
-| Governance and accountability | 24–30 | Provenance, continuous review, controlled exceptions, verified remediation, recurrence surveillance, improvement planning, and outcome verification |
+| Governance and accountability | 24–31 | Provenance, continuous review, controlled exceptions, verified remediation, recurrence surveillance, improvement planning, outcome verification, and calibrated learning |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The thirty projects
+## The thirty-one projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -100,7 +102,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-one-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -124,12 +126,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 28 | [Product Control Regression & Recurrence Monitor](control_recurrence_monitor/) | Post-exit target stability, remediation durability, monitoring coverage and cadence | Standalone and connected recurrence review |
 | 29 | [Product Control Improvement Portfolio Planner](control_improvement_planner/) | Evidence-linked, capacity-constrained improvement selection with dependencies and human review | Standalone and connected improvement planning |
 | 30 | [Product Control Improvement Outcome Monitor](control_improvement_outcome_monitor/) | Delivery, effort, lineage, observation-window and later-recurrence verification | Standalone and connected improvement-outcome review |
+| 31 | [Product Control Improvement Calibration & Learning Engine](control_improvement_calibration/) | Portfolio effort accuracy, delivery reliability, effectiveness, recurrence and evidence calibration | Standalone and connected calibration review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–30. The connected path spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, verified remediation, recurrence surveillance, capacity-aware improvement planning, and verified improvement outcomes.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–31. The connected path spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, verified remediation, recurrence surveillance, capacity-aware improvement planning, verified outcomes, and portfolio calibration.
 
 Identity lineage:
 
@@ -151,6 +154,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → recurrenceSurveillanceId → later snapshots / stability / cadence / human action
            → improvementActionId → recurrence target / owner / capacity / verification window
            → improvementOutcomeReviewId → delivery / effort / later surveillance / human closeout
+           → calibrationReport → effort / delivery / effectiveness / recurrence learning
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -189,6 +193,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 28. Monitoring Project 28 follow-up snapshots for post-exit control recurrence.
 29. Planning Project 29 evidence-linked control improvements within declared capacity.
 30. Verifying Project 30 improvement delivery and later recurrence outcomes before human closeout.
+31. Calibrating Project 31 planning evidence across verified improvements without rewriting estimates or scoring people.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -202,7 +207,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all thirty projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, exception governance, remediation effectiveness, recurrence surveillance, improvement planning, and improvement-outcome verification.
+The suite covers all thirty-one projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, exception governance, remediation effectiveness, recurrence surveillance, improvement planning, outcome verification, and portfolio calibration.
 
 Run one project independently:
 
@@ -223,7 +228,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–30 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–31 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -327,6 +332,7 @@ Projects 1–6 and 8–30 are bundled into the connected Worker through imports.
 ├── control_recurrence_monitor/        Project 28
 ├── control_improvement_planner/       Project 29
 ├── control_improvement_outcome_monitor/ Project 30
+├── control_improvement_calibration/     Project 31
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
