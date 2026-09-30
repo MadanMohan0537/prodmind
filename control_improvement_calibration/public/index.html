@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Improvement calibration | ProdMind</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">PRODMIND / PROJECT 31</p>
+        <h1>Turn completed improvements into better planning evidence.</h1>
+        <p class="lede">Measure effort accuracy, delivery reliability, observed effectiveness, and recurrence across Project 30 outcomes before a human accepts a new planning baseline.</p>
+      </header>
+      <section class="panel" aria-labelledby="review-heading">
+        <h2 id="review-heading">Calibrate the portfolio</h2>
+        <label>API token<input id="token" type="password" autocomplete="off"></label>
+        <label>Request JSON<textarea id="payload" spellcheck="false"></textarea></label>
+        <div class="actions">
+          <button id="sample" class="secondary" type="button">Load example</button>
+          <button id="run" type="button">Run calibration</button>
+        </div>
+        <p id="message" role="status" aria-live="polite"></p>
+      </section>
+      <section id="result" aria-live="polite"></section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
