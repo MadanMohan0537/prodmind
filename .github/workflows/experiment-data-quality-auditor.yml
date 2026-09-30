@@ -33,6 +33,7 @@ on:
       - 'control_recurrence_monitor/**'
       - 'control_improvement_planner/**'
       - 'control_improvement_outcome_monitor/**'
+      - 'control_improvement_calibration/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -66,6 +67,7 @@ on:
       - 'control_recurrence_monitor/**'
       - 'control_improvement_planner/**'
       - 'control_improvement_outcome_monitor/**'
+      - 'control_improvement_calibration/**'
 permissions:
   contents: read
 jobs:
