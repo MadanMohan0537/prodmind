@@ -93,6 +93,8 @@ Project 30 accepts the approved Project 29 inputs, delivery evidence, actual eff
 
 Project 31 accepts the Project 30 chain plus portfolio calibration thresholds through `POST /api/control-improvement-calibration`. Project 7 reconstructs Projects 18–30 before measuring effort bias, delivery reliability, observed effectiveness, recurrence, observation completeness, and evidence coverage. Accepting a baseline is blocked by insufficient evidence or a failed threshold. Signals are descriptive: no estimate is rewritten, no person is ranked, and causality is not inferred.
 
+Project 32 accepts the Project 31 chain plus reversible planning-policy candidates through `POST /api/planning-policy-experiments`. Project 7 reconstructs Projects 18–31 before deriving targets from failed calibration checks. Exact bounded optimization maximizes unique weighted gap coverage within capacity and dependencies. Approval is blocked below the declared coverage threshold; no estimate, policy, assignment, or process is changed automatically.
+
 ## Human gates
 
 1. Review topic-generated opportunity labels, then enter business value, user value, strategic alignment, confidence, feasibility, urgency, effort, risk and uncertainty. These are PM estimates, not model-derived facts.

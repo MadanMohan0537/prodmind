@@ -3,7 +3,7 @@ const outcome=(overrides={})=>({id:'o1',response:'prevent',plannedEffort:4,actua
 const report=(reviews=[outcome(),outcome({id:'o2',response:'detect',plannedEffort:6,actualEffort:5})])=>({schemaVersion:'1.0.0',reviews});
 const input=(overrides={})=>({asOf:'2027-07-02T00:00:00Z',minimumSampleSize:2,maximumAbsoluteEffortBiasRate:.2,minimumOnTimeRate:1,minimumEffectivenessRate:1,maximumRecurrenceRate:0,review:{reviewer:'Portfolio council',decision:'accept_baseline',rationale:'The measured baseline meets declared thresholds.',reviewedAt:'2027-07-02T00:00:00Z'},...overrides});
 const run=(r=report(),i=input())=>calibrateImprovementPortfolio([],r,i);
-test('calibrates a portfolio that meets declared thresholds',()=>{const result=run();assert.equal(result.status,'calibrated');assert.equal(result.portfolio.sampleSize,2)});
+test('calibrates a portfolio that meets declared thresholds',()=>{const result=run();assert.equal(result.status,'calibrated');assert.equal(result.portfolio.sampleSize,2);assert.deepEqual(result.sourceOutcomeReviewIds,['o1','o2'])});
 test('calculates deterministic effort bias and absolute error',()=>{const result=run();assert.equal(result.portfolio.effortBiasRate,0);assert.equal(result.portfolio.meanAbsoluteEffortErrorRate,.2083)});
 test('reports descriptive response cohorts including empty cohorts',()=>{const result=run();assert.equal(result.byResponse.find(item=>item.response==='prevent').sampleSize,1);assert.equal(result.byResponse.find(item=>item.response==='govern').sampleSize,0)});
 test('blocks acceptance for insufficient sample size',()=>{const result=run(report([outcome()]),input());assert.ok(result.failedChecks.includes('sample-size'));assert.equal(result.status,'blocked_acceptance')});
@@ -15,4 +15,3 @@ test('keeps adjust and collect-more decisions action-required',()=>{for(const de
 test('rejects future outcomes and reviews',()=>{assert.throws(()=>run(report([outcome({asOf:'2027-08-01T00:00:00Z'})])),/after calibration/);const review={...input().review,reviewedAt:'2027-08-01T00:00:00Z'};assert.throws(()=>run(report(),input({review})),/after asOf/)});
 test('rejects malformed reports and duplicate IDs',()=>{assert.throws(()=>run({}),/Project 30/);assert.throws(()=>run(report([outcome(),outcome()])),/unique/)});
 test('rejects invalid thresholds and effort',()=>{assert.throws(()=>run(report(),input({maximumRecurrenceRate:2})),/from 0 to 1/);assert.throws(()=>run(report([outcome({plannedEffort:0})])),/positive/)});
-
