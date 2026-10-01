@@ -100,6 +100,7 @@ export function calibrateImprovementPortfolio(runs, outcomeReport, input = {}) {
   return {
     schemaVersion:'1.0.0',
     asOf,
+    sourceOutcomeReviewIds:outcomeReport.reviews.map(review=>review.id).sort(),
     minimumSampleSize:input.minimumSampleSize,
     thresholds,
     portfolio,
@@ -117,4 +118,3 @@ export function calibrateImprovementPortfolio(runs, outcomeReport, input = {}) {
     method:'deterministic portfolio measurement over Project 30 outcomes; signals are descriptive and never rewrite estimates, rank people, or claim causality',
   };
 }
-
