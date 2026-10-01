@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prodmind-planning-policy-experiment-planner",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {"directory": "./public", "binding": "ASSETS"},
+  "observability": {
+    "enabled": true,
+    "logs": {"head_sampling_rate": 1},
+    "traces": {"enabled": true, "head_sampling_rate": 0.01}
+  }
+}
