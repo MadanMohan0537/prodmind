@@ -1,0 +1,11 @@
+{
+  "name": "@prodmind/planning-policy-experiment-planner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/planner.js && node --check src/worker.js && node --check public/app.js && npm test"
+  },
+  "devDependencies": {}
+}
