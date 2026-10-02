@@ -35,6 +35,7 @@ on:
       - 'control_improvement_outcome_monitor/**'
       - 'control_improvement_calibration/**'
       - 'planning_policy_experiment_planner/**'
+      - 'planning_policy_outcome_verifier/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -70,6 +71,7 @@ on:
       - 'control_improvement_outcome_monitor/**'
       - 'control_improvement_calibration/**'
       - 'planning_policy_experiment_planner/**'
+      - 'planning_policy_outcome_verifier/**'
 permissions:
   contents: read
 jobs:

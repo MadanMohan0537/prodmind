@@ -95,6 +95,8 @@ Project 31 accepts the Project 30 chain plus portfolio calibration thresholds th
 
 Project 32 accepts the Project 31 chain plus reversible planning-policy candidates through `POST /api/planning-policy-experiments`. Project 7 reconstructs Projects 18–31 before deriving targets from failed calibration checks. Exact bounded optimization maximizes unique weighted gap coverage within capacity and dependencies. Approval is blocked below the declared coverage threshold; no estimate, policy, assignment, or process is changed automatically.
 
+Project 33 accepts the same connected chain plus completed trial observations through `POST /api/planning-policy-outcomes`. Project 7 reconstructs Projects 18–32 server-side, then checks each named human decision against the trial's predeclared primary measure, guardrail, sample size, timing, observation window, and evidence. A failed prerequisite blocks an `adopt` result; the system never claims causality or changes planning policy automatically.
+
 ## Human gates
 
 1. Review topic-generated opportunity labels, then enter business value, user value, strategic alignment, confidence, feasibility, urgency, effort, risk and uncertainty. These are PM estimates, not model-derived facts.

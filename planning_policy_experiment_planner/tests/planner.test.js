@@ -27,6 +27,9 @@ const candidate = (overrides = {}) => ({
   changeDescription: 'Use a reviewed range alongside point estimates for one planning cycle.',
   successMetric: 'Absolute effort bias is at or below 0.2.',
   guardrail: 'No more than one day is added to planning lead time.',
+  primaryMeasure: {name:'Absolute effort bias',unit:'rate',direction:'decrease',baseline:.4,target:.2},
+  guardrailMeasure: {name:'Planning lead time',unit:'days',direction:'not_increase',baseline:2,tolerance:1},
+  minimumSampleSize: 3,
   rollbackPlan: 'Restore the prior estimation template after the review.',
   reversible: true,
   startsAt: '2027-07-10T00:00:00Z',
@@ -118,6 +121,12 @@ test('requires reversible experiments with observation and rollback controls', (
   assert.throws(() => plan(calibration(), input({candidates: [candidate({reversible: false})]})), /explicitly reversible/);
   assert.throws(() => plan(calibration(), input({candidates: [candidate({rollbackPlan: ''})]})), /rollbackPlan/);
   assert.throws(() => plan(calibration(), input({candidates: [candidate({minimumObservationDays: 60})]})), /shorter/);
+});
+
+test('requires predeclared quantitative primary and guardrail measures', () => {
+  assert.throws(() => plan(calibration(), input({candidates: [candidate({primaryMeasure:{name:'Bias',unit:'rate',direction:'decrease',baseline:.4,target:.5}})]})), /must improve/);
+  assert.throws(() => plan(calibration(), input({candidates: [candidate({guardrailMeasure:{name:'Lead time',unit:'days',direction:'ignore',baseline:2,tolerance:1}})]})), /direction is invalid/);
+  assert.throws(() => plan(calibration(), input({candidates: [candidate({minimumSampleSize:0})]})), /minimumSampleSize/);
 });
 
 test('rejects invalid dates and dependencies', () => {
