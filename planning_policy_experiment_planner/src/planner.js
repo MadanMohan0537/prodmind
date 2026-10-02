@@ -31,6 +31,38 @@ const integer = (value, name, min, max) => {
 
 const round = value => Number(value.toFixed(4));
 
+const finite = (value, name) => {
+  if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error(`${name} must be a finite number`);
+  return value;
+};
+
+function primaryMeasure(raw, id) {
+  const measure = raw ?? {};
+  const direction = required(measure.direction, `${id} primaryMeasure direction`, 20);
+  if (!['increase', 'decrease'].includes(direction)) throw new Error(`${id} primaryMeasure direction is invalid`);
+  const baseline = finite(measure.baseline, `${id} primaryMeasure baseline`);
+  const target = finite(measure.target, `${id} primaryMeasure target`);
+  if ((direction === 'increase' && target <= baseline) || (direction === 'decrease' && target >= baseline)) {
+    throw new Error(`${id} primaryMeasure target must improve on baseline`);
+  }
+  return {name:required(measure.name,`${id} primaryMeasure name`,120),unit:required(measure.unit,`${id} primaryMeasure unit`,40),direction,baseline,target};
+}
+
+function guardrailMeasure(raw, id) {
+  const measure = raw ?? {};
+  const direction = required(measure.direction, `${id} guardrailMeasure direction`, 20);
+  if (!['not_increase', 'not_decrease'].includes(direction)) throw new Error(`${id} guardrailMeasure direction is invalid`);
+  const tolerance = finite(measure.tolerance, `${id} guardrailMeasure tolerance`);
+  if (tolerance < 0) throw new Error(`${id} guardrailMeasure tolerance cannot be negative`);
+  return {
+    name:required(measure.name,`${id} guardrailMeasure name`,120),
+    unit:required(measure.unit,`${id} guardrailMeasure unit`,40),
+    direction,
+    baseline:finite(measure.baseline,`${id} guardrailMeasure baseline`),
+    tolerance,
+  };
+}
+
 function deriveTargets(calibrationReport) {
   return calibrationReport.checks
     .filter(check => check.passed === false)
@@ -89,6 +121,9 @@ function normalizeCandidates(rawCandidates, targets, asOf) {
       changeDescription: required(raw.changeDescription, `${id} changeDescription`, 1000),
       successMetric: required(raw.successMetric, `${id} successMetric`, 500),
       guardrail: required(raw.guardrail, `${id} guardrail`, 500),
+      primaryMeasure: primaryMeasure(raw.primaryMeasure, id),
+      guardrailMeasure: guardrailMeasure(raw.guardrailMeasure, id),
+      minimumSampleSize: integer(raw.minimumSampleSize, `${id} minimumSampleSize`, 1, 1_000_000),
       rollbackPlan: required(raw.rollbackPlan, `${id} rollbackPlan`, 1000),
       reversible: true,
       startsAt,

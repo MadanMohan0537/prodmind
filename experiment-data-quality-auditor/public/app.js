@@ -127,6 +127,9 @@ $('#discovery').onsubmit = event => {event.preventDefault(); action(async () => 
   run = await api('/api/runs', {title: form.elements.title.value, records: Array.isArray(data) ? data : (data.records ?? data.data)});
   assessments = []; render(); await loadRuns(); notice('Feedback analyzed and saved across projects 1–5. Review candidates before ranking.');
 });};
+$('#planning-policy-outcomes').onsubmit = event => {event.preventDefault();action(async()=>{
+  const file=event.currentTarget.elements.file.files[0];if(!file||file.size>2_000_000)throw new Error('Choose a policy outcome JSON file under 2 MB.');const input=JSON.parse(await file.text());const result=await api('/api/planning-policy-outcomes',input);const parent=$('#planning-policy-outcome-results');parent.replaceChildren();const metrics=el('div',undefined,'metrics');for(const[label,value]of Object.entries({Reviews:result.summary.reviews,Verified:result.summary.verified_adopt,Blocked:result.summary.blocked_adopt,Action:result.summary.action_required})){const tile=el('div',undefined,'metric');tile.append(el('strong',String(value)),el('span',label));metrics.append(tile);}parent.append(metrics,el('p',result.method,'muted'));const card=el('article',undefined,'card');card.append(el('h3',`Planning policy outcomes · ${result.status}`),el('p',`${result.outcomes.length} reviewed · human adoption remains required`,'muted'));details(card,'Inspect targets, guardrails, samples, timing, evidence, and human decisions',result);parent.append(card);notice('Policy outcome verified. No planning policy was changed.');
+});};
 const factorRanges = {businessValue:[0,10],userValue:[0,10],strategicAlignment:[0,10],confidence:[0,1],feasibility:[0,1],urgency:[0,10],effort:[0.1,10000],risk:[0,1],uncertainty:[0,0.75]};
 for (const [name,[min,max]] of Object.entries(factorRanges)) {
   const label = el('label', `${name.replace(/[A-Z]/g, x => ` ${x.toLowerCase()}`)} (${min}–${max})`);

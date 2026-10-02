@@ -204,10 +204,11 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
     policyExperimentAsOf:'2027-06-28T00:00:00Z',
     policyExperimentCapacity:1,
     policyExperimentMinimumCoverageRate:1,
-    policyExperimentCandidates:[{id:'policy-trial-1',title:'Trial a larger calibration sample',owner:'Product operations lead',effort:1,covers:['sample-size'],dependencies:[],policyArea:'measurement',hypothesis:'A longer sampling window produces a decision-ready calibration baseline.',changeDescription:'Collect one additional verified outcome before accepting the planning baseline.',successMetric:'The next calibration includes at least two verified outcomes.',guardrail:'The trial does not delay urgent control response.',rollbackPlan:'Return to the prior review cadence after the observation window.',reversible:true,startsAt:'2027-07-01T00:00:00Z',reviewAt:'2027-08-01T00:00:00Z',minimumObservationDays:30}],
+    policyExperimentCandidates:[{id:'policy-trial-1',title:'Trial a larger calibration sample',owner:'Product operations lead',effort:1,covers:['sample-size'],dependencies:[],policyArea:'measurement',hypothesis:'A longer sampling window produces a decision-ready calibration baseline.',changeDescription:'Collect one additional verified outcome before accepting the planning baseline.',successMetric:'The next calibration includes at least two verified outcomes.',guardrail:'The trial does not delay urgent control response.',primaryMeasure:{name:'Verified outcome sample',unit:'reviews',direction:'increase',baseline:1,target:2},guardrailMeasure:{name:'Urgent response delay',unit:'days',direction:'not_increase',baseline:0,tolerance:0},minimumSampleSize:2,rollbackPlan:'Return to the prior review cadence after the observation window.',reversible:true,startsAt:'2027-07-01T00:00:00Z',reviewAt:'2027-08-01T00:00:00Z',minimumObservationDays:30}],
     policyExperimentReview:{reviewer:'Product operating council',decision:'approve',rationale:'The reversible measurement trial covers the only failed calibration check.',reviewedAt:'2027-06-28T00:00:00Z'},
   };
   const policyExperiments=await(await worker.fetch(req('/api/planning-policy-experiments',policyExperimentInput),env)).json();
+  const policyOutcomes=await(await worker.fetch(req('/api/planning-policy-outcomes',{...policyExperimentInput,policyOutcomeAsOf:'2027-08-02T00:00:00Z',policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -292,6 +293,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(policyExperiments.status,'approved');
   assert.equal(policyExperiments.summary.calibrationGaps,1);
   assert.deepEqual(policyExperiments.sourceOutcomeReviewIds,['improvement-outcome-1']);
+  assert.equal(policyOutcomes.status,'verified_adopt');
+  assert.deepEqual(policyOutcomes.sourceOutcomeReviewIds,['improvement-outcome-1']);
+  assert.deepEqual(policyOutcomes.sourcePolicyExperimentIds,['policy-trial-1']);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -347,7 +351,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/30 Verify improvements/);
   assert.match(html,/31 Calibrate improvements/);
   assert.match(html,/32 Test planning policy/);
-  assert.match(html,/all thirty-two modules/);
+  assert.match(html,/33 Verify planning policy/);
+  assert.match(html,/all thirty-three modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -371,6 +376,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/control-improvement-outcomes/);
   assert.match(app,/\/api\/control-improvement-calibration/);
   assert.match(app,/\/api\/planning-policy-experiments/);
+  assert.match(app,/\/api\/planning-policy-outcomes/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);

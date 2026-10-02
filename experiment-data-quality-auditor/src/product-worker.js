@@ -26,6 +26,7 @@ import {planControlImprovements} from '../../control_improvement_planner/src/pla
 import {monitorImprovementOutcomes} from '../../control_improvement_outcome_monitor/src/outcomes.js';
 import {calibrateImprovementPortfolio} from '../../control_improvement_calibration/src/calibration.js';
 import {planPolicyExperiments} from '../../planning_policy_experiment_planner/src/planner.js';
+import {verifyPolicyExperimentOutcomes} from '../../planning_policy_outcome_verifier/src/outcomes.js';
 
 const headers = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -373,6 +374,30 @@ export default {
           candidates: input.policyExperimentCandidates,
           review: input.policyExperimentReview,
         }));
+      }
+      if (url.pathname === '/api/planning-policy-outcomes' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const assumptions = assessAssumptions(runs, {assumptions: input.assumptions, asOf: input.asOf});
+        const readiness = assessReleaseReadiness(runs, assumptions, {releases: input.releases});
+        const adoption = analyzeAdoption(runs, readiness, {journeys: input.journeys});
+        const lifecycle = planLifecycle(runs, adoption, {plans: input.plans});
+        const sunset = monitorSunsets(runs, lifecycle, {snapshots: input.snapshots});
+        const outcomes = reviewSunsetOutcomes(runs, sunset, {reviews: input.reviews});
+        const provenance = await buildDecisionProvenancePacks(runs, {assumptions, readiness, adoption, lifecycle, sunset, outcomes}, {packs: input.packs});
+        const baseline = monitorGovernanceObligations(runs, provenance, {monitors: input.baselineMonitors});
+        const exceptions = governExceptions(runs, baseline, {registers: input.registers});
+        const verification = monitorGovernanceObligations(runs, provenance, {monitors: input.verificationMonitors});
+        const exits = verifyExceptionExits(runs, exceptions, verification, {reviews: input.exitReviews});
+        const recurrenceMonitors = monitorGovernanceObligations(runs, provenance, {monitors: input.recurrenceMonitors});
+        const recurrence = monitorRecurrence(runs, exits, recurrenceMonitors, {surveillance: input.surveillance});
+        const improvements = planControlImprovements(runs, recurrence, {asOf: input.improvementAsOf, capacity: input.improvementCapacity, minimumCoverageRate: input.minimumCoverageRate, candidates: input.improvementCandidates, review: input.improvementReview});
+        const outcomeMonitors = monitorGovernanceObligations(runs, provenance, {monitors: input.outcomeRecurrenceMonitors});
+        const outcomeRecurrence = monitorRecurrence(runs, exits, outcomeMonitors, {surveillance: input.outcomeSurveillance});
+        const improvementOutcomes = monitorImprovementOutcomes(runs, improvements, outcomeRecurrence, {maximumEffortVarianceRate: input.maximumEffortVarianceRate, reviews: input.improvementOutcomeReviews});
+        const calibration = calibrateImprovementPortfolio(runs, improvementOutcomes, {asOf: input.calibrationAsOf, minimumSampleSize: input.calibrationMinimumSampleSize, maximumAbsoluteEffortBiasRate: input.maximumAbsoluteEffortBiasRate, minimumOnTimeRate: input.calibrationMinimumOnTimeRate, minimumEffectivenessRate: input.calibrationMinimumEffectivenessRate, maximumRecurrenceRate: input.calibrationMaximumRecurrenceRate, review: input.calibrationReview});
+        const policyPlan = planPolicyExperiments(runs, calibration, {asOf: input.policyExperimentAsOf, capacity: input.policyExperimentCapacity, minimumCoverageRate: input.policyExperimentMinimumCoverageRate, candidates: input.policyExperimentCandidates, review: input.policyExperimentReview});
+        return json(verifyPolicyExperimentOutcomes(runs, policyPlan, {asOf: input.policyOutcomeAsOf, reviews: input.policyOutcomeReviews}));
       }
       const match = /^\/api\/runs\/([\w-]+)(?:\/(rank|experiments|learning)(?:\/([\w-]+)\/(start|readout|decision|monitor))?)?$/.exec(url.pathname);
       if (!match) return json({error: 'Not found'}, 404);
