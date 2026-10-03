@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A thirty-three-project, evidence-to-verified-learning operating system for product teams.**
+**A thirty-four-project, evidence-to-controlled-change operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -80,6 +80,8 @@ Customer feedback
 32. Plan reversible policy experiments for observed calibration gaps
       ↓
 33. Verify completed policy experiments before human adoption
+      ↓
+34. Control versioned, gradual and reversible policy change readiness
 ```
 
 ## Portfolio impact model
@@ -92,11 +94,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
-| Governance and accountability | 24–33 | Provenance, continuous review, controlled exceptions, verified remediation, recurrence surveillance, improvement planning, calibrated learning, reversible policy trials, and post-trial verification |
+| Governance and accountability | 24–34 | Provenance, continuous review, controlled exceptions, verified remediation, recurrence surveillance, calibrated learning, reversible policy trials, outcome verification, and controlled policy changes |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The thirty-three projects
+## The thirty-four projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -106,7 +108,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-three-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-four-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -133,12 +135,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 31 | [Product Control Improvement Calibration & Learning Engine](control_improvement_calibration/) | Portfolio effort accuracy, delivery reliability, effectiveness, recurrence and evidence calibration | Standalone and connected calibration review |
 | 32 | [Product Planning Policy Experiment Planner](planning_policy_experiment_planner/) | Reversible, guarded, capacity-aware policy trials derived from calibration gaps | Standalone and connected policy-experiment planning |
 | 33 | [Product Planning Policy Experiment Outcome Verifier](planning_policy_outcome_verifier/) | Predeclared target, guardrail, sample, timing and evidence verification before policy adoption | Standalone and connected post-trial verification |
+| 34 | [Product Planning Policy Change & Version Controller](planning_policy_change_controller/) | Version, scope, gradual rollout, monitoring, rollback, enablement and approval controls | Standalone and connected policy-change readiness |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–33. The connected path spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, verified remediation, recurrence surveillance, capacity-aware improvement planning, calibrated learning, reversible policy experiments, and post-trial verification.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–34. The connected path spans customer evidence, decisions, lifecycle governance, provenance, continuous monitoring, controlled exceptions, verified remediation, recurrence surveillance, calibrated learning, reversible policy experiments, verified outcomes, and controlled policy-change readiness.
 
 Identity lineage:
 
@@ -163,6 +166,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → calibrationReport → effort / delivery / effectiveness / recurrence learning
            → policyExperimentId → gap / hypothesis / guardrail / rollback / human approval
            → policyOutcomeReviewId → observations / prerequisite checks / human adoption decision
+           → policyChangeId → active version / scope / rollout / monitors / rollback / approvals
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -204,6 +208,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 31. Calibrating Project 31 planning evidence across verified improvements without rewriting estimates or scoring people.
 32. Planning Project 32 reversible policy experiments for failed calibration checks without changing operating policy automatically.
 33. Verifying Project 33 completed trials against their predeclared measures before a human adopts, extends, or rolls back policy.
+34. Controlling Project 34 versioned, scoped, gradual, monitored, reversible policy-change readiness without activating policy.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -217,7 +222,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all thirty-three projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, exception governance, remediation effectiveness, recurrence surveillance, improvement planning, outcome verification, portfolio calibration, policy-experiment planning, and post-trial verification.
+The suite covers all thirty-four projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, provenance, exception governance, remediation effectiveness, recurrence surveillance, improvement planning, outcome verification, portfolio calibration, policy experiments, and controlled policy-change readiness.
 
 Run one project independently:
 
@@ -238,7 +243,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–33 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–34 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -345,6 +350,7 @@ Projects 1–6 and 8–33 are bundled into the connected Worker through imports.
 ├── control_improvement_calibration/     Project 31
 ├── planning_policy_experiment_planner/  Project 32
 ├── planning_policy_outcome_verifier/    Project 33
+├── planning_policy_change_controller/   Project 34
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE

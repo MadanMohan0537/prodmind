@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the thirty-three-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–33 for outcomes, portfolio governance, lifecycle assurance, provenance, continuous review, exceptions, verified remediation, recurrence surveillance, improvement planning, outcome verification, portfolio calibration, reversible policy experiments, and post-trial verification.
+Project 7 is both the experiment workspace and the integration host for the thirty-four-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–34 for outcomes, portfolio governance, lifecycle assurance, provenance, continuous review, exceptions, verified remediation, recurrence surveillance, improvement planning, outcome verification, portfolio calibration, reversible policy experiments, post-trial verification, and controlled policy-change readiness.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all thirty-three modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all thirty-four modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -77,6 +77,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 31 effort, delivery, effectiveness and recurrence calibration across verified improvements
 - Project 32 reversible, capacity-aware planning-policy experiments for failed calibration checks
 - Project 33 deterministic verification of completed planning-policy experiments against predeclared measures
+- Project 34 versioned, scoped, progressively rolled out and reversible planning-policy change readiness
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -128,6 +129,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/control-improvement-calibration` | Calibrate Project 31 portfolio planning evidence |
 | `POST` | `/api/planning-policy-experiments` | Plan Project 32 reversible policy experiments |
 | `POST` | `/api/planning-policy-outcomes` | Verify Project 33 planning-policy experiment outcomes |
+| `POST` | `/api/planning-policy-changes` | Assess Project 34 planning-policy change readiness |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -158,7 +160,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–33 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–34 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -168,7 +170,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete thirty-three-stage workspace
+public/                 Complete thirty-four-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -206,6 +208,7 @@ docs/                   PRD and connected contracts
 - Project 31 measures portfolio calibration; it never rewrites estimates, ranks people, changes plans, or proves causality.
 - Project 32 proposes reversible planning-policy experiments; it never changes policy, edits estimates, assigns people, or guarantees improvement.
 - Project 33 verifies declared prerequisites; it never claims causality or adopts, extends, or rolls back policy automatically.
+- Project 34 verifies change controls; it never activates, distributes, or rolls back planning policy automatically.
 
 ## Security and limits
 

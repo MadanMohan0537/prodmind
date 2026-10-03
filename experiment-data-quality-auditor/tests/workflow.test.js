@@ -209,6 +209,7 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   };
   const policyExperiments=await(await worker.fetch(req('/api/planning-policy-experiments',policyExperimentInput),env)).json();
   const policyOutcomes=await(await worker.fetch(req('/api/planning-policy-outcomes',{...policyExperimentInput,policyOutcomeAsOf:'2027-08-02T00:00:00Z',policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}]}),env)).json();
+  const policyChanges=await(await worker.fetch(req('/api/planning-policy-changes',{...policyExperimentInput,policyOutcomeAsOf:'2027-08-02T00:00:00Z',policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}],policyChangeAsOf:'2027-08-03T00:00:00Z',activePolicies:[{id:'sampling-policy',name:'Outcome sampling policy',version:'1.0.0',activatedAt:'2027-01-01T00:00:00Z',scope:['alpha','beta']}],policyChangeProposals:[{id:'policy-change-1',outcomeReviewId:'policy-outcome-1',policyId:'sampling-policy',owner:'Product operations owner',fromVersion:'1.0.0',toVersion:'1.1.0',scope:['alpha'],description:'Use the verified larger outcome sample for planning calibration.',effectiveAt:'2027-08-10T00:00:00Z',rolloutSteps:[{percent:20,minimumDays:7},{percent:100,minimumDays:14}],monitors:[{name:'decision latency',direction:'above',threshold:7,windowHours:168},{name:'sample completeness',direction:'below',threshold:.95,windowHours:168}],rollback:{owner:'Operations lead',targetVersion:'1.0.0',procedure:'Restore policy version 1.0.0 and notify teams.',maximumDecisionHours:24,triggerMonitors:['decision latency']},evidence:{training:'Training record 12.',communication:'Acknowledgement record 14.'},approvals:['product','operations','governance'].map((role,index)=>({role,reviewer:`Policy reviewer ${index}`,decision:'approved',reviewedAt:'2027-08-03T00:00:00Z'})),review:{reviewer:'Change council',decision:'approve',rationale:'The verified change is scoped, monitored, and reversible.',reviewedAt:'2027-08-03T00:00:00Z'}}]}),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -296,6 +297,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(policyOutcomes.status,'verified_adopt');
   assert.deepEqual(policyOutcomes.sourceOutcomeReviewIds,['improvement-outcome-1']);
   assert.deepEqual(policyOutcomes.sourcePolicyExperimentIds,['policy-trial-1']);
+  assert.equal(policyChanges.status,'ready_to_activate');
+  assert.deepEqual(policyChanges.sourceOutcomeReviewIds,['policy-outcome-1']);
+  assert.equal(policyChanges.proposals[0].toVersion,'1.1.0');
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -352,7 +356,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/31 Calibrate improvements/);
   assert.match(html,/32 Test planning policy/);
   assert.match(html,/33 Verify planning policy/);
-  assert.match(html,/all thirty-three modules/);
+  assert.match(html,/34 Control policy change/);
+  assert.match(html,/all thirty-four modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -377,6 +382,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/control-improvement-calibration/);
   assert.match(app,/\/api\/planning-policy-experiments/);
   assert.match(app,/\/api\/planning-policy-outcomes/);
+  assert.match(app,/\/api\/planning-policy-changes/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
