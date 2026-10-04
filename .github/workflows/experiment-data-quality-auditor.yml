@@ -37,6 +37,7 @@ on:
       - 'planning_policy_experiment_planner/**'
       - 'planning_policy_outcome_verifier/**'
       - 'planning_policy_change_controller/**'
+      - 'planning_policy_rollout_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -74,6 +75,7 @@ on:
       - 'planning_policy_experiment_planner/**'
       - 'planning_policy_outcome_verifier/**'
       - 'planning_policy_change_controller/**'
+      - 'planning_policy_rollout_monitor/**'
 permissions:
   contents: read
 jobs:
