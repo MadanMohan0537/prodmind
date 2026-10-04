@@ -1,0 +1,12 @@
+{
+  "name": "prodmind-evidence-privacy-gate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project 36: deterministic evidence privacy gate for ProdMind",
+  "scripts": {
+    "test": "node --test 'test/**/*.test.mjs'",
+    "check": "node --check src/privacyGate.js && node --test 'test/**/*.test.mjs'"
+  },
+  "license": "Apache-2.0"
+}
