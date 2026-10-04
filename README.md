@@ -10,6 +10,21 @@
 
 </div>
 
+## Choose your entry point
+
+| Goal | Entry point |
+| --- | --- |
+| Experience the composed workflow | [Project 7 workspace](experiment-data-quality-auditor/README.md) |
+| Find a bounded product tool | The thirty-five-project catalog below |
+| Review what is connected | The implementation and security sections below |
+| Contribute to one module | Its own README and source directory |
+
+The root is a portfolio and integration map, not a single installable package. Follow the selected project's setup instead of assuming every module shares dependencies or a deployment target. The connected suite command below belongs to the Project 7 workspace.
+
+When reviewing a recommendation, follow its evidence links and control status through the composed workflow. Passing a control demonstrates the encoded check; it does not replace a team's release or investment decision.
+
+
+
 ProdMind connects customer evidence, product judgment, experimentation, outcome monitoring, and institutional learning in one traceable workflow. Each project solves one bounded problem; the Project 7 workspace composes their real implementations and preserves the same evidence identities from ingestion through retrieval.
 
 No paid model or software service is required for the tested workflow. The connected application is designed for Cloudflare Workers and D1.
