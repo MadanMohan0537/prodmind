@@ -210,6 +210,17 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const policyExperiments=await(await worker.fetch(req('/api/planning-policy-experiments',policyExperimentInput),env)).json();
   const policyOutcomes=await(await worker.fetch(req('/api/planning-policy-outcomes',{...policyExperimentInput,policyOutcomeAsOf:'2027-08-02T00:00:00Z',policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}]}),env)).json();
   const policyChanges=await(await worker.fetch(req('/api/planning-policy-changes',{...policyExperimentInput,policyOutcomeAsOf:'2027-08-02T00:00:00Z',policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}],policyChangeAsOf:'2027-08-03T00:00:00Z',activePolicies:[{id:'sampling-policy',name:'Outcome sampling policy',version:'1.0.0',activatedAt:'2027-01-01T00:00:00Z',scope:['alpha','beta']}],policyChangeProposals:[{id:'policy-change-1',outcomeReviewId:'policy-outcome-1',policyId:'sampling-policy',owner:'Product operations owner',fromVersion:'1.0.0',toVersion:'1.1.0',scope:['alpha'],description:'Use the verified larger outcome sample for planning calibration.',effectiveAt:'2027-08-10T00:00:00Z',rolloutSteps:[{percent:20,minimumDays:7},{percent:100,minimumDays:14}],monitors:[{name:'decision latency',direction:'above',threshold:7,windowHours:168},{name:'sample completeness',direction:'below',threshold:.95,windowHours:168}],rollback:{owner:'Operations lead',targetVersion:'1.0.0',procedure:'Restore policy version 1.0.0 and notify teams.',maximumDecisionHours:24,triggerMonitors:['decision latency']},evidence:{training:'Training record 12.',communication:'Acknowledgement record 14.'},approvals:['product','operations','governance'].map((role,index)=>({role,reviewer:`Policy reviewer ${index}`,decision:'approved',reviewedAt:'2027-08-03T00:00:00Z'})),review:{reviewer:'Change council',decision:'approve',rationale:'The verified change is scoped, monitored, and reversible.',reviewedAt:'2027-08-03T00:00:00Z'}}]}),env)).json();
+  const policyRolloutInput={
+    ...policyExperimentInput,
+    policyOutcomeAsOf:'2027-08-02T00:00:00Z',
+    policyOutcomeReviews:[{id:'policy-outcome-1',experimentId:'policy-trial-1',completedAt:'2027-08-01T00:00:00Z',sampleSize:2,observedPrimary:2,observedGuardrail:0,deliveryEvidence:'The extended sampling window completed.',analysisEvidence:'Two verified outcome reviews were observed.',review:{reviewer:'Product operating council',decision:'adopt',rationale:'The declared target and guardrail passed after the full observation window.',reviewedAt:'2027-08-02T00:00:00Z'}}],
+    policyChangeAsOf:'2027-08-03T00:00:00Z',
+    activePolicies:[{id:'sampling-policy',name:'Outcome sampling policy',version:'1.0.0',activatedAt:'2027-01-01T00:00:00Z',scope:['alpha','beta']}],
+    policyChangeProposals:[{id:'policy-change-1',outcomeReviewId:'policy-outcome-1',policyId:'sampling-policy',owner:'Product operations owner',fromVersion:'1.0.0',toVersion:'1.1.0',scope:['alpha'],description:'Use the verified larger outcome sample for planning calibration.',effectiveAt:'2027-08-10T00:00:00Z',rolloutSteps:[{percent:20,minimumDays:7},{percent:100,minimumDays:14}],monitors:[{name:'decision latency',direction:'above',threshold:7,windowHours:168},{name:'sample completeness',direction:'below',threshold:.95,windowHours:168}],rollback:{owner:'Operations lead',targetVersion:'1.0.0',procedure:'Restore policy version 1.0.0 and notify teams.',maximumDecisionHours:24,triggerMonitors:['decision latency']},evidence:{training:'Training record 12.',communication:'Acknowledgement record 14.'},approvals:['product','operations','governance'].map((role,index)=>({role,reviewer:`Policy reviewer ${index}`,decision:'approved',reviewedAt:'2027-08-03T00:00:00Z'})),review:{reviewer:'Change council',decision:'approve',rationale:'The verified change is scoped, monitored, and reversible.',reviewedAt:'2027-08-03T00:00:00Z'}}],
+    policyRolloutAsOf:'2027-08-31T00:00:00Z',
+    policyRollouts:[{id:'policy-rollout-1',proposalId:'policy-change-1',activatedAt:'2027-08-10T00:00:00Z',snapshots:[{id:'rollout-snapshot-1',observedAt:'2027-08-10T00:00:00Z',percent:20,version:'1.1.0',monitorValues:[{name:'decision latency',value:5},{name:'sample completeness',value:.97}],evidence:'Pilot cohort and monitor export.'},{id:'rollout-snapshot-2',observedAt:'2027-08-17T00:00:00Z',percent:100,version:'1.1.0',monitorValues:[{name:'decision latency',value:6},{name:'sample completeness',value:.96}],evidence:'Full cohort and monitor export.'}],review:{reviewer:'Change council',decision:'continue',rationale:'Every approved rollout control passed.',reviewedAt:'2027-08-31T00:00:00Z'}}],
+  };
+  const policyRollouts=await(await worker.fetch(req('/api/planning-policy-rollouts',policyRolloutInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -300,6 +311,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(policyChanges.status,'ready_to_activate');
   assert.deepEqual(policyChanges.sourceOutcomeReviewIds,['policy-outcome-1']);
   assert.equal(policyChanges.proposals[0].toVersion,'1.1.0');
+  assert.equal(policyRollouts.status,'verified_rollout');
+  assert.deepEqual(policyRollouts.sourcePolicyChangeIds,['policy-change-1']);
+  assert.deepEqual(policyRollouts.sourceOutcomeReviewIds,['policy-outcome-1']);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -357,7 +371,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/32 Test planning policy/);
   assert.match(html,/33 Verify planning policy/);
   assert.match(html,/34 Control policy change/);
-  assert.match(html,/all thirty-four modules/);
+  assert.match(html,/35 Assure policy rollout/);
+  assert.match(html,/all thirty-five modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -383,6 +398,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/planning-policy-experiments/);
   assert.match(app,/\/api\/planning-policy-outcomes/);
   assert.match(app,/\/api\/planning-policy-changes/);
+  assert.match(app,/\/api\/planning-policy-rollouts/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
