@@ -46,7 +46,7 @@ function assessRollout(raw,index,proposal,asOf){
     check('snapshot-evidence',snapshots.every(snapshot=>Boolean(snapshot.evidence)),'Every rollout stage includes evidence.'),
   ];
   const allPassed=checks.every(item=>item.passed);
-  return{id,proposalId:proposal.id,policyId:proposal.policyId,fromVersion:proposal.fromVersion,toVersion:proposal.toVersion,activatedAt,snapshots,monitorChecks,checks,status:decision==='continue'?(allPassed?'verified_rollout':'blocked_continue'):'action_required',review:{reviewer:required(raw.review.reviewer,`${id} review reviewer`,120),decision,rationale:required(raw.review.rationale,`${id} review rationale`,1000),reviewedAt}};
+  return{id,proposalId:proposal.id,outcomeReviewId:proposal.outcomeReviewId,policyId:proposal.policyId,fromVersion:proposal.fromVersion,toVersion:proposal.toVersion,activatedAt,snapshots,monitorChecks,checks,status:decision==='continue'?(allPassed?'verified_rollout':'blocked_continue'):'action_required',review:{reviewer:required(raw.review.reviewer,`${id} review reviewer`,120),decision,rationale:required(raw.review.rationale,`${id} review rationale`,1000),reviewedAt}};
 }
 
 export function monitorPlanningPolicyRollouts(runs,changeReport,input={}){
@@ -59,4 +59,3 @@ export function monitorPlanningPolicyRollouts(runs,changeReport,input={}){
   const summary=rollouts.reduce((result,rollout)=>{result[rollout.status]++;return result;},{verified_rollout:0,blocked_continue:0,action_required:0});
   return{schemaVersion:'1.0.0',asOf,sourcePolicyChangeAsOf:changeReport.asOf,sourcePolicyChangeIds:rollouts.map(rollout=>rollout.proposalId),sourceOutcomeReviewIds:[...(changeReport.sourceOutcomeReviewIds??[])],status:summary.blocked_continue?'blocked_continue':summary.action_required?'action_required':'verified_rollout',summary:{rollouts:rollouts.length,...summary},rollouts,method:'deterministic activation timing, staged coverage, dwell, version, monitor-threshold, and evidence verification; this monitor never continues, pauses, or rolls back a policy'};
 }
-

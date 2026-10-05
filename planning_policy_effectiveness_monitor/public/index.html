@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Policy Effectiveness</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">ProdMind · Project 36</p><h1>Planning Policy Effectiveness & Drift Monitor</h1><p>Verify sustained outcomes after a completed rollout without changing policy or claiming causality.</p></header>
+    <section class="panel">
+      <h2>Assess policy effectiveness</h2>
+      <p>Upload the complete JSON request. Processing stays in the Worker and no paid model is used.</p>
+      <form id="review"><label>API token<input name="token" type="password" required autocomplete="off"></label><label>Review JSON<input name="file" type="file" accept=".json,application/json" required></label><button>Run assurance checks</button></form>
+      <p id="notice" role="status"></p><div id="results"></div>
+    </section>
+    <section class="grid"><article><h2>Predeclared</h2><p>Targets, guardrails, and sample sizes resolve back to Project 32.</p></article><article><h2>Longitudinal</h2><p>Window, cadence, version, samples, outcomes, and evidence are checked across time.</p></article><article><h2>Human-controlled</h2><p>Retain, adjust, and revert remain named human decisions.</p></article></section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

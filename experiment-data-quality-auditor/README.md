@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the thirty-five-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–35 for outcomes, governance, lifecycle assurance, verified remediation, calibrated learning, reversible policy experiments, controlled policy changes, and rollout assurance.
+Project 7 is both the experiment workspace and the integration host for the thirty-six-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–36 for outcomes, governance, lifecycle assurance, verified remediation, calibrated learning, reversible policy experiments, controlled policy changes, rollout assurance, and sustained-effectiveness review.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all thirty-five modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all thirty-six modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -79,6 +79,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 33 deterministic verification of completed planning-policy experiments against predeclared measures
 - Project 34 versioned, scoped, progressively rolled out and reversible planning-policy change readiness
 - Project 35 observed planning-policy rollout assurance across stages, dwell, versions and monitors
+- Project 36 longitudinal planning-policy effectiveness, guardrail and drift assurance
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -132,6 +133,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/planning-policy-outcomes` | Verify Project 33 planning-policy experiment outcomes |
 | `POST` | `/api/planning-policy-changes` | Assess Project 34 planning-policy change readiness |
 | `POST` | `/api/planning-policy-rollouts` | Assess Project 35 planning-policy rollout assurance |
+| `POST` | `/api/planning-policy-effectiveness` | Assess Project 36 sustained planning-policy effectiveness and drift |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -162,7 +164,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–35 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–36 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -172,7 +174,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete thirty-five-stage workspace
+public/                 Complete thirty-six-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -212,6 +214,7 @@ docs/                   PRD and connected contracts
 - Project 33 verifies declared prerequisites; it never claims causality or adopts, extends, or rolls back policy automatically.
 - Project 34 verifies change controls; it never activates, distributes, or rolls back planning policy automatically.
 - Project 35 verifies observed rollout controls; it never continues, pauses, or rolls back policy automatically.
+- Project 36 checks sustained predeclared outcomes and drift; it never retains, adjusts, or reverts policy and does not prove causality.
 
 ## Security and limits
 

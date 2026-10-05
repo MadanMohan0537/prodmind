@@ -221,6 +221,19 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
     policyRollouts:[{id:'policy-rollout-1',proposalId:'policy-change-1',activatedAt:'2027-08-10T00:00:00Z',snapshots:[{id:'rollout-snapshot-1',observedAt:'2027-08-10T00:00:00Z',percent:20,version:'1.1.0',monitorValues:[{name:'decision latency',value:5},{name:'sample completeness',value:.97}],evidence:'Pilot cohort and monitor export.'},{id:'rollout-snapshot-2',observedAt:'2027-08-17T00:00:00Z',percent:100,version:'1.1.0',monitorValues:[{name:'decision latency',value:6},{name:'sample completeness',value:.96}],evidence:'Full cohort and monitor export.'}],review:{reviewer:'Change council',decision:'continue',rationale:'Every approved rollout control passed.',reviewedAt:'2027-08-31T00:00:00Z'}}],
   };
   const policyRollouts=await(await worker.fetch(req('/api/planning-policy-rollouts',policyRolloutInput),env)).json();
+  const policyEffectivenessInput={
+    ...policyRolloutInput,
+    policyEffectivenessAsOf:'2027-09-14T00:00:00Z',
+    policyMinimumSustainmentDays:28,
+    policyMaximumSnapshotGapDays:7,
+    policyEffectivenessReviews:[{id:'policy-effectiveness-1',rolloutId:'policy-rollout-1',observations:[
+      {id:'effectiveness-snapshot-1',observedAt:'2027-08-24T00:00:00Z',version:'1.1.0',sampleSize:2,observedPrimary:2,observedGuardrail:0,evidence:'Week one planning metrics export.'},
+      {id:'effectiveness-snapshot-2',observedAt:'2027-08-31T00:00:00Z',version:'1.1.0',sampleSize:3,observedPrimary:3,observedGuardrail:0,evidence:'Week two planning metrics export.'},
+      {id:'effectiveness-snapshot-3',observedAt:'2027-09-07T00:00:00Z',version:'1.1.0',sampleSize:3,observedPrimary:3,observedGuardrail:0,evidence:'Week three planning metrics export.'},
+      {id:'effectiveness-snapshot-4',observedAt:'2027-09-14T00:00:00Z',version:'1.1.0',sampleSize:4,observedPrimary:4,observedGuardrail:0,evidence:'Week four planning metrics export.'},
+    ],review:{reviewer:'Planning governance council',decision:'retain',rationale:'The predeclared outcome remains sustained without guardrail regression.',reviewedAt:'2027-09-14T00:00:00Z'}}],
+  };
+  const policyEffectiveness=await(await worker.fetch(req('/api/planning-policy-effectiveness',policyEffectivenessInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -314,6 +327,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(policyRollouts.status,'verified_rollout');
   assert.deepEqual(policyRollouts.sourcePolicyChangeIds,['policy-change-1']);
   assert.deepEqual(policyRollouts.sourceOutcomeReviewIds,['policy-outcome-1']);
+  assert.equal(policyEffectiveness.status,'sustained_effectiveness');
+  assert.deepEqual(policyEffectiveness.sourcePolicyRolloutIds,['policy-rollout-1']);
+  assert.deepEqual(policyEffectiveness.sourcePolicyExperimentIds,['policy-trial-1']);
+  assert.equal(policyEffectiveness.policyReviews[0].drift.targetRegressionDetected,false);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -372,7 +389,8 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/33 Verify planning policy/);
   assert.match(html,/34 Control policy change/);
   assert.match(html,/35 Assure policy rollout/);
-  assert.match(html,/all thirty-five modules/);
+  assert.match(html,/36 Monitor policy effectiveness/);
+  assert.match(html,/all thirty-six modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -399,6 +417,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/planning-policy-outcomes/);
   assert.match(app,/\/api\/planning-policy-changes/);
   assert.match(app,/\/api\/planning-policy-rollouts/);
+  assert.match(app,/\/api\/planning-policy-effectiveness/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);

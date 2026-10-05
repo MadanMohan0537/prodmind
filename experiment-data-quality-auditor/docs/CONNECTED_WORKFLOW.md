@@ -101,6 +101,8 @@ Project 34 accepts the connected Project 33 chain, active policy baselines, and 
 
 Project 35 accepts the connected Project 34 chain and observed rollout snapshots through `POST /api/planning-policy-rollouts`. Project 7 reconstructs Projects 18–34 server-side before reconciling activation timing, stage sequence, minimum dwell, target version, monitor thresholds, and evidence. Continue, pause, and rollback remain named human decisions; the monitor never performs them.
 
+Project 36 accepts the connected Project 35 chain and longitudinal effectiveness observations through `POST /api/planning-policy-effectiveness`. Project 7 reconstructs Projects 18–35 server-side, resolves each rollout back to its Project 32 predeclared measures through Project 33, and checks sustainment window, observation cadence, version continuity, sample size, primary target, guardrail, evidence, and drift. Retain, adjust, and revert remain named human decisions; the monitor never performs them or claims causality.
+
 ## Human gates
 
 1. Review topic-generated opportunity labels, then enter business value, user value, strategic alignment, confidence, feasibility, urgency, effort, risk and uncertainty. These are PM estimates, not model-derived facts.
