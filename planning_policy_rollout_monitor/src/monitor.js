@@ -46,7 +46,7 @@ function assessRollout(raw,index,proposal,asOf){
     check('snapshot-evidence',snapshots.every(snapshot=>Boolean(snapshot.evidence)),'Every rollout stage includes evidence.'),
   ];
   const allPassed=checks.every(item=>item.passed);
-  return{id,proposalId:proposal.id,outcomeReviewId:proposal.outcomeReviewId,policyId:proposal.policyId,fromVersion:proposal.fromVersion,toVersion:proposal.toVersion,activatedAt,snapshots,monitorChecks,checks,status:decision==='continue'?(allPassed?'verified_rollout':'blocked_continue'):'action_required',review:{reviewer:required(raw.review.reviewer,`${id} review reviewer`,120),decision,rationale:required(raw.review.rationale,`${id} review rationale`,1000),reviewedAt}};
+  return{id,proposalId:proposal.id,outcomeReviewId:proposal.outcomeReviewId,policyId:proposal.policyId,fromVersion:proposal.fromVersion,toVersion:proposal.toVersion,scope:proposal.scope,monitors:proposal.monitors,rollback:proposal.rollback,activatedAt,snapshots,monitorChecks,checks,status:decision==='continue'?(allPassed?'verified_rollout':'blocked_continue'):'action_required',review:{reviewer:required(raw.review.reviewer,`${id} review reviewer`,120),decision,rationale:required(raw.review.rationale,`${id} review rationale`,1000),reviewedAt}};
 }
 
 export function monitorPlanningPolicyRollouts(runs,changeReport,input={}){
