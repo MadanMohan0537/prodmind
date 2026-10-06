@@ -234,6 +234,19 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
     ],review:{reviewer:'Planning governance council',decision:'retain',rationale:'The predeclared outcome remains sustained without guardrail regression.',reviewedAt:'2027-09-14T00:00:00Z'}}],
   };
   const policyEffectiveness=await(await worker.fetch(req('/api/planning-policy-effectiveness',policyEffectivenessInput),env)).json();
+  const policyRecoveryInput={
+    ...policyEffectivenessInput,
+    policyEffectivenessReviews:policyEffectivenessInput.policyEffectivenessReviews.map(item=>({...item,review:{...item.review,decision:'revert',rationale:'A named human has chosen to restore the approved prior policy.'}})),
+    policyRecoveryAsOf:'2027-09-29T00:00:00Z',policyMinimumRecoveryDays:14,policyRecoveryMaximumSnapshotGapDays:7,
+    policyRecoveryReviews:[{id:'policy-recovery-1',policyEffectivenessReviewId:'policy-effectiveness-1',initiatedAt:'2027-09-14T06:00:00Z',executionSnapshots:[
+      {id:'reversion-stage-1',observedAt:'2027-09-14T06:00:00Z',percentReverted:50,version:'1.0.0',evidence:'Half-scope deployment record.'},
+      {id:'reversion-stage-2',observedAt:'2027-09-15T00:00:00Z',percentReverted:100,version:'1.0.0',evidence:'Full-scope deployment record.'},
+    ],recoverySnapshots:[
+      {id:'recovery-snapshot-1',observedAt:'2027-09-22T00:00:00Z',version:'1.0.0',monitorValues:[{name:'decision latency',value:5},{name:'sample completeness',value:.97}],evidence:'Week one recovery export.'},
+      {id:'recovery-snapshot-2',observedAt:'2027-09-29T00:00:00Z',version:'1.0.0',monitorValues:[{name:'decision latency',value:6},{name:'sample completeness',value:.96}],evidence:'Week two recovery export.'},
+    ],review:{reviewer:'Planning governance council',decision:'close_reversion',rationale:'The approved version was restored and recovery remained stable.',reviewedAt:'2027-09-29T00:00:00Z'}}],
+  };
+  const policyRecovery=await(await worker.fetch(req('/api/planning-policy-recovery',policyRecoveryInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -331,6 +344,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.deepEqual(policyEffectiveness.sourcePolicyRolloutIds,['policy-rollout-1']);
   assert.deepEqual(policyEffectiveness.sourcePolicyExperimentIds,['policy-trial-1']);
   assert.equal(policyEffectiveness.policyReviews[0].drift.targetRegressionDetected,false);
+  assert.equal(policyRecovery.status,'verified_recovery');
+  assert.deepEqual(policyRecovery.sourcePolicyEffectivenessReviewIds,['policy-effectiveness-1']);
+  assert.deepEqual(policyRecovery.sourcePolicyExperimentIds,['policy-trial-1']);
+  assert.equal(policyRecovery.policyRecoveryReviews[0].recoveredVersion,'1.0.0');
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -390,7 +407,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/34 Control policy change/);
   assert.match(html,/35 Assure policy rollout/);
   assert.match(html,/36 Monitor policy effectiveness/);
-  assert.match(html,/all thirty-six modules/);
+  assert.match(html,/all thirty-seven modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -418,6 +435,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/planning-policy-changes/);
   assert.match(app,/\/api\/planning-policy-rollouts/);
   assert.match(app,/\/api\/planning-policy-effectiveness/);
+  assert.match(app,/\/api\/planning-policy-recovery/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
