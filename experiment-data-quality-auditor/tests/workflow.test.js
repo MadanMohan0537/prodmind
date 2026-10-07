@@ -247,6 +247,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
     ],review:{reviewer:'Planning governance council',decision:'close_reversion',rationale:'The approved version was restored and recovery remained stable.',reviewedAt:'2027-09-29T00:00:00Z'}}],
   };
   const policyRecovery=await(await worker.fetch(req('/api/planning-policy-recovery',policyRecoveryInput),env)).json();
+  const policyReentryInput={...policyRecoveryInput,policyReentryAsOf:'2027-10-14T00:00:00Z',policyMaximumReviewDays:7,policyMinimumCoolingDays:14,policyIncidentLearningReviews:[{id:'policy-learning-1',policyRecoveryReviewId:'policy-recovery-1',publishedAt:'2027-10-03T00:00:00Z',summary:'A policy trial degraded the planning guardrail and was reverted.',impact:'The alpha planning cohort experienced delayed decisions.',contributingConditions:[{id:'condition-1',category:'tooling',condition:'Validation allowed an unsafe configuration combination.',evidence:'Configuration and validation trace.'}],lessons:[{id:'lesson-1',statement:'Validate combinations before progressive exposure.',evidence:'Recovery review and control trace.'}],actions:[{id:'action-1',type:'prevent',priority:'p1',status:'completed',owner:'Platform owner',trackingId:'TASK-101',successMeasure:'Unsafe combinations are rejected by deterministic tests.',dueAt:'2027-10-05T00:00:00Z',evidence:'Passing validation suite.'},{id:'action-2',type:'detect',priority:'p2',status:'open',owner:'Analytics owner',trackingId:'TASK-102',successMeasure:'Alert fires before a guardrail breach.',dueAt:'2027-11-01T00:00:00Z'}],freezeUntil:'2027-10-20T00:00:00Z',reentry:{owner:'Planning owner',hypothesis:'A narrower reversible trial can validate the corrected guard.',baselineVersion:'1.0.0',scope:['alpha'],startsAt:'2027-10-20T00:00:00Z',rollbackAcknowledged:true,monitoringAcknowledged:true},approvals:['product','operations','governance'].map((role,index)=>({role,reviewer:`Learning reviewer ${index}`,decision:'approved',approvedAt:'2027-10-06T00:00:00Z'})),review:{reviewer:'Policy learning council',decision:'approve_reentry',rationale:'Critical prevention is complete and the next trial is bounded.',reviewedAt:'2027-10-07T00:00:00Z'}}]};
+  const policyReentry=await(await worker.fetch(req('/api/planning-policy-reentry',policyReentryInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -348,6 +350,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.deepEqual(policyRecovery.sourcePolicyEffectivenessReviewIds,['policy-effectiveness-1']);
   assert.deepEqual(policyRecovery.sourcePolicyExperimentIds,['policy-trial-1']);
   assert.equal(policyRecovery.policyRecoveryReviews[0].recoveredVersion,'1.0.0');
+  assert.equal(policyReentry.status,'ready_for_reentry');
+  assert.deepEqual(policyReentry.sourcePolicyRecoveryReviewIds,['policy-recovery-1']);
+  assert.deepEqual(policyReentry.sourcePolicyExperimentIds,['policy-trial-1']);
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -407,7 +412,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/34 Control policy change/);
   assert.match(html,/35 Assure policy rollout/);
   assert.match(html,/36 Monitor policy effectiveness/);
-  assert.match(html,/all thirty-seven modules/);
+  assert.match(html,/all thirty-eight modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -436,6 +441,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/planning-policy-rollouts/);
   assert.match(app,/\/api\/planning-policy-effectiveness/);
   assert.match(app,/\/api\/planning-policy-recovery/);
+  assert.match(app,/\/api\/planning-policy-reentry/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
