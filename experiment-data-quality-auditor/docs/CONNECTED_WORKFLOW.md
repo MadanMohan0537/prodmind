@@ -105,6 +105,8 @@ Project 36 accepts the connected Project 35 chain and longitudinal effectiveness
 
 Project 37 accepts the Project 36 revert path plus ordered execution and recovery evidence through `POST /api/planning-policy-recovery`. Project 7 reconstructs Projects 18–36 server-side, then verifies revert authorization, the Project 34 decision SLA and target version retained by Project 35, complete execution, recovery duration and cadence, every declared monitor threshold, evidence, and a named human close, continue, or escalate decision. The verifier never executes reversion, changes policy, closes an event, or claims the reversion caused recovery.
 
+Project 38 accepts verified Project 37 recovery plus an evidence-backed incident learning review through `POST /api/planning-policy-reentry`. Project 7 reconstructs Projects 18–37 server-side before checking timely publication, system-focused contributing conditions, lessons, preventive and detective actions, critical-action completion, overdue work, cooling time, recovered baseline, bounded scope, safety acknowledgements, and independent approvals. Freeze continuation, re-entry, and escalation remain named human decisions; no result lifts a freeze, starts a trial, changes policy, assigns blame, or claims causality.
+
 ## Human gates
 
 1. Review topic-generated opportunity labels, then enter business value, user value, strategic alignment, confidence, feasibility, urgency, effort, risk and uncertainty. These are PM estimates, not model-derived facts.
