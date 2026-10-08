@@ -1,0 +1,2 @@
+{"name":"prodmind-planning-policy-reentry-monitor","private":true,"type":"module","scripts":{"test":"node --test"},"devDependencies":{"wrangler":"^4.0.0"}}
+

@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A thirty-eight-project, evidence-to-learning operating system for product teams.**
+**A thirty-nine-project, evidence-to-assured-re-entry operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -15,7 +15,7 @@
 | Goal | Entry point |
 | --- | --- |
 | Experience the composed workflow | [Project 7 workspace](experiment-data-quality-auditor/README.md) |
-| Find a bounded product tool | The thirty-eight-project catalog below |
+| Find a bounded product tool | The thirty-nine-project catalog below |
 | Review what is connected | The implementation and security sections below |
 | Contribute to one module | Its own README and source directory |
 
@@ -103,6 +103,8 @@ Customer feedback
 37. Verify authorized policy reversion and stable recovery
       ↓
 38. Capture incident learning and govern safe policy re-entry
+      ↓
+39. Assure bounded post-incident policy re-entry
 ```
 
 ## Portfolio impact model
@@ -115,11 +117,11 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Portfolio judgment | 6, 12–15 | Explicit trade-offs across product, research, strategy and resilience |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
-| Governance and accountability | 24–38 | Provenance, continuous review, controlled exceptions, verified remediation, policy controls, verified recovery, blameless learning, and safe re-entry |
+| Governance and accountability | 24–39 | Provenance, continuous review, controlled exceptions, verified remediation, policy controls, verified recovery, blameless learning, safe re-entry, and observed re-entry assurance |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The thirty-eight projects
+## The thirty-nine projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -129,7 +131,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-eight-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary thirty-nine-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -161,12 +163,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 36 | [Product Planning Policy Effectiveness & Drift Monitor](planning_policy_effectiveness_monitor/) | Longitudinal predeclared-target, guardrail, cadence, version, sample and drift checks | Standalone and connected sustained-effectiveness review |
 | 37 | [Product Planning Policy Reversion & Recovery Verifier](planning_policy_recovery_verifier/) | Authorized reversion, execution completeness, target-version and stable-recovery checks | Standalone and connected recovery assurance |
 | 38 | [Product Planning Policy Incident Learning & Re-entry Controller](planning_policy_incident_learning_controller/) | Blameless review, corrective actions, cooling controls and independent re-entry approval | Standalone and connected re-entry gate |
+| 39 | [Product Planning Policy Re-entry Assurance Monitor](planning_policy_reentry_monitor/) | Pre-exposure declaration, bounded stages, corrective-control checks, recurrence signals and guardrails | Standalone and connected re-entry assurance |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–38. The connected path spans customer evidence, decisions, lifecycle governance, verified policy recovery, incident learning, and controlled re-entry.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–39. The connected path spans customer evidence, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
 
 Identity lineage:
 
@@ -196,6 +199,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
            → policyEffectivenessReviewId → longitudinal outcomes / drift / human decision
            → policyRecoveryReviewId → execution / target version / recovery / human closure
            → policyIncidentLearningReviewId → causes / lessons / actions / re-entry decision
+           → policyReentryAssuranceId → declaration / stages / controls / signals / guardrails / human decision
 ```
 
 Every opportunity and experiment retains `evidenceIds`. Within a run, `opportunityId` is stable; cross-run portfolio work uses `portfolioItemId` (`runId:opportunityId`) so same-named opportunities never collide. Client-provided IDs cannot replace server-owned links during prioritization or outcome monitoring.
@@ -242,6 +246,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 36. Monitoring Project 36 sustained primary outcomes, guardrails, cadence, version, sample sufficiency, evidence, and drift without changing policy or claiming causality.
 37. Verifying Project 37 authorized reversion, complete execution, approved target version, recovery cadence, monitor stability, and evidence without changing policy or closing the event.
 38. Governing Project 38 blameless learning, corrective actions, cooling time, recovered baseline, safety controls, and independent re-entry approval without lifting a freeze or starting a trial.
+39. Assuring Project 39 predeclared, bounded re-entry stages, critical corrective controls, recurrence signals, guardrails, and a named human decision without changing policy or trial state.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -255,7 +260,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all thirty-eight projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, verified recovery, incident learning, and safe re-entry.
+The suite covers all thirty-nine projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, decision gates, lifecycle safeguards, verified recovery, incident learning, safe re-entry, and re-entry assurance.
 
 Run one project independently:
 
@@ -276,7 +281,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–38 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–39 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -356,6 +361,7 @@ Projects 1–6 and 8–38 are bundled into the connected Worker through imports.
 | Planning-policy effectiveness | Deterministic longitudinal target, guardrail, cadence, version, sample, evidence and drift checks; no policy action or causal claim |
 | Planning-policy recovery | Deterministic authorization, execution, target-version, recovery-window, cadence and monitor checks; no reversion execution |
 | Policy incident learning | Deterministic learning, action, cooling, baseline, safety and approval checks; no freeze lift or trial start |
+| Policy re-entry assurance | Deterministic declaration, stage, sample, corrective-control, recurrence and guardrail checks; no exposure or policy action |
 | Authentication | Shared bearer token for a small trusted deployment |
 | Cost | No paid API required; Cloudflare quotas still apply |
 
@@ -401,6 +407,7 @@ Projects 1–6 and 8–38 are bundled into the connected Worker through imports.
 ├── planning_policy_effectiveness_monitor/ Project 36
 ├── planning_policy_recovery_verifier/      Project 37
 ├── planning_policy_incident_learning_controller/ Project 38
+├── planning_policy_reentry_monitor/              Project 39
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE

@@ -1,0 +1,2 @@
+{"name":"prodmind-planning-policy-reentry-monitor","main":"src/worker.js","compatibility_date":"2026-10-08","compatibility_flags":["nodejs_compat"],"assets":{"directory":"./public","binding":"ASSETS"},"observability":{"enabled":true}}
+
