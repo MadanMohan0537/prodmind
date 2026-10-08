@@ -215,7 +215,10 @@ test("enforces stage sequence and exposure bounds", () => {
       monitorPlanningPolicyReentry(
         [],
         report,
-        input({ endedAt: "2027-10-23T00:00:00Z" }),
+        {
+          ...input({ endedAt: "2027-10-23T00:00:00Z" }),
+          asOf: "2027-10-23T00:00:00Z",
+        },
       ),
     /final stage/,
   );
