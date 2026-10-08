@@ -41,6 +41,7 @@ on:
       - 'planning_policy_effectiveness_monitor/**'
       - 'planning_policy_recovery_verifier/**'
       - 'planning_policy_incident_learning_controller/**'
+      - 'planning_policy_reentry_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -82,6 +83,7 @@ on:
       - 'planning_policy_effectiveness_monitor/**'
       - 'planning_policy_recovery_verifier/**'
       - 'planning_policy_incident_learning_controller/**'
+      - 'planning_policy_reentry_monitor/**'
 permissions:
   contents: read
 jobs:

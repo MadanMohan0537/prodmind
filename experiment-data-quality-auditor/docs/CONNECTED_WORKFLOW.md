@@ -107,6 +107,8 @@ Project 37 accepts the Project 36 revert path plus ordered execution and recover
 
 Project 38 accepts verified Project 37 recovery plus an evidence-backed incident learning review through `POST /api/planning-policy-reentry`. Project 7 reconstructs Projects 18–37 server-side before checking timely publication, system-focused contributing conditions, lessons, preventive and detective actions, critical-action completion, overdue work, cooling time, recovered baseline, bounded scope, safety acknowledgements, and independent approvals. Freeze continuation, re-entry, and escalation remain named human decisions; no result lifts a freeze, starts a trial, changes policy, assigns blame, or claims causality.
 
+Project 39 accepts the complete Project 38 chain plus a pre-exposure declaration, bounded stage executions, and evidence-backed observations through `POST /api/planning-policy-reentry-assurance`. Project 7 reconstructs Projects 18–38 server-side before checking the approved owner, recovered baseline, scope, exposure ceiling, stage order and dwell, observation window, sample sufficiency, completed critical controls, incident recurrence signals, guardrails, and a named human continue, pause, or refreeze decision. It never changes policy, expands exposure, pauses or refreezes a trial, assigns blame, or claims causality.
+
 ## Human gates
 
 1. Review topic-generated opportunity labels, then enter business value, user value, strategic alignment, confidence, feasibility, urgency, effort, risk and uncertainty. These are PM estimates, not model-derived facts.

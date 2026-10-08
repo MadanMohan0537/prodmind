@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the thirty-eight-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–38 through verified recovery, blameless incident learning, and controlled policy re-entry.
+Project 7 is both the experiment workspace and the integration host for the thirty-nine-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–39 through verified recovery, blameless incident learning, controlled policy re-entry, and re-entry assurance.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all thirty-eight modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all thirty-nine modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -82,6 +82,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 36 longitudinal planning-policy effectiveness, guardrail and drift assurance
 - Project 37 planning-policy reversion execution and stable-recovery assurance
 - Project 38 blameless policy-incident learning and controlled re-entry readiness
+- Project 39 bounded policy re-entry execution, corrective-control, recurrence-signal and guardrail assurance
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -138,6 +139,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/planning-policy-effectiveness` | Assess Project 36 sustained planning-policy effectiveness and drift |
 | `POST` | `/api/planning-policy-recovery` | Verify Project 37 policy reversion execution and stable recovery |
 | `POST` | `/api/planning-policy-reentry` | Assess Project 38 incident learning and policy re-entry readiness |
+| `POST` | `/api/planning-policy-reentry-assurance` | Assess Project 39 bounded policy re-entry execution |
 | `POST` | `/api/audit` | Use the original standalone event auditor |
 
 Every mutation requires the current integer `version`. A stale writer receives HTTP 409.
@@ -168,7 +170,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–38 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–39 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -178,7 +180,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete thirty-eight-stage workspace
+public/                 Complete thirty-nine-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -221,6 +223,7 @@ docs/                   PRD and connected contracts
 - Project 36 checks sustained predeclared outcomes and drift; it never retains, adjusts, or reverts policy and does not prove causality.
 - Project 37 verifies an authorized reversion and stable recovery; it never executes reversion, changes policy, closes an event, or proves causality.
 - Project 38 verifies learning and re-entry controls; it never lifts a freeze, starts a trial, changes policy, assigns blame, or proves causality.
+- Project 39 verifies bounded re-entry execution; it never changes policy, expands exposure, pauses or refreezes a trial, assigns blame, or proves causality.
 
 ## Security and limits
 

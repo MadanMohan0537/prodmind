@@ -249,6 +249,8 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const policyRecovery=await(await worker.fetch(req('/api/planning-policy-recovery',policyRecoveryInput),env)).json();
   const policyReentryInput={...policyRecoveryInput,policyReentryAsOf:'2027-10-14T00:00:00Z',policyMaximumReviewDays:7,policyMinimumCoolingDays:14,policyIncidentLearningReviews:[{id:'policy-learning-1',policyRecoveryReviewId:'policy-recovery-1',publishedAt:'2027-10-03T00:00:00Z',summary:'A policy trial degraded the planning guardrail and was reverted.',impact:'The alpha planning cohort experienced delayed decisions.',contributingConditions:[{id:'condition-1',category:'tooling',condition:'Validation allowed an unsafe configuration combination.',evidence:'Configuration and validation trace.'}],lessons:[{id:'lesson-1',statement:'Validate combinations before progressive exposure.',evidence:'Recovery review and control trace.'}],actions:[{id:'action-1',type:'prevent',priority:'p1',status:'completed',owner:'Platform owner',trackingId:'TASK-101',successMeasure:'Unsafe combinations are rejected by deterministic tests.',dueAt:'2027-10-05T00:00:00Z',evidence:'Passing validation suite.'},{id:'action-2',type:'detect',priority:'p2',status:'open',owner:'Analytics owner',trackingId:'TASK-102',successMeasure:'Alert fires before a guardrail breach.',dueAt:'2027-11-01T00:00:00Z'}],freezeUntil:'2027-10-20T00:00:00Z',reentry:{owner:'Planning owner',hypothesis:'A narrower reversible trial can validate the corrected guard.',baselineVersion:'1.0.0',scope:['alpha'],startsAt:'2027-10-20T00:00:00Z',rollbackAcknowledged:true,monitoringAcknowledged:true},approvals:['product','operations','governance'].map((role,index)=>({role,reviewer:`Learning reviewer ${index}`,decision:'approved',approvedAt:'2027-10-06T00:00:00Z'})),review:{reviewer:'Policy learning council',decision:'approve_reentry',rationale:'Critical prevention is complete and the next trial is bounded.',reviewedAt:'2027-10-07T00:00:00Z'}}]};
   const policyReentry=await(await worker.fetch(req('/api/planning-policy-reentry',policyReentryInput),env)).json();
+  const policyReentryAssuranceInput={...policyReentryInput,policyReentryAssuranceAsOf:'2027-10-22T00:00:00Z',policyReentryMinimumObservationHours:24,policyReentryMaximumStageGapHours:1,policyReentryMaximumExposurePercent:20,policyReentryMinimumSampleSize:50,policyReentryTrials:[{id:'policy-reentry-assurance-1',incidentLearningReviewId:'policy-learning-1',declaredAt:'2027-10-10T00:00:00Z',owner:'Planning owner',baselineVersion:'1.0.0',scope:['alpha'],startedAt:'2027-10-20T00:00:00Z',endedAt:'2027-10-22T00:00:00Z',monitors:[{id:'recurrence-1',type:'recurrence',sourceId:'condition-1',name:'Unsafe combination recurrence',direction:'above',threshold:0},{id:'guardrail-1',type:'guardrail',sourceId:'planning-latency',name:'Planning latency',direction:'above',threshold:10}],plannedStages:[{id:'reentry-stage-1',exposurePercent:20,minimumHours:24}],executions:[{stageId:'reentry-stage-1',exposurePercent:20,startedAt:'2027-10-20T00:00:00Z',endedAt:'2027-10-22T00:00:00Z',evidence:'Bounded re-entry routing record.',observations:[{id:'reentry-observation-1',observedAt:'2027-10-21T00:00:00Z',sampleSize:100,metrics:[{monitorId:'recurrence-1',value:0,evidence:'No invalid combinations in the validation trace.'},{monitorId:'guardrail-1',value:6,evidence:'Planning latency export.'}],actionControls:[{actionId:'action-1',operational:true,evidence:'Preflight validator log.'}]}]}],review:{reviewer:'Independent operations council',decision:'continue',rationale:'The bounded re-entry followed its declaration with stable controls.',reviewedAt:'2027-10-22T00:00:00Z'}}]};
+  const policyReentryAssurance=await(await worker.fetch(req('/api/planning-policy-reentry-assurance',policyReentryAssuranceInput),env)).json();
   assert.equal(reopened.experiments[0].decision.outcome,'iterate');
   assert.deepEqual(ledger.learning[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(ledger.learning[0].outcomeReviews[0].analysis.status,'sustained');
@@ -353,6 +355,10 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(policyReentry.status,'ready_for_reentry');
   assert.deepEqual(policyReentry.sourcePolicyRecoveryReviewIds,['policy-recovery-1']);
   assert.deepEqual(policyReentry.sourcePolicyExperimentIds,['policy-trial-1']);
+  assert.equal(policyReentryAssurance.status,'verified_reentry');
+  assert.deepEqual(policyReentryAssurance.sourceIncidentLearningReviewIds,['policy-learning-1']);
+  assert.deepEqual(policyReentryAssurance.sourcePolicyRecoveryReviewIds,['policy-recovery-1']);
+  assert.ok(policyReentryAssurance.reentryAssuranceTrials[0].checks.every(item=>item.passed));
   assert.equal(env.DB.sql.prepare('SELECT COUNT(*) AS n FROM product_run_history').get().n,7);
 });
 
@@ -412,7 +418,10 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/34 Control policy change/);
   assert.match(html,/35 Assure policy rollout/);
   assert.match(html,/36 Monitor policy effectiveness/);
-  assert.match(html,/all thirty-eight modules/);
+  assert.match(html,/37 Verify policy recovery/);
+  assert.match(html,/38 Govern policy re-entry/);
+  assert.match(html,/39 Assure policy re-entry/);
+  assert.match(html,/all thirty-nine modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
@@ -442,6 +451,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(app,/\/api\/planning-policy-effectiveness/);
   assert.match(app,/\/api\/planning-policy-recovery/);
   assert.match(app,/\/api\/planning-policy-reentry/);
+  assert.match(app,/\/api\/planning-policy-reentry-assurance/);
   assert.match(app,/learning\/\$\{e\.id\}\/monitor/);
   assert.match(app,/Outcome reviews/);
   assert.match(app,/\/api\/memory/);
