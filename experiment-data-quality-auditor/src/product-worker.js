@@ -8,6 +8,7 @@ import {assessEvidenceIntegrity} from '../../evidence_integrity_monitor/src/inte
 import {planFromIntegrity} from '../../research_portfolio_optimizer/src/optimizer.js';
 import {auditStrategyAlignment} from '../../strategy_alignment_auditor/src/alignment.js';
 import {rebalancePortfolio} from '../../portfolio_rebalancing_simulator/src/rebalance.js';
+import {scheduleRoadmap} from '../../roadmap_delivery_scheduler/src/scheduler.js';
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
@@ -117,6 +118,12 @@ export default {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         const input = await body(request);
         return json(rebalancePortfolio(await store.recent(limit), input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds}));
+      }
+      if (url.pathname === '/api/roadmap-schedule' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const portfolio = rebalancePortfolio(runs, input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds});
+        return json(scheduleRoadmap(runs, portfolio, {id: input.roadmapScheduleId, asOf: input.roadmapAsOf, horizonStart: input.roadmapHorizonStart, maximumHorizonDays: input.roadmapMaximumHorizonDays, workingWeekdays: input.roadmapWorkingWeekdays, nonWorkingDates: input.roadmapNonWorkingDates, teams: input.roadmapTeams, plans: input.roadmapPlans, review: input.roadmapReview}));
       }
       if (url.pathname === '/api/portfolio-stress' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
