@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>ProdMind · Roadmap Delivery Scheduler</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">ProdMind · Project 40</p>
+        <h1>Turn portfolio intent into a credible delivery calendar.</h1>
+        <p class="lede">
+          Schedule selected work across dependencies, team capacity, deadlines,
+          and real calendars—without a paid solver or invented estimate.
+        </p>
+      </header>
+      <section class="panel">
+        <div>
+          <p class="kicker">Deterministic review</p>
+          <h2>Evaluate a roadmap schedule</h2>
+          <p>
+            Upload the complete API request as JSON. The result preserves
+            evidence and keeps approval human-controlled.
+          </p>
+        </div>
+        <form id="review">
+          <label
+            >API token<input
+              name="token"
+              type="password"
+              required
+              autocomplete="off"
+          /></label>
+          <label
+            >Schedule JSON<input
+              name="file"
+              type="file"
+              accept=".json,application/json"
+              required
+          /></label>
+          <button>Build schedule</button>
+        </form>
+        <p id="notice" role="status" aria-live="polite"></p>
+        <div id="results"></div>
+      </section>
+      <section class="grid" aria-label="Product principles">
+        <article>
+          <span>01</span>
+          <h2>Evidence-linked</h2>
+          <p>
+            Every scheduled item retains its run, opportunity, portfolio, and
+            customer-evidence lineage.
+          </p>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>Constraint-aware</h2>
+          <p>
+            Dependencies, team capacity, working days, holidays, starts, and
+            deadlines are enforced.
+          </p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>Human-owned</h2>
+          <p>
+            The engine proposes a schedule. A named reviewer approves, revises,
+            or defers it.
+          </p>
+        </article>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
