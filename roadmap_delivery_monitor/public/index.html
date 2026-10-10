@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>ProdMind · Roadmap Delivery Monitor</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">ProdMind · Project 41</p>
+        <h1>Keep delivery evidence aligned with the roadmap baseline.</h1>
+        <p class="lede">
+          Compare actual work, capacity, dependencies, deadlines, cadence, and
+          blockers before continuing the plan.
+        </p>
+      </header>
+      <section class="panel">
+        <div>
+          <p class="kicker">Evidence-backed control</p>
+          <h2>Review roadmap execution</h2>
+          <p>
+            Upload the complete API request as JSON. No tracker, schedule,
+            assignment, or blocker will be changed.
+          </p>
+        </div>
+        <form id="review">
+          <label
+            >API token<input
+              name="token"
+              type="password"
+              required
+              autocomplete="off"
+          /></label>
+          <label
+            >Delivery JSON<input
+              name="file"
+              type="file"
+              accept=".json,application/json"
+              required
+          /></label>
+          <button>Assess delivery</button>
+        </form>
+        <p id="notice" role="status" aria-live="polite"></p>
+        <div id="results"></div>
+      </section>
+      <section class="grid" aria-label="Product principles">
+        <article>
+          <span>01</span>
+          <h2>Baseline-aware</h2>
+          <p>
+            Time-phased planned work comes directly from Project 40’s approved
+            dates and capacity.
+          </p>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>Evidence-first</h2>
+          <p>
+            Every status retains original customer evidence and a current
+            delivery record.
+          </p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>Human-controlled</h2>
+          <p>
+            Continue, replan, and escalate remain named decisions outside the
+            engine.
+          </p>
+        </article>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
