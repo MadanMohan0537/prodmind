@@ -21,6 +21,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 13. Align strategy | `strategy_alignment_auditor/src/alignment.js` | Selected opportunity effort mapped to declared strategic objectives and ranges |
 | 14. Rebalance portfolio | `portfolio_rebalancing_simulator/src/rebalance.js` | Reviewable additions and removals linked to the saved ranking and original evidence |
 | 40. Schedule roadmap | `roadmap_delivery_scheduler/src/scheduler.js` | Dated selected work linked to canonical portfolio items, teams, dependencies and original evidence |
+| 41. Monitor delivery | `roadmap_delivery_monitor/src/monitor.js` | Actual progress, capacity, dependency, deadline and blocker evidence linked to the approved schedule |
 | 15. Stress portfolio | `portfolio_resilience_stress_tester/src/stress.js` | Declared capacity, dependency and effort shocks linked to canonical portfolio items |
 | 16. Realize benefits | `benefits_realization_tracker/src/benefits.js` | Expected and observed measures linked to selected work, decisions and original evidence |
 | 17. Assure investment | `investment_assurance_review/src/assurance.js` | Post-implementation checks, named decision and corrective actions linked to benefits and evidence |
@@ -61,6 +62,8 @@ Project 13 accepts a reviewed strategy through `POST /api/strategy-audit`, reads
 Project 14 accepts the same reviewed strategy plus capacity and optional locked portfolio-item IDs through `POST /api/portfolio-rebalance`. It searches up to 18 Project 6 candidates exactly, enforces declared dependencies, objective mappings, capacity and locked commitments, then lexicographically minimizes allocation-range violation and portfolio changes before maximizing score and utilization. The response is a scenario with retained evidence lineage; it does not mutate the saved ranking.
 
 Project 40 accepts those same Project 14 inputs plus declared teams, calendars, delivery plans, deadlines, and a named review through `POST /api/roadmap-schedule`. Project 7 reconstructs the Project 14 scenario server-side, then evaluates every dependency-valid priority order for up to eight selected items. It minimizes missed deadlines, total lateness, and makespan while preserving original evidence IDs. It never changes the portfolio, assigns people, estimates duration, or commits delivery.
+
+Project 41 accepts the Project 40 inputs plus 1–24 chronological delivery snapshots through `POST /api/roadmap-delivery`. Project 7 reconstructs both Projects 14 and 40 server-side before comparing time-phased planned work with evidenced earned work and consumed capacity. It also checks actual dependency sequencing, deadlines, snapshot cadence, and owned blockers. Continue, replan, and escalate remain named human decisions; no schedule, assignment, estimate, progress record, or blocker is changed automatically.
 
 Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 

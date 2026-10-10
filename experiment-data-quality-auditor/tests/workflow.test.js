@@ -153,7 +153,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   const strategy={id:'test-strategy',objectives:[{id:'activation',title:'Improve activation',targetShare:1,minShare:.8,maxShare:1}],mappings:[{opportunityId:run.ranking.ranked[0].id,objectiveId:'activation'}]};
   const strategyAudit=await(await worker.fetch(req('/api/strategy-audit',strategy),env)).json();
   const rebalance=await(await worker.fetch(req('/api/portfolio-rebalance',{strategy,capacity:5,lockedOpportunityIds:[run.ranking.ranked[0].id]}),env)).json();
-  const roadmapSchedule=await(await worker.fetch(req('/api/roadmap-schedule',{strategy,capacity:5,lockedOpportunityIds:[run.ranking.ranked[0].id],roadmapScheduleId:'roadmap-1',roadmapAsOf:'2027-01-03T00:00:00Z',roadmapHorizonStart:'2027-01-04',roadmapMaximumHorizonDays:30,roadmapWorkingWeekdays:[1,2,3,4,5],roadmapNonWorkingDates:[],roadmapTeams:[{id:'product-team',name:'Product team',capacity:10}],roadmapPlans:rebalance.selected.map(item=>({portfolioItemId:item.portfolioItemId,teamId:'product-team',durationDays:1,capacity:1,earliestStart:'2027-01-04',deadline:'2027-01-08',owner:'Product lead',outcome:`Deliver ${item.title}.`,estimateBasis:'Reviewed against a comparable one-day delivery.'})),roadmapReview:{reviewer:'Portfolio council',decision:'approve',rationale:'Evidence, dependencies, capacity and dates are reviewable.',reviewedAt:'2027-01-03T00:00:00Z'}}),env)).json();
+  const roadmapScheduleInput={strategy,capacity:5,lockedOpportunityIds:[run.ranking.ranked[0].id],roadmapScheduleId:'roadmap-1',roadmapAsOf:'2027-01-03T00:00:00Z',roadmapHorizonStart:'2027-01-04',roadmapMaximumHorizonDays:30,roadmapWorkingWeekdays:[1,2,3,4,5],roadmapNonWorkingDates:[],roadmapTeams:[{id:'product-team',name:'Product team',capacity:10}],roadmapPlans:rebalance.selected.map(item=>({portfolioItemId:item.portfolioItemId,teamId:'product-team',durationDays:1,capacity:1,earliestStart:'2027-01-04',deadline:'2027-01-08',owner:'Product lead',outcome:`Deliver ${item.title}.`,estimateBasis:'Reviewed against a comparable one-day delivery.'})),roadmapReview:{reviewer:'Portfolio council',decision:'approve',rationale:'Evidence, dependencies, capacity and dates are reviewable.',reviewedAt:'2027-01-03T00:00:00Z'}};
+  const roadmapSchedule=await(await worker.fetch(req('/api/roadmap-schedule',roadmapScheduleInput),env)).json();
+  const roadmapDelivery=await(await worker.fetch(req('/api/roadmap-delivery',{...roadmapScheduleInput,deliveryMonitorId:'delivery-1',deliveryAsOf:'2027-01-04T20:00:00Z',deliveryMinimumSnapshots:1,deliveryMaximumSnapshotGapDays:3,deliveryMinimumSchedulePerformanceIndex:.9,deliveryMaximumCapacityOverrunRate:.2,deliverySnapshots:[{id:'delivery-snapshot-1',observedAt:'2027-01-04T18:00:00Z',items:roadmapSchedule.schedule.map(item=>({portfolioItemId:item.portfolioItemId,status:'completed',completedWorkUnits:item.durationDays*item.capacity,actualCapacityDays:item.durationDays*item.capacity,remainingEstimateDays:0,actualStart:item.start,actualFinish:item.finish,evidence:'Reviewed delivery board export.',blockers:[]}))}],deliveryReview:{reviewer:'Delivery council',decision:'continue',rationale:'Delivery evidence, dependencies, capacity, and deadlines are controlled.',reviewedAt:'2027-01-04T19:00:00Z'}}),env)).json();
   const stress=await(await worker.fetch(req('/api/portfolio-stress',{strategy,capacity:5,scenarios:[{id:'baseline'},{id:'capacity-loss',capacityFactor:.1}]}),env)).json();
   const benefits=await(await worker.fetch(req('/api/benefits-realization',{asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}]}),env)).json();
   const assuranceInput={asOf:'2026-10-01',benefits:[{id:'activation',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,name:'Activation',unit:'percentage_points',direction:'increase',baseline:40,target:50,actual:48,baselineAt:'2026-06-01',targetAt:'2026-12-01',measuredAt:'2026-09-01',owner:'PM',attributionNote:'Reviewed with the experiment; other factors may contribute.'}],reviews:[{id:'pir-1',portfolioItemId:`${run.id}:${run.ranking.ranked[0].id}`,reviewer:'Product council',reviewedAt:'2026-10-01',decision:'continue',rationale:'Evidence and measurement are complete; continue monitoring.',actions:[]}]};
@@ -278,6 +280,9 @@ test('HTTP complete lifecycle persists learning and survives reopening the store
   assert.equal(roadmapSchedule.status,'approved_schedule');
   assert.equal(roadmapSchedule.id,'roadmap-1');
   assert.deepEqual(roadmapSchedule.schedule[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
+  assert.equal(roadmapDelivery.status,'controlled_delivery');
+  assert.equal(roadmapDelivery.sourceScheduleId,'roadmap-1');
+  assert.deepEqual(roadmapDelivery.items[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
   assert.equal(stress.summary.scenarios,2);
   assert.equal(stress.summary.weakestScenarioId,'capacity-loss');
   assert.deepEqual(stress.portfolioItems[0].evidenceIds,run.ranking.ranked[0].evidenceIds);
@@ -426,13 +431,15 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/38 Govern policy re-entry/);
   assert.match(html,/39 Assure policy re-entry/);
   assert.match(html,/40 Schedule roadmap/);
-  assert.match(html,/all forty modules/);
+  assert.match(html,/41 Monitor delivery/);
+  assert.match(html,/all forty-one modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
   assert.match(app,/\/api\/strategy-audit/);
   assert.match(app,/\/api\/portfolio-rebalance/);
   assert.match(app,/\/api\/roadmap-schedule/);
+  assert.match(app,/\/api\/roadmap-delivery/);
   assert.match(app,/\/api\/portfolio-stress/);
   assert.match(app,/\/api\/benefits-realization/);
   assert.match(app,/\/api\/investment-assurance/);
