@@ -1,0 +1,8 @@
+{
+  "name": "prodmind-roadmap-delivery-monitor",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+}
