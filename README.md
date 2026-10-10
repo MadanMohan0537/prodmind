@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A forty-project, evidence-to-execution-and-governance operating system for product teams.**
+**A forty-one-project, evidence-to-execution-and-governance operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -15,7 +15,7 @@
 | Goal | Entry point |
 | --- | --- |
 | Experience the composed workflow | [Project 7 workspace](experiment-data-quality-auditor/README.md) |
-| Find a bounded product tool | The forty-project catalog below |
+| Find a bounded product tool | The forty-one-project catalog below |
 | Review what is connected | The implementation and security sections below |
 | Contribute to one module | Its own README and source directory |
 
@@ -55,10 +55,10 @@ Customer feedback
 13. Strategic portfolio alignment
       ↓
 14. Minimum-disruption portfolio rebalancing
-      ↘
-40. Evidence-linked roadmap delivery scheduling
-      ↓
-15. Declared-scenario portfolio resilience testing
+      ├→ 15. Declared-scenario portfolio resilience testing
+      └→ 40. Evidence-linked roadmap delivery scheduling
+              ↓
+         41. Monitor roadmap delivery against the approved baseline
       ↓
 16. Expected-versus-observed benefits realization
       ↓
@@ -116,14 +116,14 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Decision layer | Projects | Intended impact |
 |---|---|---|
 | Evidence readiness | 1–5, 11, 18 | Trustworthy customer signals and explicit assumptions |
-| Portfolio judgment and execution planning | 6, 12–15, 40 | Explicit trade-offs across product, research, strategy, resilience and delivery capacity |
+| Portfolio judgment and execution control | 6, 12–15, 40–41 | Explicit trade-offs across product, research, strategy, resilience, delivery capacity and actual execution |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
 | Governance and accountability | 24–39 | Provenance, continuous review, controlled exceptions, verified remediation, policy controls, verified recovery, blameless learning, safe re-entry, and observed re-entry assurance |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The forty projects
+## The forty-one projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -133,7 +133,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary forty-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary forty-one-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -167,18 +167,20 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 38 | [Product Planning Policy Incident Learning & Re-entry Controller](planning_policy_incident_learning_controller/) | Blameless review, corrective actions, cooling controls and independent re-entry approval | Standalone and connected re-entry gate |
 | 39 | [Product Planning Policy Re-entry Assurance Monitor](planning_policy_reentry_monitor/) | Pre-exposure declaration, bounded stages, corrective-control checks, recurrence signals and guardrails | Standalone and connected re-entry assurance |
 | 40 | [Evidence-linked Product Roadmap Delivery Scheduler](roadmap_delivery_scheduler/) | Exact bounded dependency, calendar, capacity and deadline scheduling with retained evidence | Standalone and connected roadmap review |
+| 41 | [Roadmap Delivery Execution & Variance Monitor](roadmap_delivery_monitor/) | Baseline-versus-actual progress, capacity, dependency, deadline, cadence and blocker control | Standalone and connected delivery review |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–40. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–41. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, actual delivery control, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
 
 Identity lineage:
 
 ```text
 feedbackId → topicId → runId:opportunityId → experimentId
            ↘ portfolioItemId → roadmapScheduleId → dated team work
+                                → deliveryMonitorId → snapshots / variance / blockers
            → auditId → decisionId → monitorId
            → benefitId
            → assuranceReviewId → actionId
@@ -252,6 +254,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 38. Governing Project 38 blameless learning, corrective actions, cooling time, recovered baseline, safety controls, and independent re-entry approval without lifting a freeze or starting a trial.
 39. Assuring Project 39 predeclared, bounded re-entry stages, critical corrective controls, recurrence signals, guardrails, and a named human decision without changing policy or trial state.
 40. Scheduling Project 40 selected portfolio items across declared dependencies, team capacity, calendars, and deadlines without changing the portfolio, assigning people, or committing delivery.
+41. Monitoring Project 41 actual delivery against the approved baseline without changing schedules, assignments, estimates, progress, or blockers.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -265,7 +268,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all forty projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling, decision gates, lifecycle safeguards, verified recovery, incident learning, safe re-entry, and re-entry assurance.
+The suite covers all forty-one projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling and delivery control, decision gates, lifecycle safeguards, verified recovery, incident learning, safe re-entry, and re-entry assurance.
 
 Run one project independently:
 
@@ -286,7 +289,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–40 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–41 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -305,6 +308,7 @@ Projects 1–6 and 8–40 are bundled into the connected Worker through imports.
 - Strategy allocation describes selected effort; it does not measure realized benefits.
 - Rebalancing produces a reviewable scenario; it never applies ranking or roadmap changes.
 - Roadmap scheduling uses declared estimates, calendars, and capacity; it never changes selection, assigns people, predicts delivery, or treats dependency-only float as resource-aware risk.
+- Roadmap delivery monitoring compares declared baseline and actual evidence; it never updates work or blockers, evaluates people, predicts delivery probability, or claims certified EVM.
 - Resilience scores evaluate declared scenarios; they are not likelihood forecasts and never change the portfolio.
 - Benefit progress compares declared targets and observations; it does not prove causality or combine unlike units.
 - Investment assurance records a human decision; completeness checks never make or apply that decision.
@@ -344,6 +348,7 @@ Projects 1–6 and 8–40 are bundled into the connected Worker through imports.
 | Strategy alignment | Deterministic effort-allocation audit; objectives and mappings require human review |
 | Portfolio rebalancing | Exact bounded search for up to 18 candidates; declared effort, dependencies and mappings remain human inputs |
 | Roadmap scheduling | Exact bounded scheduling for up to 8 selected items; dates, capacity, estimates and deadlines remain human inputs |
+| Roadmap delivery | Deterministic baseline-versus-actual controls; earned work, consumed capacity, blockers and evidence remain reviewed inputs |
 | Portfolio resilience | Deterministic bounded scenario analysis; scenario likelihood and business impact remain human judgments |
 | Benefits realization | Deterministic target progress with reviewed attribution; no causal or fabricated ROI claim |
 | Investment assurance | Deterministic completeness checks plus named human decisions; no automated go/kill claim |
@@ -416,6 +421,7 @@ Projects 1–6 and 8–40 are bundled into the connected Worker through imports.
 ├── planning_policy_incident_learning_controller/ Project 38
 ├── planning_policy_reentry_monitor/              Project 39
 ├── roadmap_delivery_scheduler/                    Project 40
+├── roadmap_delivery_monitor/                      Project 41
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
