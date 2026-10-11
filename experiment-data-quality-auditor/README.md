@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the forty-one-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–41, including an execution branch that turns Project 14 portfolio selections into an evidence-linked schedule and compares it with actual delivery.
+Project 7 is both the experiment workspace and the integration host for the forty-two-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–42, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, and plans bounded recovery actions for failed controls.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all forty-one modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all forty-two modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -34,6 +34,7 @@ Collect → Sentiment → Topics → Requests → VoC evidence
    → Minimum-disruption rebalance scenario
    → Evidence-linked delivery calendar
    → Baseline-versus-actual delivery control
+   → Bounded delivery-recovery action plan
    → Declared-scenario resilience test
    → Expected-versus-observed benefits review
    → Named post-implementation assurance decision
@@ -87,6 +88,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 39 bounded policy re-entry execution, corrective-control, recurrence-signal and guardrail assurance
 - Project 40 exact bounded roadmap scheduling across dependencies, calendars, team capacity and deadlines
 - Project 41 chronological delivery evidence, schedule and capacity variance, dependency integrity, cadence and blocker controls
+- Project 42 exact bounded recovery-action selection from failed Project 41 controls
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -121,6 +123,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/portfolio-rebalance` | Simulate a Project 14 portfolio rebalance |
 | `POST` | `/api/roadmap-schedule` | Schedule the selected Project 14 portfolio with Project 40 |
 | `POST` | `/api/roadmap-delivery` | Compare Project 40 with actual Project 41 delivery snapshots |
+| `POST` | `/api/roadmap-recovery` | Plan Project 42 actions for failed Project 41 controls |
 | `POST` | `/api/portfolio-stress` | Assess Project 15 portfolio resilience |
 | `POST` | `/api/benefits-realization` | Build a Project 16 benefits ledger |
 | `POST` | `/api/investment-assurance` | Run a Project 17 post-implementation assurance review |
@@ -176,7 +179,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–41 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–42 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -186,7 +189,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete forty-one-stage workspace
+public/                 Complete forty-two-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -232,6 +235,7 @@ docs/                   PRD and connected contracts
 - Project 39 verifies bounded re-entry execution; it never changes policy, expands exposure, pauses or refreezes a trial, assigns blame, or proves causality.
 - Project 40 schedules declared work exactly within a bounded model; it never changes the portfolio, assigns people, invents estimates, predicts delivery, or claims resource-aware schedule risk.
 - Project 41 compares declared baseline and actual evidence; it never changes schedules, assignments, estimates, progress, or blockers and does not claim certified EVM or delivery probability.
+- Project 42 selects declared recovery actions; it never rebaselines schedules, changes scope or deadlines, assigns people, resolves blockers, executes work, forecasts delivery, or claims root cause.
 
 ## Security and limits
 
