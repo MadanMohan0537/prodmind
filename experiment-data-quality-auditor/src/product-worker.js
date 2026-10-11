@@ -10,6 +10,7 @@ import {auditStrategyAlignment} from '../../strategy_alignment_auditor/src/align
 import {rebalancePortfolio} from '../../portfolio_rebalancing_simulator/src/rebalance.js';
 import {scheduleRoadmap} from '../../roadmap_delivery_scheduler/src/scheduler.js';
 import {monitorRoadmapDelivery} from '../../roadmap_delivery_monitor/src/monitor.js';
+import {planRoadmapRecovery} from '../../roadmap_recovery_planner/src/planner.js';
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
@@ -132,6 +133,14 @@ export default {
         const portfolio = rebalancePortfolio(runs, input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds});
         const schedule = scheduleRoadmap(runs, portfolio, {id: input.roadmapScheduleId, asOf: input.roadmapAsOf, horizonStart: input.roadmapHorizonStart, maximumHorizonDays: input.roadmapMaximumHorizonDays, workingWeekdays: input.roadmapWorkingWeekdays, nonWorkingDates: input.roadmapNonWorkingDates, teams: input.roadmapTeams, plans: input.roadmapPlans, review: input.roadmapReview});
         return json(monitorRoadmapDelivery(runs, schedule, {id: input.deliveryMonitorId, asOf: input.deliveryAsOf, minimumSnapshots: input.deliveryMinimumSnapshots, maximumSnapshotGapDays: input.deliveryMaximumSnapshotGapDays, minimumSchedulePerformanceIndex: input.deliveryMinimumSchedulePerformanceIndex, maximumCapacityOverrunRate: input.deliveryMaximumCapacityOverrunRate, snapshots: input.deliverySnapshots, review: input.deliveryReview}));
+      }
+      if (url.pathname === '/api/roadmap-recovery' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const portfolio = rebalancePortfolio(runs, input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds});
+        const schedule = scheduleRoadmap(runs, portfolio, {id: input.roadmapScheduleId, asOf: input.roadmapAsOf, horizonStart: input.roadmapHorizonStart, maximumHorizonDays: input.roadmapMaximumHorizonDays, workingWeekdays: input.roadmapWorkingWeekdays, nonWorkingDates: input.roadmapNonWorkingDates, teams: input.roadmapTeams, plans: input.roadmapPlans, review: input.roadmapReview});
+        const delivery = monitorRoadmapDelivery(runs, schedule, {id: input.deliveryMonitorId, asOf: input.deliveryAsOf, minimumSnapshots: input.deliveryMinimumSnapshots, maximumSnapshotGapDays: input.deliveryMaximumSnapshotGapDays, minimumSchedulePerformanceIndex: input.deliveryMinimumSchedulePerformanceIndex, maximumCapacityOverrunRate: input.deliveryMaximumCapacityOverrunRate, snapshots: input.deliverySnapshots, review: input.deliveryReview});
+        return json(planRoadmapRecovery(runs, schedule, delivery, {id: input.recoveryPlanId, asOf: input.recoveryAsOf, horizonEnd: input.recoveryHorizonEnd, capacityDays: input.recoveryCapacityDays, minimumCoverageRate: input.recoveryMinimumCoverageRate, candidates: input.recoveryCandidates, review: input.recoveryReview}));
       }
       if (url.pathname === '/api/portfolio-stress' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);

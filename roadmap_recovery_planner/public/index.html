@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Roadmap Recovery Planner</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" type="module"></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">ProdMind · Project 42</p><h1>Roadmap recovery, without silently rewriting the plan.</h1><p class="lede">Turn failed Project 41 delivery controls into a bounded, evidence-linked recovery-action scenario for named human review.</p></header>
+    <section class="principles" aria-label="Decision boundaries"><article><strong>Original baseline retained</strong><span>Every result links to Projects 40 and 41.</span></article><article><strong>Exact bounded selection</strong><span>Up to 65,535 non-empty combinations.</span></article><article><strong>Human controlled</strong><span>No schedule, scope, deadline, staffing, or blocker changes.</span></article></section>
+    <section class="panel">
+      <div><p class="eyebrow">Recovery review</p><h2>Evaluate a scenario</h2><p>Upload a JSON envelope containing <code>runs</code>, <code>scheduleReport</code>, <code>deliveryReport</code>, and <code>input</code>.</p></div>
+      <form id="planner"><label>API token<input name="token" type="password" autocomplete="off" required></label><label>Recovery JSON<input name="file" type="file" accept=".json,application/json" required></label><button>Plan recovery actions</button></form>
+      <p id="message" role="status" aria-live="polite"></p><div id="results"></div>
+    </section>
+  </main>
+</body>
+</html>
