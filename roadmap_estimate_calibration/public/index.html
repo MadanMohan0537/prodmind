@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Roadmap Estimate Calibration</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" type="module"></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">ProdMind · Project 44</p><h1>Make delivery estimates learn from actuals.</h1><p class="lede">Build transparent reference classes from completed Project 40–41 cases and review duration and capacity adjustment factors before future planning.</p></header>
+    <section class="principles" aria-label="Decision boundaries"><article><strong>Comparable evidence</strong><span>Every observation has an explicit, justified reference class.</span></article><article><strong>Sufficient samples</strong><span>Small classes never produce adoptable factors.</span></article><article><strong>Human adoption</strong><span>No schedule or estimate is rewritten automatically.</span></article></section>
+    <section class="panel"><p class="eyebrow">Estimation learning</p><h2>Calibrate completed delivery cases</h2><p>Upload linked Project 40 schedules, final Project 41 delivery reports, classifications, policy, and review.</p><form id="calibration"><label>API token<input name="token" type="password" autocomplete="off" required></label><label>Calibration JSON<input name="file" type="file" accept=".json,application/json" required></label><button>Build calibration</button></form><p id="message" role="status" aria-live="polite"></p><div id="results"></div></section>
+  </main>
+</body>
+</html>
