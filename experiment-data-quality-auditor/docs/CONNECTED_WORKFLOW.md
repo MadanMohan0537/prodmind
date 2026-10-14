@@ -41,6 +41,21 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 28. Monitor recurrence | `control_recurrence_monitor/src/recurrence.js` | Post-exit target stability, remediation durability, snapshot coverage and cadence |
 | 29. Plan control improvements | `control_improvement_planner/src/planner.js` | Capacity-feasible recurrence response with dependencies, ownership and verification windows |
 | 30. Verify improvement outcomes | `control_improvement_outcome_monitor/src/outcomes.js` | Delivery, effort, lineage, observation-window and later-recurrence assurance |
+| 31. Calibrate improvements | `control_improvement_calibration/src/calibration.js` | Portfolio effort, delivery, effectiveness, recurrence and evidence calibration |
+| 32. Test planning policy | `planning_policy_experiment_planner/src/planner.js` | Reversible policy trials for failed calibration controls |
+| 33. Verify planning policy | `planning_policy_outcome_verifier/src/outcomes.js` | Predeclared targets, guardrails, sample, timing and evidence |
+| 34. Control policy change | `planning_policy_change_controller/src/controller.js` | Version, scope, rollout, monitoring, rollback and approval controls |
+| 35. Assure policy rollout | `planning_policy_rollout_monitor/src/monitor.js` | Approved stages, dwell, version, monitors, evidence and human decision |
+| 36. Monitor policy effectiveness | `planning_policy_effectiveness_monitor/src/monitor.js` | Longitudinal targets, guardrails, cadence, sample and drift |
+| 37. Verify policy recovery | `planning_policy_recovery_verifier/src/verifier.js` | Authorized reversion, execution and stable-recovery evidence |
+| 38. Govern policy re-entry | `planning_policy_incident_learning_controller/src/controller.js` | Blameless learning, corrective actions, cooling and re-entry controls |
+| 39. Assure policy re-entry | `planning_policy_reentry_monitor/src/monitor.js` | Bounded stages, corrective controls, recurrence signals and guardrails |
+| 40. Schedule roadmap | `roadmap_delivery_scheduler/src/scheduler.js` | Exact bounded dependency, calendar, capacity and deadline scheduling |
+| 41. Monitor delivery | `roadmap_delivery_monitor/src/monitor.js` | Baseline-versus-actual progress, capacity, dependencies and blockers |
+| 42. Plan roadmap recovery | `roadmap_recovery_planner/src/planner.js` | Bounded corrective-action selection from failed delivery controls |
+| 43. Verify roadmap recovery | `roadmap_recovery_verifier/src/verifier.js` | Execution, effort, timing, observation and control restoration |
+| 44. Calibrate roadmap estimates | `roadmap_estimate_calibration/src/calibration.js` | Completed-case reference classes, error, samples, freshness and factors |
+| 45. Control estimate adoption | `roadmap_estimate_adoption_controller/src/controller.js` | Prior calibration, per-item factors, arithmetic, evidence and independent exceptions |
 
 ## Shared contracts
 
