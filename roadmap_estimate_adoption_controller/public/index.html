@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Estimate Adoption Control</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" type="module"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">ProdMind · Project 45</p>
+      <h1>Make calibrated estimates auditable.</h1>
+      <p class="lede">Reconcile every approved roadmap estimate to a previously adopted reference-class factor—or to a prior, independently reviewed exception.</p>
+    </header>
+    <section class="principles" aria-label="Decision boundaries">
+      <article><strong>Prior calibration</strong><span>Only an adopted, sufficiently fresh Project 44 report qualifies.</span></article>
+      <article><strong>Exact arithmetic</strong><span>Base values, factors, and scheduled values must reconcile.</span></article>
+      <article><strong>Human exception</strong><span>No exception is inferred, backdated, or approved automatically.</span></article>
+    </section>
+    <section class="panel">
+      <p class="eyebrow">Estimate governance</p>
+      <h2>Control calibration adoption</h2>
+      <p>Upload a Project 40 schedule, its prior Project 44 calibration, per-item applications, policy, and named review.</p>
+      <form id="control">
+        <label>API token<input name="token" type="password" autocomplete="off" required></label>
+        <label>Control JSON<input name="file" type="file" accept=".json,application/json" required></label>
+        <button>Evaluate estimate basis</button>
+      </form>
+      <p id="message" role="status" aria-live="polite"></p>
+      <div id="results"></div>
+    </section>
+  </main>
+</body>
+</html>
