@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the forty-four-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–44, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, and calibrates future estimating context from completed delivery cases.
+Project 7 is both the experiment workspace and the integration host for the forty-five-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–45, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, calibrates future estimating context from completed delivery cases, and controls whether that calibration was applied.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all forty-four modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all forty-five modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -93,6 +93,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 42 exact bounded recovery-action selection from failed Project 41 controls
 - Project 43 recovery execution, effort, timing, baseline-governance, observation and failed-control restoration verification
 - Project 44 completed-delivery reference classes, historical error, sample sufficiency, freshness and human-reviewed calibration factors
+- Project 45 per-item calibration adoption, estimate arithmetic, freshness, evidence and independent-exception controls
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -130,6 +131,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/roadmap-recovery` | Plan Project 42 actions for failed Project 41 controls |
 | `POST` | `/api/roadmap-recovery-verification` | Verify Project 43 execution and effectiveness of the approved Project 42 plan |
 | `POST` | `/api/roadmap-estimate-calibration` | Calibrate Project 44 estimating context from completed Projects 40–41 cases |
+| `POST` | `/api/roadmap-estimate-adoption` | Control Project 45 adoption of prior Project 44 factors in Project 40 estimates |
 | `POST` | `/api/portfolio-stress` | Assess Project 15 portfolio resilience |
 | `POST` | `/api/benefits-realization` | Build a Project 16 benefits ledger |
 | `POST` | `/api/investment-assurance` | Run a Project 17 post-implementation assurance review |
@@ -185,7 +187,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–44 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–45 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -195,7 +197,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete forty-four-stage workspace
+public/                 Complete forty-five-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
@@ -244,6 +246,7 @@ docs/                   PRD and connected contracts
 - Project 42 selects declared recovery actions; it never rebaselines schedules, changes scope or deadlines, assigns people, resolves blockers, executes work, forecasts delivery, or claims root cause.
 - Project 43 verifies supplied execution and later control evidence; it never executes actions, changes baselines or work, closes recovery automatically, establishes root cause or causality, predicts delivery, or certifies EVMS compliance.
 - Project 44 calibrates completed comparable cases; it never rewrites estimates, predicts delivery, evaluates people, treats a reference class as causal, or applies a factor automatically.
+- Project 45 verifies declared factor adoption, arithmetic, and exceptions; it never creates or changes an estimate, applies a factor, predicts delivery, evaluates people, or certifies accuracy.
 
 ## Security and limits
 

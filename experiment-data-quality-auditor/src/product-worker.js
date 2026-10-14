@@ -13,6 +13,7 @@ import {monitorRoadmapDelivery} from '../../roadmap_delivery_monitor/src/monitor
 import {planRoadmapRecovery} from '../../roadmap_recovery_planner/src/planner.js';
 import {verifyRoadmapRecovery} from '../../roadmap_recovery_verifier/src/verifier.js';
 import {calibrateRoadmapEstimates} from '../../roadmap_estimate_calibration/src/calibration.js';
+import {controlRoadmapEstimateAdoption} from '../../roadmap_estimate_adoption_controller/src/controller.js';
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
@@ -162,6 +163,14 @@ export default {
         const delivery = monitorRoadmapDelivery(runs, schedule, {id: input.deliveryMonitorId, asOf: input.deliveryAsOf, minimumSnapshots: input.deliveryMinimumSnapshots, maximumSnapshotGapDays: input.deliveryMaximumSnapshotGapDays, minimumSchedulePerformanceIndex: input.deliveryMinimumSchedulePerformanceIndex, maximumCapacityOverrunRate: input.deliveryMaximumCapacityOverrunRate, snapshots: input.deliverySnapshots, review: input.deliveryReview});
         const cases = [...(input.calibrationHistoricalCases ?? []), {scheduleReport: schedule, deliveryReport: delivery, classifications: input.calibrationCurrentClassifications}];
         return json(calibrateRoadmapEstimates(runs, cases, {id: input.roadmapCalibrationId, asOf: input.roadmapCalibrationAsOf, minimumReferenceClassSize: input.roadmapCalibrationMinimumReferenceClassSize, percentileRate: input.roadmapCalibrationPercentileRate, maximumEvidenceAgeDays: input.roadmapCalibrationMaximumEvidenceAgeDays, review: input.roadmapCalibrationReview}));
+      }
+      if (url.pathname === '/api/roadmap-estimate-adoption' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const portfolio = rebalancePortfolio(runs, input.strategy, {capacity: input.capacity, lockedOpportunityIds: input.lockedOpportunityIds, lockedPortfolioItemIds: input.lockedPortfolioItemIds});
+        const schedule = scheduleRoadmap(runs, portfolio, {id: input.roadmapScheduleId, asOf: input.roadmapAsOf, horizonStart: input.roadmapHorizonStart, maximumHorizonDays: input.roadmapMaximumHorizonDays, workingWeekdays: input.roadmapWorkingWeekdays, nonWorkingDates: input.roadmapNonWorkingDates, teams: input.roadmapTeams, plans: input.roadmapPlans, review: input.roadmapReview});
+        const calibration = calibrateRoadmapEstimates(runs, input.estimateAdoptionCalibrationCases, {id: input.estimateAdoptionCalibrationId, asOf: input.estimateAdoptionCalibrationAsOf, minimumReferenceClassSize: input.estimateAdoptionCalibrationMinimumReferenceClassSize, percentileRate: input.estimateAdoptionCalibrationPercentileRate, maximumEvidenceAgeDays: input.estimateAdoptionCalibrationMaximumEvidenceAgeDays, review: input.estimateAdoptionCalibrationReview});
+        return json(controlRoadmapEstimateAdoption(runs, schedule, calibration, {id: input.estimateAdoptionControlId, asOf: input.estimateAdoptionControlAsOf, maximumCalibrationAgeDays: input.estimateAdoptionMaximumCalibrationAgeDays, roundingToleranceDays: input.estimateAdoptionRoundingToleranceDays, capacityToleranceRate: input.estimateAdoptionCapacityToleranceRate, applications: input.estimateAdoptionApplications, review: input.estimateAdoptionReview}));
       }
       if (url.pathname === '/api/portfolio-stress' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);

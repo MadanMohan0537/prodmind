@@ -41,6 +41,21 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 28. Monitor recurrence | `control_recurrence_monitor/src/recurrence.js` | Post-exit target stability, remediation durability, snapshot coverage and cadence |
 | 29. Plan control improvements | `control_improvement_planner/src/planner.js` | Capacity-feasible recurrence response with dependencies, ownership and verification windows |
 | 30. Verify improvement outcomes | `control_improvement_outcome_monitor/src/outcomes.js` | Delivery, effort, lineage, observation-window and later-recurrence assurance |
+| 31. Calibrate improvements | `control_improvement_calibration/src/calibration.js` | Portfolio effort, delivery, effectiveness, recurrence and evidence calibration |
+| 32. Test planning policy | `planning_policy_experiment_planner/src/planner.js` | Reversible policy trials for failed calibration controls |
+| 33. Verify planning policy | `planning_policy_outcome_verifier/src/outcomes.js` | Predeclared targets, guardrails, sample, timing and evidence |
+| 34. Control policy change | `planning_policy_change_controller/src/controller.js` | Version, scope, rollout, monitoring, rollback and approval controls |
+| 35. Assure policy rollout | `planning_policy_rollout_monitor/src/monitor.js` | Approved stages, dwell, version, monitors, evidence and human decision |
+| 36. Monitor policy effectiveness | `planning_policy_effectiveness_monitor/src/monitor.js` | Longitudinal targets, guardrails, cadence, sample and drift |
+| 37. Verify policy recovery | `planning_policy_recovery_verifier/src/verifier.js` | Authorized reversion, execution and stable-recovery evidence |
+| 38. Govern policy re-entry | `planning_policy_incident_learning_controller/src/controller.js` | Blameless learning, corrective actions, cooling and re-entry controls |
+| 39. Assure policy re-entry | `planning_policy_reentry_monitor/src/monitor.js` | Bounded stages, corrective controls, recurrence signals and guardrails |
+| 40. Schedule roadmap | `roadmap_delivery_scheduler/src/scheduler.js` | Exact bounded dependency, calendar, capacity and deadline scheduling |
+| 41. Monitor delivery | `roadmap_delivery_monitor/src/monitor.js` | Baseline-versus-actual progress, capacity, dependencies and blockers |
+| 42. Plan roadmap recovery | `roadmap_recovery_planner/src/planner.js` | Bounded corrective-action selection from failed delivery controls |
+| 43. Verify roadmap recovery | `roadmap_recovery_verifier/src/verifier.js` | Execution, effort, timing, observation and control restoration |
+| 44. Calibrate roadmap estimates | `roadmap_estimate_calibration/src/calibration.js` | Completed-case reference classes, error, samples, freshness and factors |
+| 45. Control estimate adoption | `roadmap_estimate_adoption_controller/src/controller.js` | Prior calibration, per-item factors, arithmetic, evidence and independent exceptions |
 
 ## Shared contracts
 
@@ -73,6 +88,8 @@ Project 42 accepts the Projects 40–41 inputs plus 1–16 declared recovery can
 Project 43 accepts the Projects 40–42 inputs, exactly one execution outcome for each selected recovery action, and a later Project 41 delivery review through `POST /api/roadmap-recovery-verification`. Project 7 reconstructs Projects 14 and 40–42 server-side, checks action completeness, due dates, effort tolerance, prior approval for baseline-changing work, observation maturity, original failed-control restoration, and evidence lineage. Close, continue monitoring, and escalate remain named human decisions; a failed check blocks close, and no action, baseline, work item, or delivery state is changed automatically.
 
 Project 44 accepts a completed current Projects 40–41 case, structurally validated historical cases, explicit per-item reference-class mappings, sample and freshness policy, and a named review through `POST /api/roadmap-estimate-calibration`. Project 7 reconstructs the current Projects 14, 40, and 41 reports server-side. The engine calculates transparent historical duration and capacity ratios, errors, on-time rates, medians, and nearest-rank percentile factors. Undersized or stale classes block adoption; no result changes an estimate, schedule, assignment, or delivery record.
+
+Project 45 accepts Project 40 inputs, bounded completed cases for Project 44, one base-and-factor application per scheduled item, freshness and rounding tolerances, optional prior exceptions, and a named review through `POST /api/roadmap-estimate-adoption`. Project 7 reconstructs Projects 14 and 40 and the Project 44 calibration server-side. The controller requires a sufficiently sampled class, reconciles duration and capacity arithmetic, and permits a lower factor only with a prior evidenced exception reviewed independently from both schedule and calibration. It never creates an estimate, applies a factor, changes a schedule, or predicts delivery.
 
 Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 
