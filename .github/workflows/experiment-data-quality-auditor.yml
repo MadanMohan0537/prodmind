@@ -48,6 +48,7 @@ on:
       - 'roadmap_recovery_verifier/**'
       - 'roadmap_estimate_calibration/**'
       - 'roadmap_estimate_adoption_controller/**'
+      - 'roadmap_estimate_effectiveness_monitor/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -96,6 +97,7 @@ on:
       - 'roadmap_recovery_verifier/**'
       - 'roadmap_estimate_calibration/**'
       - 'roadmap_estimate_adoption_controller/**'
+      - 'roadmap_estimate_effectiveness_monitor/**'
 permissions:
   contents: read
 jobs:

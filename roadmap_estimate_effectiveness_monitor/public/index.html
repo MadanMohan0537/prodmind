@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Roadmap Estimate Effectiveness Monitor · ProdMind</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">ProdMind · Project 46</p>
+        <h1>Roadmap Estimate Effectiveness Monitor</h1>
+        <p class="lede">Verify whether adopted estimate factors improved accuracy after delivery—without changing a factor, schedule, or decision automatically.</p>
+      </div>
+      <span class="badge">Deterministic control</span>
+    </header>
+
+    <section class="panel controls" aria-labelledby="control-title">
+      <div>
+        <p class="eyebrow" id="control-title">Authenticated evaluation</p>
+        <p>Paste a complete Projects 40, 41, and 45 payload, then provide your Worker bearer token locally.</p>
+      </div>
+      <label>Bearer token <input id="token" type="password" autocomplete="off" placeholder="Stored only in this page"></label>
+      <button id="evaluate" type="button">Evaluate sample</button>
+    </section>
+
+    <section id="status" class="status" aria-live="polite">Ready to evaluate the included sample.</section>
+    <section id="summary" class="metrics" aria-label="Evaluation summary"></section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div><p class="eyebrow">Per-item evidence</p><h2>Accuracy and improvement</h2></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Duration error</th><th>Capacity error</th><th>Outcome</th></tr></thead>
+          <tbody id="results"><tr><td colspan="4">No evaluation yet.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Boundary</p>
+      <h2>Human judgment remains explicit</h2>
+      <p>The monitor compares reviewed actual workdays and delivery capacity with the previously approved base and calibrated estimates. It does not infer causality, rank people, modify calibration factors, or approve future estimates.</p>
+    </section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

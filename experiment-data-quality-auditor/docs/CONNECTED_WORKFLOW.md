@@ -56,6 +56,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 43. Verify roadmap recovery | `roadmap_recovery_verifier/src/verifier.js` | Execution, effort, timing, observation and control restoration |
 | 44. Calibrate roadmap estimates | `roadmap_estimate_calibration/src/calibration.js` | Completed-case reference classes, error, samples, freshness and factors |
 | 45. Control estimate adoption | `roadmap_estimate_adoption_controller/src/controller.js` | Prior calibration, per-item factors, arithmetic, evidence and independent exceptions |
+| 46. Verify estimate effectiveness | `roadmap_estimate_effectiveness_monitor/src/monitor.js` | Completed outcomes, accuracy, error reduction, exception outcomes and evidence |
 
 ## Shared contracts
 
@@ -90,6 +91,8 @@ Project 43 accepts the Projects 40–42 inputs, exactly one execution outcome fo
 Project 44 accepts a completed current Projects 40–41 case, structurally validated historical cases, explicit per-item reference-class mappings, sample and freshness policy, and a named review through `POST /api/roadmap-estimate-calibration`. Project 7 reconstructs the current Projects 14, 40, and 41 reports server-side. The engine calculates transparent historical duration and capacity ratios, errors, on-time rates, medians, and nearest-rank percentile factors. Undersized or stale classes block adoption; no result changes an estimate, schedule, assignment, or delivery record.
 
 Project 45 accepts Project 40 inputs, bounded completed cases for Project 44, one base-and-factor application per scheduled item, freshness and rounding tolerances, optional prior exceptions, and a named review through `POST /api/roadmap-estimate-adoption`. Project 7 reconstructs Projects 14 and 40 and the Project 44 calibration server-side. The controller requires a sufficiently sampled class, reconciles duration and capacity arithmetic, and permits a lower factor only with a prior evidenced exception reviewed independently from both schedule and calibration. It never creates an estimate, applies a factor, changes a schedule, or predicts delivery.
+
+Project 46 accepts the Projects 40, 41, 44, and 45 inputs plus one reviewed actual-workday outcome per item, accuracy and improvement policy, evidence, and a named review through `POST /api/roadmap-estimate-effectiveness`. Project 7 reconstructs Projects 14, 40, 41, 44, and 45 server-side. The monitor compares base and calibrated duration/capacity error with completed outcomes, evaluates approved exceptions separately, and preserves customer evidence. Actual workdays are explicit so Project 40 workday estimates are never silently compared with Project 41 calendar elapsed time. It never changes a factor, estimate, schedule, or product state and does not claim causality.
 
 Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 
