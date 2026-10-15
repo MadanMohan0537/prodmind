@@ -465,7 +465,7 @@ test('workspace UI exposes monitoring and searchable product memory',()=>{
   assert.match(html,/43 Verify recovery/);
   assert.match(html,/44 Calibrate estimates/);
   assert.match(html,/45 Control estimates/);
-  assert.match(html,/all forty-five modules/);
+  assert.match(html,/all forty-six modules/);
   assert.match(app,/\/api\/calibration/);
   assert.match(app,/\/api\/evidence-integrity/);
   assert.match(app,/\/api\/research-plan/);
