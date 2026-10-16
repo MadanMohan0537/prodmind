@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Roadmap Estimate Drift Monitor · ProdMind</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">ProdMind · Project 47</p>
+        <h1>Roadmap Estimate Drift Monitor</h1>
+        <p class="lede">Detect degrading calibration accuracy across completed roadmap work—before an outdated estimate basis becomes routine.</p>
+      </div>
+      <span class="badge">Zero paid services</span>
+    </header>
+
+    <section class="panel controls" aria-labelledby="control-title">
+      <div>
+        <p class="eyebrow" id="control-title">Authenticated review</p>
+        <h2>Compare baseline and recent windows</h2>
+        <p class="muted">The included sample contains four chronological Project 46 assessments.</p>
+      </div>
+      <label>Bearer token <input id="token" type="password" autocomplete="off" placeholder="Kept only in this page"></label>
+      <button id="evaluate" type="button">Evaluate sample</button>
+    </section>
+
+    <p id="status" class="status" aria-live="polite">Ready to evaluate the sample.</p>
+    <section id="summary" class="metrics" aria-label="Drift summary"></section>
+
+    <section class="panel">
+      <p class="eyebrow">Reference classes</p>
+      <h2>Accuracy and improvement retention</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th>Duration drift</th><th>Capacity drift</th><th>Coverage</th><th>State</th></tr></thead>
+          <tbody id="results"><tr><td colspan="5">No evaluation yet.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel boundary">
+      <div><p class="eyebrow">Decision boundary</p><h2>Signal, then review</h2></div>
+      <p>The monitor identifies evidence-backed recalibration candidates. It does not calculate replacement factors, change estimates or schedules, rank people, or treat policy thresholds as statistical control limits.</p>
+    </section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
