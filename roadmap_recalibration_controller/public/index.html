@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Roadmap Recalibration Controller · ProdMind</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">ProdMind · Project 48</p>
+        <h1>Roadmap Recalibration Controller</h1>
+        <p class="lede">Turn detected estimate drift into a versioned, holdout-tested, reversible proposal—without silently changing the active planning basis.</p>
+      </div>
+      <span class="badge">Zero paid services</span>
+    </header>
+
+    <section class="panel controls" aria-labelledby="control-title">
+      <div>
+        <p class="eyebrow" id="control-title">Authenticated review</p>
+        <h2>Validate a replacement factor</h2>
+        <p class="muted">The sample separates four training observations from two later holdout observations.</p>
+      </div>
+      <label>Bearer token <input id="token" type="password" autocomplete="off" placeholder="Kept only in this page"></label>
+      <button id="evaluate" type="button">Evaluate sample</button>
+    </section>
+
+    <p id="status" class="status" aria-live="polite">Ready to evaluate the sample.</p>
+    <section id="summary" class="metrics" aria-label="Recalibration summary"></section>
+
+    <section class="panel">
+      <p class="eyebrow">Candidate validation</p>
+      <h2>Active versus proposed factors</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th>Duration factor</th><th>Capacity factor</th><th>Holdout gain</th><th>State</th></tr></thead>
+          <tbody id="results"><tr><td colspan="5">No evaluation yet.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel boundary">
+      <div><p class="eyebrow">Decision boundary</p><h2>Approve a proposal, not activation</h2></div>
+      <p>The controller does not activate factors, rewrite estimates or schedules, rank teams, establish statistical significance, or guarantee future delivery accuracy. Deployment remains a separately owned human action.</p>
+    </section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
