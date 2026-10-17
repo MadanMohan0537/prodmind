@@ -50,6 +50,7 @@ on:
       - 'roadmap_estimate_adoption_controller/**'
       - 'roadmap_estimate_effectiveness_monitor/**'
       - 'roadmap_estimate_drift_monitor/**'
+      - 'roadmap_recalibration_controller/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -100,6 +101,7 @@ on:
       - 'roadmap_estimate_adoption_controller/**'
       - 'roadmap_estimate_effectiveness_monitor/**'
       - 'roadmap_estimate_drift_monitor/**'
+      - 'roadmap_recalibration_controller/**'
 permissions:
   contents: read
 jobs:
