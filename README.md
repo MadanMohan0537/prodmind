@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A forty-eight-project, evidence-to-execution-and-governance operating system for product teams.**
+**A forty-nine-project, evidence-to-execution-and-governance operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -15,7 +15,7 @@
 | Goal | Entry point |
 | --- | --- |
 | Experience the composed workflow | [Project 7 workspace](experiment-data-quality-auditor/README.md) |
-| Find a bounded product tool | The forty-eight-project catalog below |
+| Find a bounded product tool | The forty-nine-project catalog below |
 | Review what is connected | The implementation and security sections below |
 | Contribute to one module | Its own README and source directory |
 
@@ -73,6 +73,8 @@ Customer feedback
          47. Monitor calibration drift and recalibration readiness
               ↓
          48. Validate a versioned recalibration on later holdout evidence
+              ↓
+         49. Assure shadow and staged recalibration rollout evidence
       ↓
 16. Expected-versus-observed benefits realization
       ↓
@@ -130,14 +132,14 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Decision layer | Projects | Intended impact |
 |---|---|---|
 | Evidence readiness | 1–5, 11, 18 | Trustworthy customer signals and explicit assumptions |
-| Portfolio judgment and execution control | 6, 12–15, 40–48 | Explicit trade-offs across product, research, strategy, resilience, delivery capacity, actual execution, recovery, estimation learning, adoption control, observed effectiveness, longitudinal drift and controlled recalibration |
+| Portfolio judgment and execution control | 6, 12–15, 40–49 | Explicit trade-offs across product, research, strategy, resilience, delivery capacity, actual execution, recovery, estimation learning, adoption control, observed effectiveness, longitudinal drift, controlled recalibration and rollout assurance |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
 | Governance and accountability | 24–39 | Provenance, continuous review, controlled exceptions, verified remediation, policy controls, verified recovery, blameless learning, safe re-entry, and observed re-entry assurance |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The forty-eight projects
+## The forty-nine projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -147,7 +149,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary forty-eight-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary forty-nine-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -189,12 +191,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 46 | [Roadmap Estimate Calibration Effectiveness & Exception Outcome Monitor](roadmap_estimate_effectiveness_monitor/) | Completed-outcome accuracy, base-versus-calibrated error reduction, exception outcomes and evidence lineage | Standalone and connected effectiveness review |
 | 47 | [Roadmap Estimate Calibration Drift & Recalibration Readiness Monitor](roadmap_estimate_drift_monitor/) | Rolling-window accuracy, reference-class coverage, cadence and evidence-backed recalibration candidates | Standalone and connected drift review |
 | 48 | [Roadmap Estimate Recalibration Proposal & Validation Controller](roadmap_recalibration_controller/) | Training-only candidate factors, later holdout comparison, bounded change, versioning, rollback and independent approval | Standalone and connected recalibration review |
+| 49 | [Roadmap Estimate Recalibration Rollout Assurance Monitor](roadmap_recalibration_rollout_monitor/) | Shadow-first staged introduction, exact factors, paired baseline comparison, dwell, sample, incidents and tested rollback | Standalone and connected rollout assurance |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–48. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, actual delivery control, bounded recovery planning, recovery effectiveness verification, estimate calibration, adoption control, completed-outcome effectiveness review, longitudinal drift monitoring and holdout-tested recalibration proposals, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–49. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, actual delivery control, bounded recovery planning, recovery effectiveness verification, estimate calibration, adoption control, completed-outcome effectiveness review, longitudinal drift monitoring, holdout-tested recalibration proposals and controlled rollout assurance, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
 
 Identity lineage:
 
@@ -209,6 +212,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
                                           → estimateEffectivenessId → actuals / error reductions / exception outcomes / review
                                             → estimateDriftId → baseline / recent windows / class signals / recalibration candidates
                                               → recalibrationId → training / holdout / candidate factors / versions / rollback / approvals
+                                                → recalibrationRolloutId → shadow / staged exposure / paired errors / incidents / tested rollback
            → auditId → decisionId → monitorId
            → benefitId
            → assuranceReviewId → actionId
@@ -290,6 +294,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 46. Verifying Project 46 estimate accuracy, error reduction, and exception outcomes against reviewed completed evidence without changing factors, estimates, schedules, or product state.
 47. Monitoring Project 47 longitudinal estimate accuracy, retained improvement, class coverage, cadence, and recalibration readiness without changing factors, estimates, schedules, or product state.
 48. Validating Project 48 training-only candidate factors against later holdout evidence with version, rollback, and independent-approval controls without activating factors or changing estimates, schedules, assignments, or product state.
+49. Assuring Project 49 shadow and staged recalibration rollout evidence against the exact approved version and factors without changing exposure, activating factors, editing estimates, promoting a version, executing rollback, or changing product state.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -303,7 +308,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all forty-eight projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling, delivery control, recovery planning and verification, estimate calibration, adoption control, effectiveness review, drift monitoring and recalibration validation, decision gates, lifecycle safeguards, verified policy recovery, incident learning, safe re-entry, and re-entry assurance.
+The suite covers all forty-nine projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling, delivery control, recovery planning and verification, estimate calibration, adoption control, effectiveness review, drift monitoring, recalibration validation and rollout assurance, decision gates, lifecycle safeguards, verified policy recovery, incident learning, safe re-entry, and re-entry assurance.
 
 Run one project independently:
 
@@ -324,7 +329,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–48 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–49 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -350,6 +355,7 @@ Projects 1–6 and 8–48 are bundled into the connected Worker through imports.
 - Roadmap estimate adoption control verifies declared factor use, arithmetic and exceptions; it never creates or changes an estimate, predicts delivery, evaluates people, or certifies accuracy.
 - Roadmap estimate effectiveness and drift monitoring compare supplied completed outcomes and chronological assessment windows; neither changes factors or schedules, proves causality, or treats policy thresholds as statistical control limits.
 - Roadmap recalibration control derives candidates only from earlier training observations and compares them on a later holdout; approval never activates a version, guarantees generalization, establishes statistical significance, or changes estimates, schedules, assignments, or product state.
+- Roadmap recalibration rollout assurance compares exact approved factors with the concurrent active baseline through declared stages; it does not establish statistical significance, verify evidence truth, change exposure, activate factors, edit estimates, promote a version, or execute rollback.
 - Resilience scores evaluate declared scenarios; they are not likelihood forecasts and never change the portfolio.
 - Benefit progress compares declared targets and observations; it does not prove causality or combine unlike units.
 - Investment assurance records a human decision; completeness checks never make or apply that decision.
@@ -474,6 +480,7 @@ Projects 1–6 and 8–48 are bundled into the connected Worker through imports.
 ├── roadmap_estimate_effectiveness_monitor/         Project 46
 ├── roadmap_estimate_drift_monitor/                 Project 47
 ├── roadmap_recalibration_controller/               Project 48
+├── roadmap_recalibration_rollout_monitor/           Project 49
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE

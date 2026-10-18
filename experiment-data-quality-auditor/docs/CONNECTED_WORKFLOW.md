@@ -58,6 +58,8 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 45. Control estimate adoption | `roadmap_estimate_adoption_controller/src/controller.js` | Prior calibration, per-item factors, arithmetic, evidence and independent exceptions |
 | 46. Verify estimate effectiveness | `roadmap_estimate_effectiveness_monitor/src/monitor.js` | Completed outcomes, accuracy, error reduction, exception outcomes and evidence |
 | 47. Monitor estimate drift | `roadmap_estimate_drift_monitor/src/monitor.js` | Rolling-window accuracy, class coverage, cadence and recalibration candidates |
+| 48. Control estimate recalibration | `roadmap_recalibration_controller/src/controller.js` | Training-only candidates, later holdout, exact versions, rollback and approval |
+| 49. Assure recalibration rollout | `roadmap_recalibration_rollout_monitor/src/monitor.js` | Shadow-first stages, exact factors, paired errors, dwell, sample, incidents and tested rollback |
 
 ## Shared contracts
 
@@ -98,6 +100,8 @@ Project 46 accepts the Projects 40, 41, 44, and 45 inputs plus one reviewed actu
 Project 47 accepts historical Project 46 reports plus the Projects 40–46 inputs needed to reconstruct the latest assessment through `POST /api/roadmap-estimate-drift`. It compares non-overlapping baseline and recent windows by reference class, checks sample coverage, cadence, evidence age, accuracy change, and retained error reduction, and identifies recalibration candidates. Historical assessments are explicitly supplied and structurally validated; Project 7 reconstructs the current Projects 14, 40, 41, 44, 45, and 46 chain server-side. Thresholds are policy signals rather than statistical control limits, and no factor, estimate, schedule, or product state changes automatically.
 
 Project 48 accepts newer completed delivery cases plus the Projects 40–47 inputs needed to reconstruct the active calibration and authorized drift decision through `POST /api/roadmap-recalibration`. Project 7 builds a newer Project 44 evidence report, reserves the latest observations as a temporal holdout, derives candidate factors only from earlier observations, and compares active and candidate error on the untouched holdout. Versioning, bounded change, rollback, three independent approvals, and a named human decision are required. Historical cases remain supplied, structurally validated evidence; approval never activates a factor or changes an estimate, schedule, assignment, or product state.
+
+Project 49 extends that full chain through `POST /api/roadmap-recalibration-rollout`. Project 7 reconstructs Projects 14 and 40–48 server-side, then checks a predeclared zero-exposure shadow and increasing active stages against the exact approved version and factors. Paired active-versus-candidate errors, minimum dwell and sample, incident limits, complete evidence, and tested rollback must pass before a named reviewer can record `promote`. The endpoint never changes exposure, activates factors, edits estimates, promotes a version, or executes rollback.
 
 Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 

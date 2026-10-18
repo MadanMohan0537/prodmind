@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Recalibration Rollout Assurance</title>
+  <meta name="description" content="Evidence-backed assurance for shadow and staged roadmap-estimate recalibration rollouts.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <a href="#main" class="skip">Skip to content</a>
+    <div class="brand"><span>ProdMind</span><strong>Project 49</strong></div>
+    <button id="theme" type="button" aria-label="Toggle color theme">Theme</button>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow">ROADMAP ESTIMATE GOVERNANCE</p>
+      <h1>Verify the rollout.<br><em>Keep promotion human.</em></h1>
+      <p>Compare an approved recalibration with its live baseline through shadow and staged evidence—without changing a single estimate or exposure.</p>
+      <div class="badges"><span>Deterministic</span><span>Zero paid APIs</span><span>Cloudflare-ready</span></div>
+    </section>
+    <section class="flow" aria-label="Workflow">
+      <article><b>01</b><h2>Declare</h2><p>Pin the approved baseline, candidate version, factors, owner, and expiry.</p></article>
+      <article><b>02</b><h2>Observe</h2><p>Run shadow first, then compare paired cohorts through increasing exposure stages.</p></article>
+      <article><b>03</b><h2>Decide</h2><p>Verify dwell, sample, error, improvement, incidents, evidence, and rollback.</p></article>
+    </section>
+    <section class="panel">
+      <div>
+        <p class="eyebrow">CONTROL BOUNDARY</p>
+        <h2>Assurance, not automation</h2>
+        <p>This monitor never changes traffic, activates factors, edits estimates, or executes rollback. A named reviewer chooses promote, pause, or rollback.</p>
+      </div>
+      <ul>
+        <li>Exact version and factor matching</li>
+        <li>Concurrent active-versus-candidate comparison</li>
+        <li>Minimum dwell and representative sample gates</li>
+        <li>Tested last-known-good rollback</li>
+      </ul>
+    </section>
+    <section class="console">
+      <div>
+        <p class="eyebrow">API WORKBENCH</p>
+        <h2>Run a review</h2>
+        <p>Paste a Project 48 report and rollout input as JSON. Your token remains in this tab.</p>
+      </div>
+      <label>Bearer token<input id="token" type="password" autocomplete="off" placeholder="API_TOKEN"></label>
+      <label>Request JSON<textarea id="payload" spellcheck="false" placeholder='{"recalibrationReport":{},"input":{}}'></textarea></label>
+      <button id="run" type="button">Evaluate rollout</button>
+      <pre id="result" aria-live="polite">Ready.</pre>
+    </section>
+  </main>
+  <footer>Project 49 · Roadmap Recalibration Rollout Assurance Monitor</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
+
