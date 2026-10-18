@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all forty-eight modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all forty-nine modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -195,7 +195,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–48 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–49 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -205,7 +205,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete forty-eight-stage workspace
+public/                 Complete forty-nine-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
