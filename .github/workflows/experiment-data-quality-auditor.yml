@@ -52,6 +52,7 @@ on:
       - 'roadmap_estimate_drift_monitor/**'
       - 'roadmap_recalibration_controller/**'
       - 'roadmap_recalibration_rollout_monitor/**'
+      - 'roadmap_recalibration_recovery_verifier/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -104,6 +105,7 @@ on:
       - 'roadmap_estimate_drift_monitor/**'
       - 'roadmap_recalibration_controller/**'
       - 'roadmap_recalibration_rollout_monitor/**'
+      - 'roadmap_recalibration_recovery_verifier/**'
 permissions:
   contents: read
 jobs:
