@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the forty-nine-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–49, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, calibrates future estimating context, controls its adoption, verifies observed effectiveness, monitors longitudinal drift, validates versioned recalibration proposals, and assures shadow-plus-staged rollout evidence.
+Project 7 is both the experiment workspace and the integration host for the fifty-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–50, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, calibrates future estimating context, controls its adoption, verifies observed effectiveness, monitors longitudinal drift, validates versioned recalibration proposals, assures shadow-plus-staged rollout evidence, and verifies rollback recovery.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all forty-nine modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all fifty modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -98,6 +98,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 47 rolling-window estimate accuracy, class coverage, cadence and recalibration-readiness controls
 - Project 48 versioned recalibration proposals with temporal holdouts, bounded factor changes, rollback and independent approvals
 - Project 49 shadow and staged recalibration rollout assurance with exact factors, paired comparisons, dwell, sample, incidents and tested rollback
+- Project 50 authorized recalibration rollback recovery with exact prior-version and factor restoration, timing, observation, accuracy and closeout controls
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -140,6 +141,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/roadmap-estimate-drift` | Monitor Project 47 longitudinal accuracy and recalibration readiness by reference class |
 | `POST` | `/api/roadmap-recalibration` | Validate Project 48 versioned recalibration proposals against untouched later evidence |
 | `POST` | `/api/roadmap-recalibration-rollout` | Assure Project 49 shadow and staged rollout evidence before human promotion |
+| `POST` | `/api/roadmap-recalibration-recovery` | Verify Project 50 rollback execution and stable restoration before human closeout |
 | `POST` | `/api/portfolio-stress` | Assess Project 15 portfolio resilience |
 | `POST` | `/api/benefits-realization` | Build a Project 16 benefits ledger |
 | `POST` | `/api/investment-assurance` | Run a Project 17 post-implementation assurance review |
@@ -195,7 +197,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–49 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–50 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -205,7 +207,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete forty-nine-stage workspace
+public/                 Complete fifty-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
