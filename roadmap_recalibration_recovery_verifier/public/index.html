@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ProdMind · Recalibration Recovery Verification</title>
+  <meta name="description" content="Verify that a human-authorized roadmap recalibration rollback restored the prior policy and remained stable.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="brand"><span>ProdMind</span><strong>Project 50</strong></div>
+    <button id="theme" type="button" aria-label="Toggle color theme">Theme</button>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow">RECALIBRATION RECOVERY</p>
+      <h1>Rollback is an action.<br><em>Recovery is evidence.</em></h1>
+      <p>Verify exact restoration, execution timing, observation stability, and closeout evidence after a human-authorized estimate-policy rollback.</p>
+      <div class="badges"><span>Deterministic</span><span>Human-governed</span><span>Cloudflare-ready</span></div>
+    </section>
+    <section class="flow" aria-label="Verification workflow">
+      <article><b>01</b><h2>Authorize</h2><p>Require the matching Project 49 rollback decision and approved recovery owner.</p></article>
+      <article><b>02</b><h2>Restore</h2><p>Reconcile the prior version and every pre-recalibration reference-class factor.</p></article>
+      <article><b>03</b><h2>Observe</h2><p>Verify cadence, samples, accuracy, incidents, evidence, and a named closeout.</p></article>
+    </section>
+    <section class="panel">
+      <div><p class="eyebrow">CONTROL BOUNDARY</p><h2>Verification, not execution</h2><p>The verifier records what happened. It cannot change a version, restore a factor, edit an estimate, or close recovery automatically.</p></div>
+      <ul><li>Exact prior-version restoration</li><li>Exact reference-class factor restoration</li><li>Bounded recovery time and observation cadence</li><li>Stable accuracy and incident guardrails</li></ul>
+    </section>
+    <section class="console">
+      <div><p class="eyebrow">API WORKBENCH</p><h2>Review recovery</h2><p>Paste Projects 48–49 reports and recovery evidence as JSON. Your token remains in this tab.</p></div>
+      <label>Bearer token<input id="token" type="password" autocomplete="off" placeholder="API_TOKEN"></label>
+      <label>Request JSON<textarea id="payload" spellcheck="false" placeholder='{"recalibrationReport":{},"rolloutReport":{},"input":{}}'></textarea></label>
+      <button id="run" type="button">Verify recovery</button>
+      <pre id="result" aria-live="polite">Ready.</pre>
+    </section>
+  </main>
+  <footer>Project 50 · Roadmap Recalibration Rollback & Recovery Verifier</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
+
