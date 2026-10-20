@@ -61,6 +61,7 @@ The project 7 Worker calls the existing implementations of projects 1–6 direct
 | 48. Control estimate recalibration | `roadmap_recalibration_controller/src/controller.js` | Training-only candidates, later holdout, exact versions, rollback and approval |
 | 49. Assure recalibration rollout | `roadmap_recalibration_rollout_monitor/src/monitor.js` | Shadow-first stages, exact factors, paired errors, dwell, sample, incidents and tested rollback |
 | 50. Verify recalibration recovery | `roadmap_recalibration_recovery_verifier/src/verifier.js` | Authorized rollback, exact prior version and factors, recovery timing, stable observation and closeout |
+| 51. Govern recalibration re-entry | `roadmap_recalibration_incident_reentry_controller/src/learning.js` | Blameless learning, corrective actions, cooling, new candidate, bounded exposure, rollback, monitors and approval |
 
 ## Shared contracts
 
@@ -105,6 +106,8 @@ Project 48 accepts newer completed delivery cases plus the Projects 40–47 inpu
 Project 49 extends that full chain through `POST /api/roadmap-recalibration-rollout`. Project 7 reconstructs Projects 14 and 40–48 server-side, then checks a predeclared zero-exposure shadow and increasing active stages against the exact approved version and factors. Paired active-versus-candidate errors, minimum dwell and sample, incident limits, complete evidence, and tested rollback must pass before a named reviewer can record `promote`. The endpoint never changes exposure, activates factors, edits estimates, promotes a version, or executes rollback.
 
 Project 50 extends the rollback path through `POST /api/roadmap-recalibration-recovery`. Project 7 reconstructs Projects 14 and 40–49 server-side and requires the matching Project 49 human `rollback` decision. It then verifies authorization, owner, recovery time, exact prior-version and factor restoration, chronological observation cadence, class samples, accuracy, incidents, evidence, and a named closeout decision. It never changes versions, factors, estimates, exposure, schedules, rollback state, or closure state.
+
+Project 51 extends verified recovery through `POST /api/roadmap-recalibration-reentry`. Project 7 reconstructs Projects 14 and 40–50 server-side, then checks a timely blameless incident record, corrective actions, cooling, recovered baseline, a genuinely new candidate, recovered scope, shadow-first exposure, rollback, core monitors, independent approvals, and a named re-entry decision. It never lifts a freeze, starts rollout, changes factors or estimates, or approves its own re-entry.
 
 Project 15 accepts a reviewed strategy, capacity, optional Project 14 portfolio-item selection, and 1–12 declared stress scenarios through `POST /api/portfolio-stress`. It checks capacity loss, unavailable items, dependency failures, effort multipliers, and allocation drift while retaining evidence IDs. Scenario scores are transparent review indices, not probability forecasts, and the endpoint never changes a ranking.
 
