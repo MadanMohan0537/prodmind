@@ -52,22 +52,166 @@ test("approves bounded recalibration re-entry with complete lineage", () => {
   assert.ok(result.checks.every((item) => item.passed));
 });
 
-test("blocks unverified recovery", () => assert.equal(controlRoadmapRecalibrationReentry(recovery({ status: "blocked_close" }), input()).status, "blocked_reentry"));
-test("blocks recovery without human close", () => assert.equal(controlRoadmapRecalibrationReentry(recovery({ review: { reviewer: "Recovery council", decision: "continue_monitoring", reviewedAt: "2027-03-13T13:00:00Z" } }), input()).status, "blocked_reentry"));
-test("blocks late publication", () => assert.equal(controlRoadmapRecalibrationReentry(recovery(), input({ maximumPublicationDays: 3 })).status, "blocked_reentry"));
-test("requires chronological timeline", () => { const value = input(); value.timeline.reverse(); assert.throws(() => controlRoadmapRecalibrationReentry(recovery(), value), /strictly chronological/); });
-test("requires preventive and detective actions", () => { const value = input(); value.actions = [value.actions[0]]; value.reentry = { ...value.reentry, requiredActionIds: ["prevent-1"] }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires completed evidenced critical actions", () => { const value = input(); value.actions[0] = { ...value.actions[0], status: "open", evidence: undefined }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("blocks overdue open actions", () => { const value = input(); value.actions[1] = { ...value.actions[1], status: "open", evidence: undefined, dueAt: "2027-03-20T00:00:00Z" }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires re-entry actions to be complete", () => { const value = input(); value.actions[1] = { ...value.actions[1], status: "open", evidence: undefined, dueAt: "2027-04-20T00:00:00Z" }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("enforces cooling period and freeze", () => { const value = input(); value.reentry = { ...value.reentry, startsAt: "2027-03-22T00:00:00Z" }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires recovered baseline", () => { const value = input(); value.reentry = { ...value.reentry, baselineVersion: "estimate-policy-2" }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires a genuinely new candidate version", () => { for (const candidateVersion of ["estimate-policy-3", "estimate-policy-4"]) { const value = input(); value.reentry = { ...value.reentry, candidateVersion }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); } });
-test("requires recovered scope subset", () => { const value = input(); value.reentry = { ...value.reentry, scope: ["billing"] }; assert.throws(() => controlRoadmapRecalibrationReentry(recovery(), value), /subset/); });
-test("requires shadow and bounded exposure", () => { const value = input(); value.reentry = { ...value.reentry, shadowRequired: false, initialExposureRate: 0.2 }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires rollback to recovered baseline", () => { const value = input(); value.reentry.rollback = { ...value.reentry.rollback, targetVersion: "estimate-policy-2" }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires core monitors", () => { const value = input(); value.reentry = { ...value.reentry, monitors: ["duration_error"] }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("blocks rejected approval", () => { const value = input(); value.approvals = approvals.map((item, index) => index ? item : { ...item, decision: "rejected" }); assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry"); });
-test("requires independent approvers", () => { const value = input(); value.approvals[0] = { ...value.approvals[0], reviewer: "Recovery council" }; assert.throws(() => controlRoadmapRecalibrationReentry(recovery(), value), /independent/); });
-test("keeps freeze and escalation human controlled", () => { for (const decision of ["continue_freeze", "escalate"]) { const value = input(); value.review = { ...value.review, decision }; assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "action_required"); } });
-test("rejects malformed recovery and invalid policy bounds", () => { assert.throws(() => controlRoadmapRecalibrationReentry({}, input()), /Project 50/); assert.throws(() => controlRoadmapRecalibrationReentry(recovery(), input({ minimumCoolingDays: 0 })), /1 to 90/); });
+test("blocks unverified recovery", () => {
+  const result = controlRoadmapRecalibrationReentry(
+    recovery({ status: "blocked_close" }),
+    input(),
+  );
+  assert.equal(result.status, "blocked_reentry");
+});
+
+test("blocks recovery without human close", () => {
+  const result = controlRoadmapRecalibrationReentry(recovery({
+    review: {
+      reviewer: "Recovery council",
+      decision: "continue_monitoring",
+      reviewedAt: "2027-03-13T13:00:00Z",
+    },
+  }), input());
+  assert.equal(result.status, "blocked_reentry");
+});
+
+test("blocks late publication", () => {
+  const result = controlRoadmapRecalibrationReentry(
+    recovery(),
+    input({ maximumPublicationDays: 3 }),
+  );
+  assert.equal(result.status, "blocked_reentry");
+});
+
+test("requires chronological timeline", () => {
+  const value = input();
+  value.timeline.reverse();
+  assert.throws(
+    () => controlRoadmapRecalibrationReentry(recovery(), value),
+    /strictly chronological/,
+  );
+});
+
+test("requires preventive and detective actions", () => {
+  const value = input();
+  value.actions = [value.actions[0]];
+  value.reentry = { ...value.reentry, requiredActionIds: ["prevent-1"] };
+  assert.equal(
+    controlRoadmapRecalibrationReentry(recovery(), value).status,
+    "blocked_reentry",
+  );
+});
+
+test("requires completed evidenced critical actions", () => {
+  const value = input();
+  value.actions[0] = { ...value.actions[0], status: "open", evidence: undefined };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("blocks overdue open actions", () => {
+  const value = input();
+  value.actions[1] = {
+    ...value.actions[1],
+    status: "open",
+    evidence: undefined,
+    dueAt: "2027-03-20T00:00:00Z",
+  };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires re-entry actions to be complete", () => {
+  const value = input();
+  value.actions[1] = {
+    ...value.actions[1],
+    status: "open",
+    evidence: undefined,
+    dueAt: "2027-04-20T00:00:00Z",
+  };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("enforces cooling period and freeze", () => {
+  const value = input();
+  value.reentry = { ...value.reentry, startsAt: "2027-03-22T00:00:00Z" };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires recovered baseline", () => {
+  const value = input();
+  value.reentry = { ...value.reentry, baselineVersion: "estimate-policy-2" };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires a genuinely new candidate version", () => {
+  for (const candidateVersion of ["estimate-policy-3", "estimate-policy-4"]) {
+    const value = input();
+    value.reentry = { ...value.reentry, candidateVersion };
+    assert.equal(
+      controlRoadmapRecalibrationReentry(recovery(), value).status,
+      "blocked_reentry",
+    );
+  }
+});
+
+test("requires recovered scope subset", () => {
+  const value = input();
+  value.reentry = { ...value.reentry, scope: ["billing"] };
+  assert.throws(() => controlRoadmapRecalibrationReentry(recovery(), value), /subset/);
+});
+
+test("requires shadow and bounded exposure", () => {
+  const value = input();
+  value.reentry = {
+    ...value.reentry,
+    shadowRequired: false,
+    initialExposureRate: 0.2,
+  };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires rollback to recovered baseline", () => {
+  const value = input();
+  value.reentry.rollback = {
+    ...value.reentry.rollback,
+    targetVersion: "estimate-policy-2",
+  };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires core monitors", () => {
+  const value = input();
+  value.reentry = { ...value.reentry, monitors: ["duration_error"] };
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("blocks rejected approval", () => {
+  const value = input();
+  value.approvals = approvals.map((item, index) => (
+    index ? item : { ...item, decision: "rejected" }
+  ));
+  assert.equal(controlRoadmapRecalibrationReentry(recovery(), value).status, "blocked_reentry");
+});
+
+test("requires independent approvers", () => {
+  const value = input();
+  value.approvals[0] = { ...value.approvals[0], reviewer: "Recovery council" };
+  assert.throws(
+    () => controlRoadmapRecalibrationReentry(recovery(), value),
+    /independent/,
+  );
+});
+
+test("keeps freeze and escalation human controlled", () => {
+  for (const decision of ["continue_freeze", "escalate"]) {
+    const value = input();
+    value.review = { ...value.review, decision };
+    assert.equal(
+      controlRoadmapRecalibrationReentry(recovery(), value).status,
+      "action_required",
+    );
+  }
+});
+
+test("rejects malformed recovery and invalid policy bounds", () => {
+  assert.throws(() => controlRoadmapRecalibrationReentry({}, input()), /Project 50/);
+  assert.throws(
+    () => controlRoadmapRecalibrationReentry(recovery(), input({ minimumCoolingDays: 0 })),
+    /1 to 90/,
+  );
+});
