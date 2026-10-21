@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>ProdMind · Recalibration Re-entry Assurance</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">ProdMind · Project 52</p>
+        <h1>Roadmap Recalibration Re-entry Assurance Monitor</h1>
+        <p>
+          Verify that a post-incident recalibration retry stays inside its approved
+          shadow-first plan before a human permits continuation.
+        </p>
+      </header>
+
+      <section class="panel">
+        <h2>Review observed re-entry evidence</h2>
+        <p>
+          Upload the complete JSON request. Processing is deterministic and calls no
+          paid model or external service.
+        </p>
+        <form id="assurance">
+          <label>
+            API token
+            <input name="token" type="password" required autocomplete="off">
+          </label>
+          <label>
+            Assurance JSON
+            <input name="file" type="file" accept=".json,application/json" required>
+          </label>
+          <button>Run assurance checks</button>
+        </form>
+        <p id="notice" role="status"></p>
+        <div id="results"></div>
+      </section>
+
+      <section class="grid" aria-label="Assurance principles">
+        <article>
+          <h2>Bounded</h2>
+          <p>Exposure cannot exceed either the Project 51 approval or local assurance policy.</p>
+        </article>
+        <article>
+          <h2>Evidence-linked</h2>
+          <p>Every class, corrective control, recurrence signal, stage, and rollback retains evidence.</p>
+        </article>
+        <article>
+          <h2>Human-controlled</h2>
+          <p>The monitor evaluates evidence; people continue, pause, or roll back the trial.</p>
+        </article>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
