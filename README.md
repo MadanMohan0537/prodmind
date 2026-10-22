@@ -2,7 +2,7 @@
 
 # ProdMind
 
-**A fifty-two-project, evidence-to-execution-and-governance operating system for product teams.**
+**A fifty-three-project, evidence-to-execution-and-governance operating system for product teams.**
 
 [![Connected lifecycle](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml/badge.svg)](https://github.com/MadanMohan0537/prodmind/actions/workflows/experiment-data-quality-auditor.yml)
 [![Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020)](https://developers.cloudflare.com/workers/)
@@ -15,7 +15,7 @@
 | Goal | Entry point |
 | --- | --- |
 | Experience the composed workflow | [Project 7 workspace](experiment-data-quality-auditor/README.md) |
-| Find a bounded product tool | The fifty-two-project catalog below |
+| Find a bounded product tool | The fifty-three-project catalog below |
 | Review what is connected | The implementation and security sections below |
 | Contribute to one module | Its own README and source directory |
 
@@ -81,6 +81,8 @@ Customer feedback
          51. Govern incident learning and bounded recalibration re-entry
               ↓
          52. Assure observed shadow and bounded recalibration re-entry
+              ↓
+         53. Gate sustained re-entry promotion with independent approval
       ↓
 16. Expected-versus-observed benefits realization
       ↓
@@ -138,14 +140,14 @@ ProdMind is designed around decisions rather than disconnected demos:
 | Decision layer | Projects | Intended impact |
 |---|---|---|
 | Evidence readiness | 1–5, 11, 18 | Trustworthy customer signals and explicit assumptions |
-| Portfolio judgment and execution control | 6, 12–15, 40–52 | Explicit trade-offs across product, research, strategy, resilience, delivery capacity, actual execution, recovery, estimation learning, adoption control, observed effectiveness, longitudinal drift, controlled recalibration, rollout assurance, rollback recovery verification, governed re-entry and observed re-entry assurance |
+| Portfolio judgment and execution control | 6, 12–15, 40–53 | Explicit trade-offs across product, research, strategy, resilience, delivery capacity, actual execution, recovery, estimation learning, adoption control, observed effectiveness, longitudinal drift, controlled recalibration, rollout assurance, rollback recovery verification, governed re-entry, observed re-entry assurance and sustained promotion control |
 | Experiment and release governance | 7, 19 | Prospective plans, reviewed decisions, staged release and rollback readiness |
 | Learning, value and lifecycle | 8–10, 16–17, 20–23 | Monitored outcomes, reusable context, realized benefits, adoption, lifecycle decisions, migration assurance and post-sunset closeout |
 | Governance and accountability | 24–39 | Provenance, continuous review, controlled exceptions, verified remediation, policy controls, verified recovery, blameless learning, safe re-entry, and observed re-entry assurance |
 
 The product should be evaluated by evidence-linked decisions, time saved with review quality preserved, prevented data-quality failures, accepted research plans, monitored outcome coverage, and strategy exceptions resolved. None of these measures should reward automatic shipping or unsupported causal claims.
 
-## The fifty-two projects
+## The fifty-three projects
 
 | # | Project | What it contributes | Frontend |
 |---:|---|---|---|
@@ -155,7 +157,7 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 4 | [Feature Request Detector](feature_request_detector/) | Multi-label product intent and evidence sentences | Request, bug, complaint and churn-signal inspection |
 | 5 | [Voice-of-Customer Dashboard](voice_of_customer_dashboard/) | Trends, filters, segments and source evidence | Interactive light/dark dashboard |
 | 6 | [Prioritization Engine](prioritization_engine/) | Transparent scores and capacity-aware portfolio | Weights, rankings, Pareto and dependency views |
-| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary fifty-two-stage ProdMind workspace |
+| 7 | [Experiment & Learning Workspace](experiment-data-quality-auditor/) | Connected lifecycle, D1 state, audit and human decisions | Primary fifty-three-stage ProdMind workspace |
 | 8 | [Product Outcome Monitor](product_outcome_monitor/) | Persistence, reversal and guardrail monitoring | Standalone and Project 7 monitoring interfaces |
 | 9 | [Product Learning Memory](product_learning_memory/) | Cross-run retrieval of evidence-linked learning | Standalone and connected search interfaces |
 | 10 | [Product Decision Calibration Engine](decision_calibration_engine/) | Brier scores and reliability bands for resolved product forecasts | Standalone and connected calibration views |
@@ -201,12 +203,13 @@ The product should be evaluated by evidence-linked decisions, time saved with re
 | 50 | [Roadmap Recalibration Rollback & Recovery Verifier](roadmap_recalibration_recovery_verifier/) | Authorized rollback execution, exact prior version and factor restoration, recovery timing, stable accuracy and incident gates | Standalone and connected recovery verification |
 | 51 | [Roadmap Recalibration Incident Learning & Re-entry Controller](roadmap_recalibration_incident_reentry_controller/) | Blameless learning, corrective actions, cooling, new candidate, shadow-first exposure, rollback, monitoring and independent approval | Standalone and connected re-entry control |
 | 52 | [Roadmap Recalibration Re-entry Assurance Monitor](roadmap_recalibration_reentry_monitor/) | Exact declaration, shadow-first observed stages, paired accuracy, live corrective controls, recurrence signals, incidents and rollback | Standalone and connected re-entry assurance |
+| 53 | [Roadmap Recalibration Re-entry Promotion Controller](roadmap_recalibration_reentry_promotion_controller/) | Sustained checkpoints, paired accuracy, control health, incident limits, current rollback and independent promotion approvals | Standalone and connected promotion gate |
 
 `.github/` is supporting CI configuration, not a product project.
 
 ## What is genuinely connected
 
-Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–52. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, actual delivery control, bounded recovery planning, recovery effectiveness verification, estimate calibration, adoption control, completed-outcome effectiveness review, longitudinal drift monitoring, holdout-tested recalibration proposals, controlled rollout assurance, verified rollback recovery, governed incident learning and observed re-entry assurance, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
+Project 7 imports and executes Projects 1–6 and the engines behind Projects 8–53. The connected path spans customer evidence, portfolio selection, executable roadmap scheduling, actual delivery control, bounded recovery planning, recovery effectiveness verification, estimate calibration, adoption control, completed-outcome effectiveness review, longitudinal drift monitoring, holdout-tested recalibration proposals, controlled rollout assurance, verified rollback recovery, governed incident learning, observed re-entry assurance and sustained promotion control, decisions, lifecycle governance, verified policy recovery, incident learning, controlled re-entry, and re-entry assurance.
 
 Identity lineage:
 
@@ -225,6 +228,7 @@ feedbackId → topicId → runId:opportunityId → experimentId
                                                   → recalibrationRecoveryId → execution / exact factors / stable observations / closeout review
                                                     → recalibrationReentryId → timeline / actions / cooling / new candidate / approvals
                                                       → recalibrationReentryAssuranceId → declaration / stages / controls / recurrence / rollback
+                                                        → recalibrationReentryPromotionId → stabilization / paired outcomes / controls / approvals
            → auditId → decisionId → monitorId
            → benefitId
            → assuranceReviewId → actionId
@@ -310,6 +314,7 @@ The deployable interface in `experiment-data-quality-auditor/public/` supports:
 50. Verifying Project 50 an authorized recalibration rollback restored the exact prior version and factors and remained stable without executing rollback, changing versions or factors, editing estimates, changing exposure, or closing recovery automatically.
 51. Governing Project 51 blameless recalibration incident learning, corrective actions, cooling, a new candidate, shadow-first exposure, rollback, monitoring, and independent approval without lifting a freeze, starting rollout, changing factors or estimates, or approving its own re-entry.
 52. Assuring Project 52 observed recalibration re-entry against the exact Project 51 plan, paired outcomes, corrective controls, recurrence signals, incidents, and rollback without changing exposure, activating or promoting a version, editing estimates, pausing or rolling back a trial, or approving continuation automatically.
+53. Governing Project 53 sustained re-entry promotion through checkpoint continuity, paired class outcomes, control health, recurrence, incidents, current rollback, and independent approvals without activating or promoting a version, changing factors or estimates, extending exposure, removing rollback, or executing a decision automatically.
 
 All project frontends use system-aware light and dark color schemes. Standalone interfaces are useful for focused demonstrations; Project 7 is the integrated product.
 
@@ -323,7 +328,7 @@ cd prodmind
 node experiment-data-quality-auditor/scripts/test-all.mjs
 ```
 
-The suite covers all fifty-two projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling, delivery control, recovery planning and verification, estimate calibration, adoption control, effectiveness review, drift monitoring, recalibration validation, rollout assurance, rollback recovery verification, governed re-entry and observed re-entry assurance, decision gates, lifecycle safeguards, verified policy recovery, incident learning, safe re-entry, and re-entry assurance.
+The suite covers all fifty-three projects, shared contracts, authenticated routes, SQLite migrations, evidence lineage, deterministic roadmap scheduling, delivery control, recovery planning and verification, estimate calibration, adoption control, effectiveness review, drift monitoring, recalibration validation, rollout assurance, rollback recovery verification, governed re-entry, observed re-entry assurance and sustained promotion control, decision gates, lifecycle safeguards, verified policy recovery, incident learning, safe re-entry, and re-entry assurance.
 
 Run one project independently:
 
@@ -344,7 +349,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–52 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
+Projects 1–6 and 8–53 are bundled into the connected Worker through imports. Their standalone deployments remain independent and are not silently synchronized.
 
 ## Security and decision boundaries
 
@@ -374,6 +379,7 @@ Projects 1–6 and 8–52 are bundled into the connected Worker through imports.
 - Roadmap recalibration recovery verification checks supplied rollback and stability evidence; it never executes rollback, changes versions or factors, edits estimates, changes exposure, or closes recovery automatically.
 - Roadmap recalibration incident re-entry control checks blameless learning, corrective action, cooling, candidate, safety and approval evidence; it never lifts a freeze, starts rollout, assigns blame, changes factors or estimates, or approves its own re-entry.
 - Roadmap recalibration re-entry assurance checks observed stages against the exact approved retry; it never changes exposure, activates or promotes a version, edits estimates, pauses or rolls back a trial, assigns blame, or proves causality.
+- Roadmap recalibration re-entry promotion checks sustained observations, healthy controls, current rollback and independent approval; it never activates or promotes a version, changes factors or estimates, extends exposure, removes rollback, or proves causality.
 - Resilience scores evaluate declared scenarios; they are not likelihood forecasts and never change the portfolio.
 - Benefit progress compares declared targets and observations; it does not prove causality or combine unlike units.
 - Investment assurance records a human decision; completeness checks never make or apply that decision.
@@ -425,6 +431,7 @@ Projects 1–6 and 8–52 are bundled into the connected Worker through imports.
 | Roadmap recalibration recovery | Deterministic authorization, exact restoration, timing, observation and closeout checks; no rollback execution or automatic closure |
 | Roadmap recalibration re-entry | Deterministic learning, action, cooling, new-candidate, bounded-exposure, rollback, monitoring and approval checks; no freeze lift or rollout start |
 | Roadmap recalibration re-entry assurance | Deterministic declaration, stage, paired-error, corrective-control, recurrence, incident, rollback and independent-review checks; no exposure or version action |
+| Roadmap recalibration re-entry promotion | Deterministic lineage, stabilization, checkpoint, paired-error, control, recurrence, incident, rollback-freshness and independent-approval checks; no promotion or version action |
 | Portfolio resilience | Deterministic bounded scenario analysis; scenario likelihood and business impact remain human judgments |
 | Benefits realization | Deterministic target progress with reviewed attribution; no causal or fabricated ROI claim |
 | Investment assurance | Deterministic completeness checks plus named human decisions; no automated go/kill claim |
@@ -509,6 +516,7 @@ Projects 1–6 and 8–52 are bundled into the connected Worker through imports.
 ├── roadmap_recalibration_recovery_verifier/          Project 50
 ├── roadmap_recalibration_incident_reentry_controller/ Project 51
 ├── roadmap_recalibration_reentry_monitor/              Project 52
+├── roadmap_recalibration_reentry_promotion_controller/   Project 53
 ├── .github/                            CI workflow
 ├── .gitignore
 ├── LICENSE
