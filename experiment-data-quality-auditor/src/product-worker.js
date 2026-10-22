@@ -21,6 +21,7 @@ import {monitorRoadmapRecalibrationRollout} from '../../roadmap_recalibration_ro
 import {verifyRoadmapRecalibrationRecovery} from '../../roadmap_recalibration_recovery_verifier/src/verifier.js';
 import {controlRoadmapRecalibrationReentry} from '../../roadmap_recalibration_incident_reentry_controller/src/learning.js';
 import {assureRoadmapRecalibrationReentry} from '../../roadmap_recalibration_reentry_monitor/src/assurance.js';
+import {controlRoadmapRecalibrationReentryPromotion} from '../../roadmap_recalibration_reentry_promotion_controller/src/promotion.js';
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
@@ -96,6 +97,26 @@ function buildRoadmapRecalibrationReentry(runs, input) {
   const rollout = monitorRoadmapRecalibrationRollout(recalibration, {id: input.recalibrationRolloutId, asOf: input.recalibrationRolloutAsOf, minimumStageDwellHours: input.recalibrationRolloutMinimumStageDwellHours, minimumSamplesPerClass: input.recalibrationRolloutMinimumSamplesPerClass, maximumExposureRate: input.recalibrationRolloutMaximumExposureRate, maximumCandidateErrorRate: input.recalibrationRolloutMaximumCandidateErrorRate, minimumImprovementRate: input.recalibrationRolloutMinimumImprovementRate, maximumIncidents: input.recalibrationRolloutMaximumIncidents, declaration: input.recalibrationRolloutDeclaration, stages: input.recalibrationRolloutStages, rollback: input.recalibrationRolloutRollback, review: input.recalibrationRolloutReview});
   const recovery = verifyRoadmapRecalibrationRecovery(recalibration, rollout, {id: input.recalibrationRecoveryId, asOf: input.recalibrationRecoveryAsOf, minimumObservationHours: input.recalibrationRecoveryMinimumObservationHours, maximumSnapshotGapHours: input.recalibrationRecoveryMaximumSnapshotGapHours, minimumSamplesPerClass: input.recalibrationRecoveryMinimumSamplesPerClass, maximumDurationErrorRate: input.recalibrationRecoveryMaximumDurationErrorRate, maximumCapacityErrorRate: input.recalibrationRecoveryMaximumCapacityErrorRate, maximumIncidents: input.recalibrationRecoveryMaximumIncidents, execution: input.recalibrationRecoveryExecution, factorRestorations: input.recalibrationRecoveryFactorRestorations, snapshots: input.recalibrationRecoverySnapshots, review: input.recalibrationRecoveryReview});
   return controlRoadmapRecalibrationReentry(recovery, {id: input.recalibrationReentryId, asOf: input.recalibrationReentryAsOf, maximumPublicationDays: input.recalibrationReentryMaximumPublicationDays, minimumCoolingDays: input.recalibrationReentryMinimumCoolingDays, maximumInitialExposureRate: input.recalibrationReentryMaximumInitialExposureRate, publishedAt: input.recalibrationReentryPublishedAt, summary: input.recalibrationReentrySummary, impact: input.recalibrationReentryImpact, timeline: input.recalibrationReentryTimeline, contributingConditions: input.recalibrationReentryContributingConditions, lessons: input.recalibrationReentryLessons, actions: input.recalibrationReentryActions, freezeUntil: input.recalibrationReentryFreezeUntil, reentry: input.recalibrationReentryPlan, approvals: input.recalibrationReentryApprovals, review: input.recalibrationReentryReview});
+}
+
+function buildRoadmapRecalibrationReentryAssurance(runs, input) {
+  const learning = buildRoadmapRecalibrationReentry(runs, input);
+  const assurance = assureRoadmapRecalibrationReentry(learning, {
+    id: input.recalibrationReentryAssuranceId,
+    asOf: input.recalibrationReentryAssuranceAsOf,
+    minimumStageDwellHours: input.recalibrationReentryAssuranceMinimumStageDwellHours,
+    maximumStageGapHours: input.recalibrationReentryAssuranceMaximumStageGapHours,
+    minimumSamplesPerClass: input.recalibrationReentryAssuranceMinimumSamplesPerClass,
+    maximumExposureRate: input.recalibrationReentryAssuranceMaximumExposureRate,
+    maximumCandidateErrorRate: input.recalibrationReentryAssuranceMaximumCandidateErrorRate,
+    minimumImprovementRate: input.recalibrationReentryAssuranceMinimumImprovementRate,
+    maximumIncidents: input.recalibrationReentryAssuranceMaximumIncidents,
+    declaration: input.recalibrationReentryAssuranceDeclaration,
+    stages: input.recalibrationReentryAssuranceStages,
+    rollback: input.recalibrationReentryAssuranceRollback,
+    review: input.recalibrationReentryAssuranceReview,
+  });
+  return {learning, assurance};
 }
 
 export default {
@@ -270,21 +291,27 @@ export default {
       if (url.pathname === '/api/roadmap-recalibration-reentry-assurance' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         const input = await body(request); const runs = await store.recent(limit);
-        const learning = buildRoadmapRecalibrationReentry(runs, input);
-        return json(assureRoadmapRecalibrationReentry(learning, {
-          id: input.recalibrationReentryAssuranceId,
-          asOf: input.recalibrationReentryAssuranceAsOf,
-          minimumStageDwellHours: input.recalibrationReentryAssuranceMinimumStageDwellHours,
-          maximumStageGapHours: input.recalibrationReentryAssuranceMaximumStageGapHours,
-          minimumSamplesPerClass: input.recalibrationReentryAssuranceMinimumSamplesPerClass,
-          maximumExposureRate: input.recalibrationReentryAssuranceMaximumExposureRate,
-          maximumCandidateErrorRate: input.recalibrationReentryAssuranceMaximumCandidateErrorRate,
-          minimumImprovementRate: input.recalibrationReentryAssuranceMinimumImprovementRate,
-          maximumIncidents: input.recalibrationReentryAssuranceMaximumIncidents,
-          declaration: input.recalibrationReentryAssuranceDeclaration,
-          stages: input.recalibrationReentryAssuranceStages,
-          rollback: input.recalibrationReentryAssuranceRollback,
-          review: input.recalibrationReentryAssuranceReview,
+        return json(buildRoadmapRecalibrationReentryAssurance(runs, input).assurance);
+      }
+      if (url.pathname === '/api/roadmap-recalibration-reentry-promotion' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const {learning, assurance} = buildRoadmapRecalibrationReentryAssurance(runs, input);
+        return json(controlRoadmapRecalibrationReentryPromotion(learning, assurance, {
+          id: input.recalibrationReentryPromotionId,
+          asOf: input.recalibrationReentryPromotionAsOf,
+          minimumStabilizationHours: input.recalibrationReentryPromotionMinimumStabilizationHours,
+          maximumCheckpointGapHours: input.recalibrationReentryPromotionMaximumCheckpointGapHours,
+          minimumCheckpoints: input.recalibrationReentryPromotionMinimumCheckpoints,
+          minimumSamplesPerClass: input.recalibrationReentryPromotionMinimumSamplesPerClass,
+          maximumCandidateErrorRate: input.recalibrationReentryPromotionMaximumCandidateErrorRate,
+          minimumImprovementRate: input.recalibrationReentryPromotionMinimumImprovementRate,
+          maximumIncidents: input.recalibrationReentryPromotionMaximumIncidents,
+          maximumRollbackTestAgeDays: input.recalibrationReentryPromotionMaximumRollbackTestAgeDays,
+          checkpoints: input.recalibrationReentryPromotionCheckpoints,
+          rollback: input.recalibrationReentryPromotionRollback,
+          approvals: input.recalibrationReentryPromotionApprovals,
+          review: input.recalibrationReentryPromotionReview,
         }));
       }
       if (url.pathname === '/api/portfolio-stress' && request.method === 'POST') {
