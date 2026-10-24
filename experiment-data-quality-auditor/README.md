@@ -10,7 +10,7 @@
 
 </div>
 
-Project 7 is both the experiment workspace and the integration host for the fifty-four-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–54, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, calibrates future estimating context, controls its adoption, verifies observed effectiveness, monitors longitudinal drift, validates versioned recalibration proposals, assures shadow-plus-staged rollout evidence, verifies rollback recovery, governs incident learning before re-entry, assures the observed retry, gates sustained promotion, and verifies the promoted operating outcome.
+Project 7 is both the experiment workspace and the integration host for the fifty-five-project [ProdMind](../README.md) product. It executes Projects 1–6 directly and imports Projects 8–55, including an execution branch that schedules Project 14 portfolio selections, compares them with actual delivery, plans and verifies bounded recovery, calibrates future estimating context, controls its adoption, verifies observed effectiveness, monitors longitudinal drift, validates versioned recalibration proposals, assures shadow-plus-staged rollout evidence, verifies rollback recovery, governs incident learning before re-entry, assures the observed retry, gates sustained promotion, verifies the promoted operating outcome, and verifies exact baseline handoff across every required consumer.
 
 The folder name is retained because the experiment data-quality auditor remains a core component.
 
@@ -18,7 +18,7 @@ The folder name is retained because the experiment data-quality auditor remains 
 
 - **Decision improved:** whether evidence can progress from discovery through a prospective experiment, reviewed decision and monitored learning.
 - **Leading measures:** blocked data-quality audits, stale-write conflicts, completed guardrail reviews and evidence-linked decisions.
-- **Portfolio value:** provides one D1-backed control plane for all fifty-four modules and preserves the decision trail.
+- **Portfolio value:** provides one D1-backed control plane for all fifty-five modules and preserves the decision trail.
 - **Stop condition:** descriptive readouts and workflow gates do not establish statistical significance or causality.
 
 ## Connected lifecycle
@@ -103,6 +103,7 @@ One D1 `product_runs` record preserves the IDs and state for this lifecycle. Cli
 - Project 52 observed recalibration re-entry assurance with exact declaration, shadow-first stages, paired outcomes, live corrective controls, recurrence signals, incidents and rollback
 - Project 53 sustained recalibration re-entry promotion control with exact lineage, checkpoint continuity, paired outcomes, control health, current rollback and independent approval
 - Project 54 promotion outcome verification with exact activation, full-scope adoption, longitudinal accuracy, control health, incidents and rollback
+- Project 55 baseline handoff control with one versioned manifest, exact class registration, five-consumer convergence, immutable archive, current rollback, downstream monitoring and independent approval
 - Canonical `portfolioItemId` contracts across Projects 11–14 to prevent cross-run ID collisions
 - Canonical `portfolioItemId` contracts across Projects 11–28 to prevent cross-run ID collisions
 - Optimistic version checks and D1 history journal
@@ -150,6 +151,7 @@ Synthetic files are provided for feedback, event audits, and outcome monitoring.
 | `POST` | `/api/roadmap-recalibration-reentry-assurance` | Assure Project 52 observed recalibration re-entry before human continuation |
 | `POST` | `/api/roadmap-recalibration-reentry-promotion` | Gate Project 53 sustained promotion readiness before human adoption |
 | `POST` | `/api/roadmap-recalibration-promotion-outcomes` | Verify Project 54 promotion activation and operating outcomes before human retention |
+| `POST` | `/api/roadmap-recalibration-baseline-handoff` | Verify Project 55 exact baseline convergence before human handoff completion |
 | `POST` | `/api/portfolio-stress` | Assess Project 15 portfolio resilience |
 | `POST` | `/api/benefits-realization` | Build a Project 16 benefits ledger |
 | `POST` | `/api/investment-assurance` | Run a Project 17 post-implementation assurance review |
@@ -205,7 +207,7 @@ npx wrangler secret put API_TOKEN
 npx wrangler deploy
 ```
 
-Projects 1–6 and 8–54 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
+Projects 1–6 and 8–55 are bundled through imports for this deployment. Their standalone databases are not automatically copied into the workspace.
 
 ## Structure
 
@@ -215,7 +217,7 @@ src/lifecycle.js        Experiments, decisions and Project 8 monitoring
 src/audit.js            Deterministic event-quality audit
 src/product-worker.js   Connected authenticated API
 src/store.js            Versioned D1 persistence
-public/                 Complete fifty-four-stage workspace
+public/                 Complete fifty-five-stage workspace
 migrations/             Product-run and history schema
 tests/                  Audit, workflow, HTTP and persistence tests
 docs/                   PRD and connected contracts
