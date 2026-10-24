@@ -57,6 +57,7 @@ on:
       - 'roadmap_recalibration_reentry_monitor/**'
       - 'roadmap_recalibration_reentry_promotion_controller/**'
       - 'roadmap_recalibration_promotion_outcome_monitor/**'
+      - 'roadmap_recalibration_baseline_handoff_controller/**'
   pull_request:
     paths:
       - 'experiment-data-quality-auditor/**'
@@ -114,6 +115,7 @@ on:
       - 'roadmap_recalibration_reentry_monitor/**'
       - 'roadmap_recalibration_reentry_promotion_controller/**'
       - 'roadmap_recalibration_promotion_outcome_monitor/**'
+      - 'roadmap_recalibration_baseline_handoff_controller/**'
 permissions:
   contents: read
 jobs:

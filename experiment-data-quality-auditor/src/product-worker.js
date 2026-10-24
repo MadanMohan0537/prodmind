@@ -23,6 +23,7 @@ import {controlRoadmapRecalibrationReentry} from '../../roadmap_recalibration_in
 import {assureRoadmapRecalibrationReentry} from '../../roadmap_recalibration_reentry_monitor/src/assurance.js';
 import {controlRoadmapRecalibrationReentryPromotion} from '../../roadmap_recalibration_reentry_promotion_controller/src/promotion.js';
 import {monitorRoadmapRecalibrationPromotionOutcomes} from '../../roadmap_recalibration_promotion_outcome_monitor/src/outcomes.js';
+import {controlRoadmapRecalibrationBaselineHandoff} from '../../roadmap_recalibration_baseline_handoff_controller/src/handoff.js';
 import {stressPortfolio} from '../../portfolio_resilience_stress_tester/src/stress.js';
 import {trackBenefits} from '../../benefits_realization_tracker/src/benefits.js';
 import {reviewInvestments} from '../../investment_assurance_review/src/assurance.js';
@@ -139,6 +140,28 @@ function buildRoadmapRecalibrationReentryPromotion(runs, input) {
     review: input.recalibrationReentryPromotionReview,
   });
   return {learning, assurance, promotion};
+}
+
+function buildRoadmapRecalibrationPromotionOutcome(runs, input) {
+  const {learning, assurance, promotion} = buildRoadmapRecalibrationReentryPromotion(runs, input);
+  const outcome = monitorRoadmapRecalibrationPromotionOutcomes(promotion, {
+    id: input.recalibrationPromotionOutcomeId,
+    asOf: input.recalibrationPromotionOutcomeAsOf,
+    minimumObservationHours: input.recalibrationPromotionOutcomeMinimumObservationHours,
+    maximumSnapshotGapHours: input.recalibrationPromotionOutcomeMaximumSnapshotGapHours,
+    minimumSnapshots: input.recalibrationPromotionOutcomeMinimumSnapshots,
+    minimumAdoptionRate: input.recalibrationPromotionOutcomeMinimumAdoptionRate,
+    minimumSamplesPerClass: input.recalibrationPromotionOutcomeMinimumSamplesPerClass,
+    maximumPromotedErrorRate: input.recalibrationPromotionOutcomeMaximumPromotedErrorRate,
+    minimumImprovementRate: input.recalibrationPromotionOutcomeMinimumImprovementRate,
+    maximumIncidents: input.recalibrationPromotionOutcomeMaximumIncidents,
+    maximumRollbackTestAgeDays: input.recalibrationPromotionOutcomeMaximumRollbackTestAgeDays,
+    execution: input.recalibrationPromotionOutcomeExecution,
+    snapshots: input.recalibrationPromotionOutcomeSnapshots,
+    rollback: input.recalibrationPromotionOutcomeRollback,
+    review: input.recalibrationPromotionOutcomeReview,
+  });
+  return {learning, assurance, promotion, outcome};
 }
 
 export default {
@@ -323,23 +346,26 @@ export default {
       if (url.pathname === '/api/roadmap-recalibration-promotion-outcomes' && request.method === 'POST') {
         const limit = Number(url.searchParams.get('limit') ?? 20);
         const input = await body(request); const runs = await store.recent(limit);
-        const {promotion} = buildRoadmapRecalibrationReentryPromotion(runs, input);
-        return json(monitorRoadmapRecalibrationPromotionOutcomes(promotion, {
-          id: input.recalibrationPromotionOutcomeId,
-          asOf: input.recalibrationPromotionOutcomeAsOf,
-          minimumObservationHours: input.recalibrationPromotionOutcomeMinimumObservationHours,
-          maximumSnapshotGapHours: input.recalibrationPromotionOutcomeMaximumSnapshotGapHours,
-          minimumSnapshots: input.recalibrationPromotionOutcomeMinimumSnapshots,
-          minimumAdoptionRate: input.recalibrationPromotionOutcomeMinimumAdoptionRate,
-          minimumSamplesPerClass: input.recalibrationPromotionOutcomeMinimumSamplesPerClass,
-          maximumPromotedErrorRate: input.recalibrationPromotionOutcomeMaximumPromotedErrorRate,
-          minimumImprovementRate: input.recalibrationPromotionOutcomeMinimumImprovementRate,
-          maximumIncidents: input.recalibrationPromotionOutcomeMaximumIncidents,
-          maximumRollbackTestAgeDays: input.recalibrationPromotionOutcomeMaximumRollbackTestAgeDays,
-          execution: input.recalibrationPromotionOutcomeExecution,
-          snapshots: input.recalibrationPromotionOutcomeSnapshots,
-          rollback: input.recalibrationPromotionOutcomeRollback,
-          review: input.recalibrationPromotionOutcomeReview,
+        return json(buildRoadmapRecalibrationPromotionOutcome(runs, input).outcome);
+      }
+      if (url.pathname === '/api/roadmap-recalibration-baseline-handoff' && request.method === 'POST') {
+        const limit = Number(url.searchParams.get('limit') ?? 20);
+        const input = await body(request); const runs = await store.recent(limit);
+        const {outcome} = buildRoadmapRecalibrationPromotionOutcome(runs, input);
+        return json(controlRoadmapRecalibrationBaselineHandoff(outcome, {
+          id: input.recalibrationBaselineHandoffId,
+          asOf: input.recalibrationBaselineHandoffAsOf,
+          maximumHandoffHours: input.recalibrationBaselineHandoffMaximumHandoffHours,
+          minimumArchiveDays: input.recalibrationBaselineHandoffMinimumArchiveDays,
+          maximumRollbackTestAgeDays: input.recalibrationBaselineHandoffMaximumRollbackTestAgeDays,
+          manifest: input.recalibrationBaselineHandoffManifest,
+          referenceClasses: input.recalibrationBaselineHandoffReferenceClasses,
+          consumers: input.recalibrationBaselineHandoffConsumers,
+          archive: input.recalibrationBaselineHandoffArchive,
+          rollback: input.recalibrationBaselineHandoffRollback,
+          monitoring: input.recalibrationBaselineHandoffMonitoring,
+          approvals: input.recalibrationBaselineHandoffApprovals,
+          review: input.recalibrationBaselineHandoffReview,
         }));
       }
       if (url.pathname === '/api/portfolio-stress' && request.method === 'POST') {
